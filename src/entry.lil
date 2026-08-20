@@ -1,0 +1,667 @@
+import {
+  objectAssign,
+  promiseResolve,
+  toStr,
+  undef
+} from "./host.lil";
+import {
+  coreUtil,
+  getConfig,
+  datetimeRegex,
+  timeRegex,
+  durationRe,
+  emailRe,
+  guidRe,
+  ipv4Re,
+  ipv6Re,
+  isoDateRe,
+  isoDateTimeRe,
+  isoTimeRe,
+  jwtRe,
+  nanoidRe,
+  regexJs,
+  ZodEncodeError,
+  setCoerce,
+  ulidRe,
+  uuidRe
+} from "./engine.lil";
+import {
+  ZodAny,
+  ZodArray,
+  ZodBigInt,
+  ZodBoolean,
+  ZodCatch,
+  ZodCustom,
+  ZodDate,
+  ZodDefault,
+  ZodDiscriminatedUnion,
+  ZodEmail,
+  ZodEnum,
+  ZodErrorApi,
+  ZodFile,
+  ZodFunction,
+  ZodGUID,
+  ZodISODate,
+  ZodISODateTime,
+  ZodISODuration,
+  ZodISOTime,
+  ZodIntersection,
+  ZodJWT,
+  ZodLazy,
+  ZodLiteral,
+  ZodMap,
+  ZodNaN,
+  ZodNever,
+  ZodNonOptional,
+  ZodNull,
+  ZodNullable,
+  ZodNumber,
+  ZodObject,
+  ZodOptional,
+  ZodPipe,
+  ZodCodec,
+  ZodPreprocess,
+  ZodPrefault,
+  ZodPromise,
+  ZodReadonly,
+  ZodRecord,
+  ZodSet,
+  ZodString,
+  ZodSuccess,
+  ZodSymbol,
+  ZodTemplateLiteral,
+  ZodTransform,
+  ZodTuple,
+  ZodType,
+  ZodURL,
+  ZodUUID,
+  ZodUndefined,
+  ZodUnion,
+  ZodUnknown,
+  ZodVoid,
+  ZodXor,
+  boot,
+  configApi,
+  flattenApi,
+  formatApi,
+  getDiscriminatedOptionApi,
+  formatFactory,
+  getConfigApi,
+  globalRegistryApi,
+  localesEn,
+  decodeApi,
+  decodeAsyncApi,
+  encodeApi,
+  encodeAsyncApi,
+  parseApi,
+  parseAsyncApi,
+  prettifyApi,
+  registryApi,
+  safeParseApi,
+  safeParseAsyncApi,
+  schemaAny,
+  schemaArray,
+  schemaBigint,
+  schemaBoolean,
+  schemaCustom,
+  schemaDate,
+  schemaDiscUnion,
+  schemaEnum,
+  schemaFile,
+  schemaFunction,
+  schemaTemplateLiteral,
+  schemaStringFormat,
+  schemaProperty,
+  schemaInstanceof,
+  schemaInt,
+  schemaNumberFormat,
+  schemaIntersection,
+  schemaLazy,
+  schemaLiteral,
+  schemaMap,
+  schemaNan,
+  schemaNever,
+  schemaNull,
+  schemaNumber,
+  schemaObject,
+  schemaPipe,
+  schemaCodec,
+  schemaInvertCodec,
+  schemaPreprocess,
+  schemaUrl,
+  schemaHttpUrl,
+  schemaStringbool,
+  schemaSuccess,
+  schemaPartialRecord,
+  schemaJson,
+  schemaHex,
+  schemaHostname,
+  schemaHash,
+  schemaCreditCard,
+  schemaMac,
+  schemaLooseRecord,
+  schemaFormat,
+  schemaPromise,
+  schemaRecord,
+  schemaSetType,
+  schemaString,
+  schemaSymbol,
+  schemaTransform,
+  schemaTuple,
+  schemaUndefined,
+  schemaUnion,
+  schemaUnknown,
+  schemaVoid,
+  schemaXor,
+  toDotPathApi,
+  treeifyApi,
+  versionApi,
+  visitSchema,
+  ZodExactOptional,
+  ZodRealErrorApi,
+  schemaExactOptional,
+  schemaFromJSON,
+  schemaProperties,
+  schemaSlugifyCheck,
+  schemaTrimCheck,
+  schemaMaxLengthCheck,
+  schemaMinLengthCheck,
+  schemaCheck,
+  schemaRefine,
+  schemaSuperRefine
+} from "./api.lil";
+
+boot();
+
+JsValue stringFn = JS.staticRest((JsValue args) => {
+  return schemaString(args[0]);
+});
+JsValue numberFn = JS.staticRest((JsValue args) => {
+  return schemaNumber(args[0]);
+});
+JsValue booleanFn = JS.staticRest((JsValue args) => {
+  return schemaBoolean(args[0]);
+});
+JsValue bigintFn = JS.staticRest((JsValue args) => {
+  return schemaBigint(args[0]);
+});
+JsValue symbolFn = JS.staticRest((JsValue args) => {
+  return schemaSymbol(args[0]);
+});
+JsValue dateFn = JS.staticRest((JsValue args) => {
+  return schemaDate(args[0]);
+});
+JsValue nanFn = JS.staticRest((JsValue args) => {
+  return schemaNan(args[0]);
+});
+JsValue undefinedFn = JS.staticRest((JsValue _args) => {
+  return schemaUndefined();
+});
+JsValue nullFn = JS.staticRest((JsValue _args) => {
+  return schemaNull();
+});
+JsValue anyFn = JS.staticRest((JsValue _args) => {
+  return schemaAny();
+});
+JsValue unknownFn = JS.staticRest((JsValue _args) => {
+  return schemaUnknown();
+});
+JsValue neverFn = JS.staticRest((JsValue _args) => {
+  return schemaNever();
+});
+JsValue voidFn = JS.staticRest((JsValue _args) => {
+  return schemaVoid();
+});
+JsValue literalFn = JS.staticRest((JsValue args) => {
+  return schemaLiteral(args[0], args[1]);
+});
+JsValue enumFn = JS.staticRest((JsValue args) => {
+  return schemaEnum(args[0], args[1]);
+});
+JsValue objectFn = JS.staticRest((JsValue args) => {
+  return schemaObject(args[0], args[1]);
+});
+JsValue strictObjectFn = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaObject(args[0], args[1]);
+  return JS.call(inst["strict"], inst);
+});
+JsValue looseObjectFn = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaObject(args[0], args[1]);
+  return JS.call(inst["passthrough"], inst);
+});
+JsValue arrayFn = JS.staticRest((JsValue args) => {
+  return schemaArray(args[0], args[1]);
+});
+JsValue tupleFn = JS.staticRest((JsValue args) => {
+  return schemaTuple(args[0], args[1], args[2]);
+});
+JsValue recordFn = JS.staticRest((JsValue args) => {
+  return schemaRecord(args[0], args[1], args[2]);
+});
+JsValue unionFn = JS.staticRest((JsValue args) => {
+  return schemaUnion(args[0], args[1]);
+});
+JsValue xorFn = JS.staticRest((JsValue args) => {
+  return schemaXor(args[0], args[1]);
+});
+JsValue discriminatedUnionFn = JS.staticRest((JsValue args) => {
+  return schemaDiscUnion(toStr(args[0]), args[1], args[2]);
+});
+JsValue intersectionFn = JS.staticRest((JsValue args) => {
+  return schemaIntersection(args[0], args[1]);
+});
+JsValue mapFn = JS.staticRest((JsValue args) => {
+  return schemaMap(args[0], args[1]);
+});
+JsValue setFn = JS.staticRest((JsValue args) => {
+  return schemaSetType(args[0], args[1]);
+});
+JsValue lazyFn = JS.staticRest((JsValue args) => {
+  return schemaLazy(args[0]);
+});
+JsValue promiseFn = JS.staticRest((JsValue args) => {
+  return schemaPromise(args[0]);
+});
+JsValue customFn = JS.staticRest((JsValue args) => {
+  return schemaCustom(args[0], args[1]);
+});
+JsValue fileFn = JS.staticRest((JsValue args) => {
+  return schemaFile(args[0]);
+});
+JsValue instanceofFn = JS.staticRest((JsValue args) => {
+  return schemaInstanceof(args[0], args[1]);
+});
+JsValue transformFn = JS.staticRest((JsValue args) => {
+  return schemaTransform(args[0]);
+});
+JsValue functionFn = JS.staticRest((JsValue args) => {
+  return schemaFunction(args[0]);
+});
+JsValue intFn = JS.staticRest((JsValue args) => {
+  return schemaInt(args[0]);
+});
+JsValue int32Fn = JS.staticRest((JsValue args) => {
+  return schemaNumberFormat("int32", args[0]);
+});
+JsValue uint32Fn = JS.staticRest((JsValue args) => {
+  return schemaNumberFormat("uint32", args[0]);
+});
+JsValue float32Fn = JS.staticRest((JsValue args) => {
+  return schemaNumberFormat("float32", args[0]);
+});
+JsValue float64Fn = JS.staticRest((JsValue args) => {
+  return schemaNumberFormat("float64", args[0]);
+});
+JsValue pipeFn = JS.staticRest((JsValue args) => {
+  return schemaPipe(args[0], args[1]);
+});
+JsValue optionalFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["optional"], args[0]);
+});
+JsValue nullableFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["nullable"], args[0]);
+});
+JsValue emailFn = formatFactory(ZodEmail, "email", regexJs(emailRe));
+JsValue uuidFn = formatFactory(ZodUUID, "uuid", regexJs(uuidRe));
+JsValue guidFn = formatFactory(ZodGUID, "guid", regexJs(guidRe));
+JsValue urlFn = JS.staticRest((JsValue args) => {
+  return schemaUrl(args[0]);
+});
+JsValue httpUrlFn = JS.staticRest((JsValue args) => {
+  return schemaHttpUrl(args[0]);
+});
+JsValue codecFn = JS.staticRest((JsValue args) => {
+  return schemaCodec(args[0], args[1], args[2]);
+});
+JsValue invertCodecFn = JS.staticRest((JsValue args) => {
+  return schemaInvertCodec(args[0]);
+});
+JsValue preprocessFn = JS.staticRest((JsValue args) => {
+  return schemaPreprocess(args[0], args[1]);
+});
+JsValue stringboolFn = JS.staticRest((JsValue args) => {
+  return schemaStringbool(args[0]);
+});
+JsValue successFn = JS.staticRest((JsValue args) => {
+  return schemaSuccess(args[0]);
+});
+JsValue jsonFn = JS.staticRest((JsValue args) => {
+  return schemaJson(args[0]);
+});
+JsValue hexFn = JS.staticRest((JsValue args) => {
+  return schemaHex(args[0]);
+});
+JsValue hostnameFn = JS.staticRest((JsValue args) => {
+  return schemaHostname(args[0]);
+});
+JsValue hashFn = JS.staticRest((JsValue args) => {
+  return schemaHash(args[0], args[1]);
+});
+JsValue partialRecordFn = JS.staticRest((JsValue args) => {
+  return schemaPartialRecord(args[0], args[1], args[2]);
+});
+JsValue keyofFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["keyof"], args[0]);
+});
+JsValue catchFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["catch"], args[0], args[1]);
+});
+JsValue defaultFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["default"], args[0], args[1]);
+});
+JsValue prefaultFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["prefault"], args[0], args[1]);
+});
+JsValue nonoptionalFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["nonoptional"], args[0]);
+});
+JsValue readonlyFn = JS.staticRest((JsValue args) => {
+  return JS.call(args[0]["readonly"], args[0]);
+});
+JsValue jwtFn = formatFactory(ZodJWT, "jwt", regexJs(jwtRe));
+JsValue nanoidFn = formatFactory(undef(), "nanoid", regexJs(nanoidRe));
+JsValue ulidFn = formatFactory(undef(), "ulid", regexJs(ulidRe));
+JsValue ipv4Fn = formatFactory(undef(), "ipv4", regexJs(ipv4Re));
+JsValue ipv6Fn = formatFactory(undef(), "ipv6", regexJs(ipv6Re));
+
+JsValue coerce = JS.object();
+coerce["string"] = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaString(args[0]);
+  setCoerce(inst);
+  return inst;
+});
+coerce["number"] = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaNumber(args[0]);
+  setCoerce(inst);
+  return inst;
+});
+coerce["boolean"] = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaBoolean(args[0]);
+  setCoerce(inst);
+  return inst;
+});
+coerce["bigint"] = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaBigint(args[0]);
+  setCoerce(inst);
+  return inst;
+});
+coerce["date"] = JS.staticRest((JsValue args) => {
+  JsValue inst = schemaDate(args[0]);
+  setCoerce(inst);
+  return inst;
+});
+
+JsValue iso = JS.object();
+iso["datetime"] = JS.staticRest((JsValue args) => {
+  return schemaFormat(ZodISODateTime, "datetime", datetimeRegex(args[0]), args[0]);
+});
+iso["date"] = formatFactory(ZodISODate, "date", regexJs(isoDateRe));
+iso["time"] = JS.staticRest((JsValue args) => {
+  return schemaFormat(ZodISOTime, "time", timeRegex(args[0]), args[0]);
+});
+iso["duration"] = formatFactory(ZodISODuration, "duration", regexJs(durationRe));
+
+JsValue locales = JS.object();
+locales["en"] = JS.staticRest((JsValue _args) => {
+  return localesEn();
+});
+
+JsValue core = JS.object();
+
+JsValue zObj = JS.object();
+
+void put(string key, JsValue value) {
+  zObj[key] = value;
+}
+
+put("string", stringFn);
+put("number", numberFn);
+put("boolean", booleanFn);
+put("bigint", bigintFn);
+put("symbol", symbolFn);
+put("date", dateFn);
+put("nan", nanFn);
+put("undefined", undefinedFn);
+put("null", nullFn);
+put("any", anyFn);
+put("unknown", unknownFn);
+put("never", neverFn);
+put("void", voidFn);
+put("literal", literalFn);
+put("enum", enumFn);
+put("nativeEnum", enumFn);
+put("object", objectFn);
+put("strictObject", strictObjectFn);
+put("looseObject", looseObjectFn);
+put("interface", objectFn);
+put("array", arrayFn);
+put("tuple", tupleFn);
+put("record", recordFn);
+put("union", unionFn);
+put("xor", xorFn);
+put("discriminatedUnion", discriminatedUnionFn);
+put("intersection", intersectionFn);
+put("map", mapFn);
+put("set", setFn);
+put("lazy", lazyFn);
+put("promise", promiseFn);
+put("custom", customFn);
+put("file", fileFn);
+put("instanceof", instanceofFn);
+put("transform", transformFn);
+put("function", functionFn);
+put("int", intFn);
+put("int32", int32Fn);
+put("uint32", uint32Fn);
+put("float32", float32Fn);
+put("float64", float64Fn);
+put("pipe", pipeFn);
+put("optional", optionalFn);
+put("nullable", nullableFn);
+put("email", emailFn);
+put("uuid", uuidFn);
+put("guid", guidFn);
+put("url", urlFn);
+put("httpUrl", httpUrlFn);
+put("codec", codecFn);
+put("invertCodec", invertCodecFn);
+put("preprocess", preprocessFn);
+put("stringbool", stringboolFn);
+put("success", successFn);
+put("json", jsonFn);
+put("hex", hexFn);
+put("hostname", hostnameFn);
+put("hash", hashFn);
+put("partialRecord", partialRecordFn);
+put("looseRecord", JS.staticRest((JsValue args) => {
+  return schemaLooseRecord(args[0], args[1], args[2]);
+}));
+put("creditCard", JS.staticRest((JsValue args) => {
+  return schemaCreditCard(args[0]);
+}));
+put("mac", JS.staticRest((JsValue args) => {
+  return schemaMac(args[0]);
+}));
+put("keyof", keyofFn);
+put("catch", catchFn);
+put("default", defaultFn);
+put("_default", defaultFn);
+put("prefault", prefaultFn);
+put("nonoptional", nonoptionalFn);
+put("readonly", readonlyFn);
+put("jwt", jwtFn);
+put("nanoid", nanoidFn);
+put("ulid", ulidFn);
+put("ipv4", ipv4Fn);
+put("ipv6", ipv6Fn);
+put("coerce", coerce);
+put("iso", iso);
+put("locales", locales);
+put("core", core);
+put("parse", parseApi);
+put("safeParse", safeParseApi);
+put("parseAsync", parseAsyncApi);
+put("safeParseAsync", safeParseAsyncApi);
+put("encode", encodeApi);
+put("decode", decodeApi);
+put("encodeAsync", encodeAsyncApi);
+put("decodeAsync", decodeAsyncApi);
+put("treeifyError", treeifyApi);
+put("prettifyError", prettifyApi);
+put("formatError", formatApi);
+put("flattenError", flattenApi);
+put("registry", registryApi);
+put("globalRegistry", globalRegistryApi);
+put("config", configApi);
+put("ZodType", ZodType);
+put("ZodString", ZodString);
+put("ZodNumber", ZodNumber);
+put("ZodBoolean", ZodBoolean);
+put("ZodBigInt", ZodBigInt);
+put("ZodSymbol", ZodSymbol);
+put("ZodDate", ZodDate);
+put("ZodNaN", ZodNaN);
+put("ZodUndefined", ZodUndefined);
+put("ZodNull", ZodNull);
+put("ZodAny", ZodAny);
+put("ZodUnknown", ZodUnknown);
+put("ZodNever", ZodNever);
+put("ZodVoid", ZodVoid);
+put("ZodLiteral", ZodLiteral);
+put("ZodEnum", ZodEnum);
+put("ZodObject", ZodObject);
+put("ZodArray", ZodArray);
+put("ZodTuple", ZodTuple);
+put("ZodRecord", ZodRecord);
+put("ZodMap", ZodMap);
+put("ZodSet", ZodSet);
+put("ZodUnion", ZodUnion);
+put("ZodDiscriminatedUnion", ZodDiscriminatedUnion);
+put("ZodXor", ZodXor);
+put("ZodIntersection", ZodIntersection);
+put("ZodOptional", ZodOptional);
+put("ZodNullable", ZodNullable);
+put("ZodDefault", ZodDefault);
+put("ZodPrefault", ZodPrefault);
+put("ZodCatch", ZodCatch);
+put("ZodNonOptional", ZodNonOptional);
+put("ZodLazy", ZodLazy);
+put("ZodPromise", ZodPromise);
+put("ZodTransform", ZodTransform);
+put("ZodPipe", ZodPipe);
+put("ZodCodec", ZodCodec);
+put("ZodPreprocess", ZodPreprocess);
+put("ZodReadonly", ZodReadonly);
+put("ZodCustom", ZodCustom);
+put("ZodFile", ZodFile);
+put("ZodFunction", ZodFunction);
+put("ZodTemplateLiteral", ZodTemplateLiteral);
+put("ZodSuccess", ZodSuccess);
+put("ZodError", ZodErrorApi);
+put("ZodRealError", ZodRealErrorApi);
+put("getDiscriminatedOption", getDiscriminatedOptionApi);
+put("ZodExactOptional", ZodExactOptional);
+put("exactOptional", JS.staticRest((JsValue args) => {
+  return schemaExactOptional(args[0]);
+}));
+put("slugify", JS.staticRest((JsValue _args) => {
+  return schemaSlugifyCheck();
+}));
+put("properties", JS.staticRest((JsValue args) => {
+  return schemaProperties(args[0]);
+}));
+put("property", JS.staticRest((JsValue args) => {
+  return schemaProperty(args[0], args[1], args[2]);
+}));
+put("templateLiteral", JS.staticRest((JsValue args) => {
+  return schemaTemplateLiteral(args[0], args[1]);
+}));
+put("stringFormat", JS.staticRest((JsValue args) => {
+  return schemaStringFormat(args[0], args[1], args[2]);
+}));
+put("check", JS.staticRest((JsValue args) => {
+  return schemaCheck(args[0], args[1]);
+}));
+put("with", JS.staticRest((JsValue args) => {
+  return schemaCheck(args[0], args[1]);
+}));
+put("refine", JS.staticRest((JsValue args) => {
+  return schemaRefine(args[0], args[1]);
+}));
+put("superRefine", JS.staticRest((JsValue args) => {
+  return schemaSuperRefine(args[0], args[1]);
+}));
+put("trim", JS.staticRest((JsValue _args) => {
+  return schemaTrimCheck();
+}));
+put("maxLength", JS.staticRest((JsValue args) => {
+  return schemaMaxLengthCheck(args[0], args[1]);
+}));
+put("minLength", JS.staticRest((JsValue args) => {
+  return schemaMinLengthCheck(args[0], args[1]);
+}));
+put("ZodISODateTime", ZodISODateTime);
+put("ZodISODate", ZodISODate);
+put("ZodISOTime", ZodISOTime);
+put("ZodISODuration", ZodISODuration);
+put("$ZodError", ZodErrorApi);
+put("NEVER", JS.object("status", "aborted"));
+put("fromJSONSchema", JS.staticRest((JsValue args) => {
+  return schemaFromJSON(args[0], args[1]);
+}));
+put("visit", visitSchema);
+put("ZodIssueCode", JS.object(
+  "invalid_type", "invalid_type",
+  "too_big", "too_big",
+  "too_small", "too_small",
+  "invalid_format", "invalid_format",
+  "not_multiple_of", "not_multiple_of",
+  "unrecognized_keys", "unrecognized_keys",
+  "invalid_union", "invalid_union",
+  "invalid_key", "invalid_key",
+  "invalid_element", "invalid_element",
+  "invalid_value", "invalid_value",
+  "custom", "custom"
+));
+put("TimePrecision", JS.object(
+  "Any", null,
+  "Minute", 0.0 - 1.0,
+  "Second", 0,
+  "Millisecond", 3,
+  "Microsecond", 6
+));
+
+objectAssign(core, zObj);
+core["$ZodError"] = ZodErrorApi;
+core["$ZodRealError"] = ZodRealErrorApi;
+core["$ZodEncodeError"] = ZodEncodeError;
+core["toDotPath"] = toDotPathApi;
+core["flattenError"] = flattenApi;
+core["formatError"] = formatApi;
+core["treeifyError"] = treeifyApi;
+core["prettifyError"] = prettifyApi;
+core["getDiscriminatedOption"] = getDiscriminatedOptionApi;
+core["$ZodType"] = ZodType;
+core["$ZodPipe"] = ZodPipe;
+core["$ZodCodec"] = ZodCodec;
+core["$ZodPreprocess"] = ZodPreprocess;
+core["$ZodString"] = ZodString;
+core["$ZodCustom"] = ZodCustom;
+core["$ZodNever"] = ZodNever;
+core["$ZodUnknown"] = ZodUnknown;
+core["$ZodNumber"] = ZodNumber;
+core["$ZodString"] = ZodString;
+core["$ZodType"] = ZodType;
+core["$ZodObject"] = ZodObject;
+core["$ZodOptional"] = ZodOptional;
+core["visit"] = visitSchema;
+core["$ZodObject"] = ZodObject;
+core["$ZodOptional"] = ZodOptional;
+core["$ZodExactOptional"] = ZodExactOptional;
+core["config"] = configApi;
+core["globalConfig"] = getConfig();
+core["util"] = coreUtil();
+zObj["util"] = core["util"];
+
+export JsValue z = zObj;
+export JsValue default = zObj;

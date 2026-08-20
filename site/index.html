@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="@itslil/zod is Zod 4.4.3 reimplemented in LilScript. Official classic tests, size, and Playwright parse speed versus zod@4.4.3."
+    />
+    <meta name="theme-color" content="#3068f4" />
+    <title>itslil/zod — Zod 4.4.3 through LilScript</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"></div>
+    <header class="nav shell">
+      <a class="wordmark" href="#top" aria-label="itslil/zod home">
+        <span class="mark">z</span>
+        <span>itslil/zod</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#performance">performance</a>
+        <a href="#lab">lab</a>
+        <a href="#evidence">size</a>
+        <a href="https://github.com/yeargun/zodlil">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot"></span> Zod 4.4.3 · LilScript port · @itslil/zod</p>
+          <h1>Zod,<br /><em>compiled.</em></h1>
+          <p class="lede">
+            The <code>zod@4.4.3</code> classic API, rewritten in LilScript with native
+            <code>class</code>/<code>struct</code> schemas and official types. Internals can be
+            mangled via config; only the public API stays named. The DX stays
+            <code>z.string().parse(value)</code>.
+          </p>
+          <div class="install-row">
+            <code>npm install @itslil/zod</code>
+            <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
+          </div>
+          <div class="hero-actions">
+            <a class="button primary" href="#performance">Playwright</a>
+            <a class="button secondary" href="https://www.npmjs.com/package/@itslil/zod">npm ↗</a>
+          </div>
+        </div>
+        <div class="scoreboard" aria-label="Compression and performance results">
+          <div class="score-main">
+            <span class="score-label">Brotli-11 vs Vite 8 Oxc of official zod/v4</span>
+            <strong id="hero-ratio">—<span></span></strong>
+            <p id="hero-bytes"></p>
+          </div>
+          <div class="score-grid">
+            <div><strong id="hero-tests">—</strong><span>classic tests passing</span></div>
+            <div><strong id="hero-gzip">—</strong><span>gzip-9 vs Oxc</span></div>
+            <div><strong id="hero-raw">—</strong><span>raw vs Oxc</span></div>
+            <div><strong id="hero-speed">—</strong><span>Chromium parse</span></div>
+          </div>
+          <p class="score-note">
+            Official rows are an esbuild bundle of <code>zod@4.4.3</code> <code>v4</code>, then Oxc
+            or Terser. LilScript rows compare closer-world (mangle on) and normal (mangle off).
+            Sizes are <code>lilscript-codec</code> raw / gzip-9 / Brotli-11.
+          </p>
+        </div>
+      </section>
+
+      <section class="ticker" aria-label="Supported APIs">
+        <div>
+          string <span>✦</span> number <span>✦</span> object <span>✦</span> array <span>✦</span> enum
+          <span>✦</span> union <span>✦</span> optional <span>✦</span> coerce <span>✦</span> refine
+          <span>✦</span> pipe <span>✦</span> lazy <span>✦</span> ZodError
+        </div>
+      </section>
+
+      <section id="performance" class="performance shell">
+        <h2>Playwright</h2>
+        <p class="lede">Time to parse one object schema in Chromium, @itslil/zod versus official.</p>
+        <div class="perf-cards" id="perf-cards"></div>
+      </section>
+
+      <section id="lab" class="lab shell">
+        <h2>Parse lab</h2>
+        <p class="lede">Same input, both libraries. Output must match.</p>
+        <pre id="lab-out" class="lab-out">loading…</pre>
+      </section>
+
+      <section id="evidence" class="evidence shell">
+        <h2>Size</h2>
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Lane</th>
+              <th>raw</th>
+              <th>gzip-9</th>
+              <th>brotli-11</th>
+            </tr>
+          </thead>
+          <tbody id="size-body"></tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>

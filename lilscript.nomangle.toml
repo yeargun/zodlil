@@ -1,0 +1,22 @@
+[package]
+name = "zodlil"
+version = "4.4.3"
+abi = 1
+entry = "src/entry.lil"
+
+[javascript]
+priority = "size-first"
+optimization_level = 8
+cost_model = "brotli"
+public_aggregate_abi = "named"
+assume_pristine_builtins = true
+strip_console = true
+candidate_search = "off"
+local_name_reserve = 48
+function_spelling = "arrow"
+
+[mangle]
+identifiers = false
+properties = false
+exports = false
+pool_strings = true

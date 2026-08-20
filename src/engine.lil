@@ -1,0 +1,4988 @@
+import {
+  apply,
+  asyncImplement,
+  assignProp,
+  call0,
+  call1,
+  call2,
+  captureStackTrace,
+  construct1,
+  construct2,
+  copyDescriptors,
+  copyOwn,
+  defineProperty,
+  deleteProp,
+  gArray,
+  gDate,
+  gError,
+  gGlobal,
+  gMap,
+  gNumber,
+  gObject,
+  gSet,
+  gSymbol,
+  gURL,
+  gWeakMap,
+  getPrototypeOf,
+  hasOwn,
+  hiddenConst,
+  hiddenValue,
+  inOp,
+  invoke0,
+  invoke1,
+  invoke2,
+  invoke3,
+  getDescriptor,
+  getProp,
+  isArr,
+  isBig,
+  isBool,
+  isDate,
+  isFiniteNum,
+  isFn,
+  isInstance,
+  isInteger,
+  isNaNNum,
+  isNumericEnumKey,
+  isNullish,
+  isNum,
+  isObj,
+  isPromise,
+  isSafeInteger,
+  isStr,
+  isSym,
+  isUndef,
+  jsonStringify,
+  mapGet,
+  mapHas,
+  mapSet,
+  newArray,
+  newError,
+  newMap,
+  newRegex,
+  newSet,
+  newWeakMap,
+  objectAssign,
+  objectCreate,
+  objectIs,
+  objectKeys,
+  ownKeys,
+  promiseAll,
+  promiseReject,
+  promiseResolve,
+  propertyIsEnumerable,
+  push,
+  regexTest,
+  setAdd,
+  setDelete,
+  setHas,
+  setPrototypeOf,
+  toBigInt,
+  toBoolean,
+  toNum,
+  toNumber,
+  toStr,
+  toStringValue,
+  typeOf,
+  undef,
+  weakGet,
+  weakHas,
+  weakSet,
+  yes
+} from "./host.lil";
+
+export int KString = 0;
+export int KNumber = 1;
+export int KBoolean = 2;
+export int KBigint = 3;
+export int KSymbol = 4;
+export int KDate = 5;
+export int KNan = 6;
+export int KUndefined = 7;
+export int KNull = 8;
+export int KAny = 9;
+export int KUnknown = 10;
+export int KNever = 11;
+export int KVoid = 12;
+export int KLiteral = 13;
+export int KEnum = 14;
+export int KObject = 15;
+export int KArray = 16;
+export int KTuple = 17;
+export int KRecord = 18;
+export int KMap = 19;
+export int KSet = 20;
+export int KUnion = 21;
+export int KIntersection = 22;
+export int KOptional = 23;
+export int KNullable = 24;
+export int KDefault = 25;
+export int KPrefault = 26;
+export int KCatch = 27;
+export int KNonoptional = 28;
+export int KLazy = 29;
+export int KPromise = 30;
+export int KTransform = 31;
+export int KPipe = 32;
+export int KReadonly = 33;
+export int KCustom = 34;
+export int KFile = 35;
+export int KInstanceof = 36;
+export int KSuccess = 37;
+export int KXor = 38;
+export int KFunction = 39;
+export int KTemplateLiteral = 40;
+
+Schema[] bag = [];
+int nextId = 0;
+JsValue installingZod = undef();
+bool brokeInternal = false;
+JsValue breakerDesc = JS.object(
+  "configurable", true,
+  "get", JS.method0((JsValue _s) => {
+    brokeInternal = true;
+    return undef();
+  })
+);
+JsValue recCache = newWeakMap();
+JsValue propShapes = newWeakMap();
+
+export class Schema {
+  int id;
+  int kind;
+  JsValue handle;
+  JsValue def;
+  JsValue ctor;
+  string typeName;
+  string trait;
+  JsValue values;
+  int optin;
+  int optout;
+
+  init(JsValue def) {
+    string t = toStr(def["type"]);
+    this.id = nextId;
+    nextId = nextId + 1;
+    this.kind = this.kindOfType(t);
+    if (t == "union") {
+      if (!isStr(def["discriminator"]) && JS.strictEqual(def["inclusive"], false)) this.kind = KXor;
+    }
+    this.handle = undef();
+    this.def = def;
+    this.ctor = undef();
+    this.typeName = t;
+    if (t == "int") this.typeName = "number";
+    this.trait = "ZodType";
+    this.values = undef();
+    this.optin = 0;
+    this.optout = 0;
+    bag.push(this);
+    this.derive();
+  }
+
+  int kindOfType(string t) {
+    if (t == "string") return KString;
+    if (t == "number") return KNumber;
+    if (t == "int") return KNumber;
+    if (t == "boolean") return KBoolean;
+    if (t == "bigint") return KBigint;
+    if (t == "symbol") return KSymbol;
+    if (t == "date") return KDate;
+    if (t == "nan") return KNan;
+    if (t == "undefined") return KUndefined;
+    if (t == "null") return KNull;
+    if (t == "any") return KAny;
+    if (t == "unknown") return KUnknown;
+    if (t == "never") return KNever;
+    if (t == "void") return KVoid;
+    if (t == "literal") return KLiteral;
+    if (t == "enum") return KEnum;
+    if (t == "object") return KObject;
+    if (t == "array") return KArray;
+    if (t == "tuple") return KTuple;
+    if (t == "record") return KRecord;
+    if (t == "map") return KMap;
+    if (t == "set") return KSet;
+    if (t == "union") return KUnion;
+    if (t == "intersection") return KIntersection;
+    if (t == "optional") return KOptional;
+    if (t == "nullable") return KNullable;
+    if (t == "default") return KDefault;
+    if (t == "prefault") return KPrefault;
+    if (t == "catch") return KCatch;
+    if (t == "nonoptional") return KNonoptional;
+    if (t == "lazy") return KLazy;
+    if (t == "promise") return KPromise;
+    if (t == "transform") return KTransform;
+    if (t == "pipe") return KPipe;
+    if (t == "readonly") return KReadonly;
+    if (t == "custom") return KCustom;
+    if (t == "file") return KFile;
+    if (t == "success") return KSuccess;
+    if (t == "function") return KFunction;
+    if (t == "template_literal") return KTemplateLiteral;
+    return KCustom;
+  }
+
+  void derive() {
+    string t = this.typeName;
+    JsValue def = this.def;
+    if (t == "undefined") {
+      JsValue set = newSet();
+      setAdd(set, undef());
+      this.values = set;
+    } else if (t == "null") {
+      JsValue set = newSet();
+      setAdd(set, null);
+      this.values = set;
+    } else if (t == "literal") {
+      JsValue set = newSet();
+      JsValue list = def["values"];
+      if (isArr(list)) {
+        int i = 0;
+        int n = JS.number(list["length"]).toInt();
+        while (i < n) {
+          setAdd(set, list[i]);
+          i = i + 1;
+        }
+      }
+      this.values = set;
+    } else if (t == "enum") {
+      JsValue set = newSet();
+      JsValue list = enumValues(def["entries"]);
+      int i = 0;
+      int n = JS.number(list["length"]).toInt();
+      while (i < n) {
+        setAdd(set, list[i]);
+        i = i + 1;
+      }
+      this.values = set;
+    } else if (t == "optional") {
+      Schema? inner = childOf(this, "innerType");
+      if (inner != null) {
+        Schema inn = inner;
+        if (!isUndef(inn.values)) {
+          JsValue set = newSet();
+          JsValue list = invoke1(gArray(), "from", inn.values);
+          int i = 0;
+          int n = JS.number(list["length"]).toInt();
+          while (i < n) {
+            setAdd(set, list[i]);
+            i = i + 1;
+          }
+          if (!def["exact"].truthy()) setAdd(set, undef());
+          this.values = set;
+        }
+        if (inn.optin == 2) this.optin = 2;
+        else this.optin = 1;
+      } else {
+        this.optin = 1;
+      }
+      this.optout = 1;
+    } else if (t == "nullable") {
+      Schema? inner = childOf(this, "innerType");
+      if (inner != null) {
+        Schema inn = inner;
+        if (!isUndef(inn.values)) {
+          JsValue set = newSet();
+          JsValue list = invoke1(gArray(), "from", inn.values);
+          int i = 0;
+          int n = JS.number(list["length"]).toInt();
+          while (i < n) {
+            setAdd(set, list[i]);
+            i = i + 1;
+          }
+          setAdd(set, null);
+          this.values = set;
+        }
+        this.optin = inn.optin;
+        this.optout = inn.optout;
+      }
+    } else if (t == "default" || t == "prefault" || t == "catch") {
+      Schema? inner = childOf(this, "innerType");
+      if (t == "catch") {
+        this.optin = 1;
+        if (inner != null) {
+          Schema inn = inner;
+          this.values = inn.values;
+          if (inn.optin == 2) this.optin = 2;
+        }
+      } else {
+        this.optin = 2;
+        if (inner != null) {
+          Schema inn = inner;
+          this.values = inn.values;
+        }
+      }
+    } else if (t == "readonly") {
+      Schema? inner = childOf(this, "innerType");
+      if (inner != null) {
+        Schema inn = inner;
+        this.values = inn.values;
+        this.optin = inn.optin;
+        this.optout = inn.optout;
+      }
+    } else if (t == "nonoptional") {
+      Schema? inner = childOf(this, "innerType");
+      if (inner != null) {
+        Schema inn = inner;
+        this.values = inn.values;
+      }
+    } else if (t == "transform") {
+      this.optin = 1;
+    } else if (t == "pipe") {
+      Schema? inner = childOf(this, "in");
+      if (inner != null) {
+        Schema inn = inner;
+        this.values = inn.values;
+        this.optin = inn.optin;
+        this.optout = inn.optout;
+      }
+    } else if (t == "union") {
+      JsValue options = def["options"];
+      if (isArr(options)) {
+        int n = JS.number(options["length"]).toInt();
+        bool allVals = n > 0;
+        bool anyDef = false;
+        bool anyIn = false;
+        bool anyOut = false;
+        JsValue set = newSet();
+        int i = 0;
+        while (i < n) {
+          Schema? opt = trySchema(options[i]);
+          if (opt != null) {
+            Schema o = opt;
+            if (o.optin == 2) anyDef = true;
+            if (o.optin != 0) anyIn = true;
+            if (o.optout == 1) anyOut = true;
+            if (isUndef(o.values)) allVals = false;
+            else {
+              JsValue list = invoke1(gArray(), "from", o.values);
+              int j = 0;
+              int jn = JS.number(list["length"]).toInt();
+              while (j < jn) {
+                setAdd(set, list[j]);
+                j = j + 1;
+              }
+            }
+          } else {
+            allVals = false;
+          }
+          i = i + 1;
+        }
+        if (allVals) this.values = set;
+        if (anyDef) this.optin = 2;
+        else if (anyIn) this.optin = 1;
+        if (anyOut) this.optout = 1;
+      }
+    }
+  }
+
+  JsValue minBound() {
+    JsValue checks = this.def["checks"];
+    if (isUndef(checks) || !isArr(checks)) return null;
+    JsValue found = null;
+    int i = 0;
+    int n = JS.number(checks["length"]).toInt();
+    while (i < n) {
+      JsValue cdef = checkDef(checks[i]);
+      if (toStr(cdef["check"]) == "greater_than") {
+        if (!JS.strictEqual(cdef["inclusive"], false)) found = cdef["value"];
+      }
+      i = i + 1;
+    }
+    return found;
+  }
+
+  JsValue maxBound() {
+    JsValue checks = this.def["checks"];
+    if (isUndef(checks) || !isArr(checks)) return null;
+    JsValue found = null;
+    int i = 0;
+    int n = JS.number(checks["length"]).toInt();
+    while (i < n) {
+      JsValue cdef = checkDef(checks[i]);
+      if (toStr(cdef["check"]) == "less_than") {
+        if (!JS.strictEqual(cdef["inclusive"], false)) found = cdef["value"];
+      }
+      i = i + 1;
+    }
+    return found;
+  }
+
+  void applyIndexedField(JsValue payload, JsValue out, JsValue idx, JsValue inner) {
+    if (JS.number(inner["issues"]["length"]).toInt() > 0) prefixAll(inner["issues"], payload["issues"], idx);
+    out[idx] = inner["value"];
+  }
+
+  int internOptin() {
+    JsValue v = this.handle["_zod"]["optin"];
+    if (isStr(v)) {
+      if (toStr(v) == "defaulted") return 2;
+      if (toStr(v) == "optional") return 1;
+      return 0;
+    }
+    return this.optin;
+  }
+
+  int internOptout() {
+    JsValue v = this.handle["_zod"]["optout"];
+    if (isStr(v) && toStr(v) == "optional") return 1;
+    return this.optout;
+  }
+
+  void applyObjField(JsValue payload, JsValue out, string key, bool present, int optin, int optout, JsValue inner) {
+    bool optionalOut = optout == 1;
+    bool optionalIn = optin != 0;
+    bool skip = false;
+    if (!present && optionalOut && optin == 1) skip = true;
+    if (!skip && JS.number(inner["issues"]["length"]).toInt() > 0) {
+      if (optionalIn && optionalOut && !present) skip = true;
+      else prefixAll(inner["issues"], payload["issues"], key);
+    }
+    if (!skip && !present && optin == 0) {
+      if (JS.number(inner["issues"]["length"]).toInt() == 0) {
+        JsValue iss = typeIssue("nonoptional", undef());
+        prefixPath(iss, key);
+        push(payload["issues"], iss);
+      }
+      skip = true;
+    }
+    if (skip) return;
+    if (isUndef(inner["value"])) {
+      if (present) out[key] = undef();
+    } else {
+      out[key] = inner["value"];
+    }
+  }
+
+  string escapeRegex(string s) {
+    JsValue re = newRegex("[.*+?^${}()|[\\]\\\\]", "g");
+    return toStr(invoke2(JS.string(s), "replace", re, "\\$&"));
+  }
+
+  string cleanRegex(string source) {
+    JsValue src = JS.string(source);
+    int start = 0;
+    int end = JS.number(src["length"]).toInt();
+    if (invoke1(src, "startsWith", "^").truthy()) start = 1;
+    if (invoke1(src, "endsWith", "$").truthy()) end = end - 1;
+    return toStr(invoke2(src, "slice", start, end));
+  }
+
+  JsValue newRe(string source) {
+    return newRegex(source, "");
+  }
+
+  JsValue computePattern() {
+    int k = this.kind;
+    JsValue bag = JS.object();
+    if (isObj(this.handle) && isObj(this.handle["_zod"])) bag = this.handle["_zod"]["bag"];
+    if (k == KString) {
+      if (isObj(bag) && !isUndef(bag["patterns"])) {
+        JsValue arr = invoke1(gArray(), "from", bag["patterns"]);
+        int n = JS.number(arr["length"]).toInt();
+        if (n > 0) return arr[n - 1];
+      }
+      if (!isUndef(this.def["pattern"])) return this.def["pattern"];
+      string min = "0";
+      string max = "";
+      if (isNum(bag["minimum"])) min = toStr(bag["minimum"]);
+      if (isNum(bag["maximum"])) max = toStr(bag["maximum"]);
+      return this.newRe("^[\\s\\S]{" + min + "," + max + "}$");
+    }
+    if (k == KNumber) {
+      if (!isUndef(bag["pattern"]) && !JS.isNullish(bag["pattern"])) return bag["pattern"];
+      string fmt = "";
+      if (isStr(bag["format"])) fmt = toStr(bag["format"]);
+      if (fmt.includes("int")) return this.newRe("^-?\\d+$");
+      return this.newRe("^-?\\d+(?:\\.\\d+)?$");
+    }
+    if (k == KBoolean) return newRegex("^(?:true|false)$", "i");
+    if (k == KBigint) return this.newRe("^-?\\d+n?$");
+    if (k == KUndefined) return this.newRe("^undefined$");
+    if (k == KNull) return this.newRe("^null$");
+    if (k == KLiteral) {
+      JsValue list = invoke1(gArray(), "from", this.values);
+      JsValue parts = newArray();
+      int i = 0;
+      int n = JS.number(list["length"]).toInt();
+      while (i < n) {
+        JsValue v = list[i];
+        if (isStr(v)) push(parts, this.escapeRegex(toStr(v)));
+        else if (JS.isNullish(v) && isUndef(v)) push(parts, "undefined");
+        else if (JS.isNullish(v)) push(parts, "null");
+        else push(parts, this.escapeRegex(toStr(v)));
+        i = i + 1;
+      }
+      return this.newRe("^(" + toStr(invoke1(parts, "join", "|")) + ")$");
+    }
+    if (k == KEnum) {
+      JsValue list = invoke1(gArray(), "from", this.values);
+      JsValue parts = newArray();
+      int i = 0;
+      int n = JS.number(list["length"]).toInt();
+      while (i < n) {
+        JsValue v = list[i];
+        if (isStr(v) || isNum(v) || isSym(v)) push(parts, this.escapeRegex(toStr(v)));
+        i = i + 1;
+      }
+      return this.newRe("^(" + toStr(invoke1(parts, "join", "|")) + ")$");
+    }
+    if (k == KTemplateLiteral) return this.handle["_zod"]["pattern"];
+    return undef();
+  }
+
+  JsValue templatePattern(JsValue parts) {
+    JsValue regexParts = newArray();
+    int i = 0;
+    int n = JS.number(parts["length"]).toInt();
+    while (i < n) {
+      JsValue part = parts[i];
+      if (JS.isNullish(part) || isStr(part) || isNum(part) || isBool(part) || isBig(part)) {
+        push(regexParts, this.escapeRegex(toStr(part)));
+      } else if (isObj(part) && isObj(part["_zod"])) {
+        JsValue pat = part["_zod"]["pattern"];
+        if (isUndef(pat) || JS.isNullish(pat)) {
+          JsValue traits = part["_zod"]["traits"];
+          string name = "";
+          if (!isUndef(traits)) {
+            JsValue names = invoke1(gArray(), "from", traits);
+            if (JS.number(names["length"]).toInt() > 0) name = toStr(names[0]);
+          }
+          throw construct1(gError(), "Invalid template literal part, no pattern found: " + name);
+        }
+        string source = toStr(pat["source"]);
+        if (source.length == 0) throw construct1(gError(), "Invalid template literal part");
+        push(regexParts, this.cleanRegex(source));
+      } else {
+        throw construct1(gError(), "Invalid template literal part: " + toStr(part));
+      }
+      i = i + 1;
+    }
+    return this.newRe("^" + toStr(invoke1(regexParts, "join", "")) + "$");
+  }
+
+  void defineLazyOn(JsValue target, string key, JsValue compute) {
+    JsValue evaluating = gSymbol()["for"]("evaluating");
+    JsValue box = JS.object("value", undef());
+    defineProperty(target, key, JS.object(
+      "configurable", true,
+      "get", JS.method0((JsValue _s) => {
+        if (JS.strictEqual(box["value"], evaluating)) return undef();
+        if (isUndef(box["value"])) {
+          box["value"] = evaluating;
+          box["value"] = call0(compute, undef());
+        }
+        return box["value"];
+      }),
+      "set", JS.method1((JsValue _s, JsValue v) => {
+        defineProperty(target, key, JS.object("value", v, "configurable", true, "writable", true));
+        return undef();
+      })
+    ));
+  }
+
+  void defineLazyInternal(string key, JsValue compute) {
+    JsValue intern = this.handle["_zod"];
+    JsValue proto = getPrototypeOf(intern);
+    if (inOp(key, proto) && !JS.strictEqual(installingZod, intern)) {
+      installingZod = undef();
+      return;
+    }
+    installingZod = intern;
+    defineProperty(proto, key, JS.object(
+      "configurable", true,
+      "get", JS.method0((JsValue self) => {
+        defineProperty(self, key, breakerDesc);
+        bool outer = brokeInternal;
+        brokeInternal = false;
+        JsValue value = undef();
+        try {
+          value = call1(compute, undef(), self);
+          if (brokeInternal) {
+            deleteProp(self, key);
+          } else {
+            defineProperty(self, key, JS.object("configurable", true, "writable", true, "value", value));
+          }
+          if (outer) brokeInternal = true;
+          return value;
+        } catch (auto err) {
+          deleteProp(self, key);
+          if (outer) brokeInternal = true;
+          throw err;
+        }
+      }),
+      "set", JS.method1((JsValue self, JsValue value) => {
+        defineProperty(self, key, JS.object("configurable", true, "writable", true, "value", value));
+        return undef();
+      })
+    ));
+  }
+
+  JsValue optinValue() {
+    if (this.optin == 1) return "optional";
+    if (this.optin == 2) return "defaulted";
+    return undef();
+  }
+
+  JsValue optoutValue() {
+    if (this.optout == 1) return "optional";
+    return undef();
+  }
+
+  JsValue childIntern(string key) {
+    JsValue child = this.def[key];
+    if (isObj(child) && isObj(child["_zod"])) return child["_zod"];
+    return undef();
+  }
+
+  void installDerived() {
+    int k = this.kind;
+    JsValue intern = this.handle["_zod"];
+    JsValue self = this.handle;
+    if (k == KLazy) {
+      JsValue getter = this.def["getter"];
+      this.defineLazyOn(intern, "innerType", JS.method0((JsValue _s) => {
+        JsValue d = self["_zod"]["def"];
+        if (isUndef(d["_cachedInner"])) d["_cachedInner"] = call0(getter, undef());
+        return d["_cachedInner"];
+      }));
+      this.defineLazyInternal("pattern", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["pattern"];
+        return undef();
+      }));
+      this.defineLazyInternal("propValues", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["propValues"];
+        return undef();
+      }));
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optin"];
+        return undef();
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optout"];
+        return undef();
+      }));
+      return;
+    }
+    if (k == KOptional) {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"]) && toStr(inner["_zod"]["optin"]) == "defaulted") return "defaulted";
+        return "optional";
+      }));
+      intern["optout"] = "optional";
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (!isObj(inner) || !isObj(inner["_zod"]) || isUndef(inner["_zod"]["values"])) return undef();
+        JsValue set = newSet();
+        JsValue list = invoke1(gArray(), "from", inner["_zod"]["values"]);
+        int i = 0;
+        int n = JS.number(list["length"]).toInt();
+        while (i < n) {
+          setAdd(set, list[i]);
+          i = i + 1;
+        }
+        if (!zod["def"]["exact"].truthy()) setAdd(set, undef());
+        return set;
+      }));
+      this.defineLazyInternal("pattern", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (!isObj(inner) || !isObj(inner["_zod"])) return undef();
+        JsValue pat = inner["_zod"]["pattern"];
+        if (isUndef(pat) || JS.isNullish(pat)) return undef();
+        return newRegex("^(" + this.cleanRegex(toStr(pat["source"])) + ")?$", "");
+      }));
+      return;
+    }
+    if (k == KNullable) {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optin"];
+        return undef();
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optout"];
+        return undef();
+      }));
+      this.defineLazyInternal("pattern", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (!isObj(inner) || !isObj(inner["_zod"])) return undef();
+        JsValue pat = inner["_zod"]["pattern"];
+        if (isUndef(pat) || JS.isNullish(pat)) return undef();
+        return newRegex("^(" + this.cleanRegex(toStr(pat["source"])) + "|null)$", "");
+      }));
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (!isObj(inner) || !isObj(inner["_zod"]) || isUndef(inner["_zod"]["values"])) return undef();
+        JsValue set = newSet();
+        JsValue list = invoke1(gArray(), "from", inner["_zod"]["values"]);
+        int i = 0;
+        int n = JS.number(list["length"]).toInt();
+        while (i < n) {
+          setAdd(set, list[i]);
+          i = i + 1;
+        }
+        setAdd(set, null);
+        return set;
+      }));
+      return;
+    }
+    if (k == KUnion || k == KXor) {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue options = zod["def"]["options"];
+        if (!isArr(options)) return undef();
+        bool any = false;
+        int i = 0;
+        int n = JS.number(options["length"]).toInt();
+        while (i < n) {
+          JsValue opt = options[i]["_zod"]["optin"];
+          if (toStr(opt) == "defaulted") return "defaulted";
+          if (!isUndef(opt)) any = true;
+          i = i + 1;
+        }
+        if (any) return "optional";
+        return undef();
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue options = zod["def"]["options"];
+        if (!isArr(options)) return undef();
+        int i = 0;
+        int n = JS.number(options["length"]).toInt();
+        while (i < n) {
+          if (toStr(options[i]["_zod"]["optout"]) == "optional") return "optional";
+          i = i + 1;
+        }
+        return undef();
+      }));
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue options = zod["def"]["options"];
+        if (!isArr(options)) return undef();
+        JsValue set = newSet();
+        int i = 0;
+        int n = JS.number(options["length"]).toInt();
+        while (i < n) {
+          JsValue vals = options[i]["_zod"]["values"];
+          if (isUndef(vals)) return undef();
+          JsValue list = invoke1(gArray(), "from", vals);
+          int j = 0;
+          int jn = JS.number(list["length"]).toInt();
+          while (j < jn) {
+            setAdd(set, list[j]);
+            j = j + 1;
+          }
+          i = i + 1;
+        }
+        return set;
+      }));
+      this.defineLazyInternal("pattern", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue options = zod["def"]["options"];
+        if (!isArr(options)) return undef();
+        JsValue parts = newArray();
+        int i = 0;
+        int n = JS.number(options["length"]).toInt();
+        while (i < n) {
+          JsValue pat = options[i]["_zod"]["pattern"];
+          if (isUndef(pat) || JS.isNullish(pat)) return undef();
+          push(parts, this.cleanRegex(toStr(pat["source"])));
+          i = i + 1;
+        }
+        return newRegex("^(" + toStr(invoke1(parts, "join", "|")) + ")$", "");
+      }));
+      return;
+    }
+    if (k == KPipe) {
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue left = zod["def"]["in"];
+        if (isObj(left) && isObj(left["_zod"])) return left["_zod"]["values"];
+        return undef();
+      }));
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue left = zod["def"]["in"];
+        if (isObj(left) && isObj(left["_zod"])) return left["_zod"]["optin"];
+        return undef();
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue right = zod["def"]["out"];
+        if (isObj(right) && isObj(right["_zod"])) return right["_zod"]["optout"];
+        return undef();
+      }));
+      return;
+    }
+    if (k == KCatch) {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"]) && toStr(inner["_zod"]["optin"]) == "defaulted") return "defaulted";
+        return "optional";
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optout"];
+        return undef();
+      }));
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["values"];
+        return undef();
+      }));
+      return;
+    }
+    if (k == KTemplateLiteral) {
+      return;
+    }
+    if (k == KReadonly) {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optin"];
+        return undef();
+      }));
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["optout"];
+        return undef();
+      }));
+      this.defineLazyInternal("values", JS.method1((JsValue _s, JsValue zod) => {
+        JsValue inner = zod["def"]["innerType"];
+        if (isObj(inner) && isObj(inner["_zod"])) return inner["_zod"]["values"];
+        return undef();
+      }));
+      return;
+    }
+    this.defineLazyInternal("pattern", JS.method1((JsValue _s, JsValue zod) => {
+      Schema owner = bag[JS.number(zod["id"]).toInt()];
+      return owner.computePattern();
+    }));
+    if (this.optin != 0) intern["optin"] = this.optinValue();
+    else {
+      this.defineLazyInternal("optin", JS.method1((JsValue _s, JsValue zod) => {
+        Schema owner = bag[JS.number(zod["id"]).toInt()];
+        return owner.optinValue();
+      }));
+    }
+    if (this.optout != 0) intern["optout"] = this.optoutValue();
+    else {
+      this.defineLazyInternal("optout", JS.method1((JsValue _s, JsValue zod) => {
+        Schema owner = bag[JS.number(zod["id"]).toInt()];
+        return owner.optoutValue();
+      }));
+    }
+    if (!isUndef(this.values)) intern["values"] = this.values;
+  }
+
+  bool isContainer() {
+    int k = this.kind;
+    if (k == KObject) return true;
+    if (k == KArray) return true;
+    if (k == KTuple) return true;
+    if (k == KRecord) return true;
+    if (k == KMap) return true;
+    if (k == KSet) return true;
+    return false;
+  }
+
+  bool walkChildRecursive(JsValue child, JsValue stack) {
+    if (JS.isNullish(child) || !isObj(child)) return false;
+    if (isObj(child["_zod"])) {
+      Schema? s = trySchema(child);
+      if (s != null) return s.isRecursiveWalk(stack);
+      return false;
+    }
+    if (!isArr(child)) return false;
+    int i = 0;
+    int n = JS.number(child["length"]).toInt();
+    while (i < n) {
+      if (this.walkChildRecursive(child[i], stack)) return true;
+      i = i + 1;
+    }
+    return false;
+  }
+
+  bool isRecursiveWalk(JsValue stack) {
+    JsValue cached = weakGet(recCache, this.handle);
+    if (!isUndef(cached) && !JS.isNullish(cached)) return yes(cached);
+    if (setHas(stack, this.handle).truthy()) return true;
+    setAdd(stack, this.handle);
+    bool result = false;
+    if (this.kind == KLazy) {
+      JsValue inner = this.handle["_zod"]["innerType"];
+      if (this.walkChildRecursive(inner, stack)) result = true;
+    } else {
+      JsValue def = this.def;
+      JsValue shape = def["shape"];
+      if (isObj(shape) && !JS.isNullish(shape)) {
+        JsValue keys = objectKeys(shape);
+        int i = 0;
+        int n = JS.number(keys["length"]).toInt();
+        while (i < n) {
+          if (this.walkChildRecursive(shape[keys[i]], stack)) result = true;
+          i = i + 1;
+        }
+      }
+      JsValue keys = objectKeys(def);
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        string key = toStr(keys[i]);
+        if (key != "shape") {
+          if (this.walkChildRecursive(def[keys[i]], stack)) result = true;
+        }
+        i = i + 1;
+      }
+    }
+    setDelete(stack, this.handle);
+    weakSet(recCache, this.handle, result);
+    return result;
+  }
+
+  JsValue cloneIssues(JsValue issues) {
+    JsValue out = newArray();
+    int i = 0;
+    int n = JS.number(issues["length"]).toInt();
+    while (i < n) {
+      JsValue iss = objectAssign(JS.object(), issues[i]);
+      if (isArr(iss["path"])) iss["path"] = invoke1(iss["path"], "slice", 0);
+      push(out, iss);
+      i = i + 1;
+    }
+    return out;
+  }
+
+  void pushClonedIssues(JsValue issues, JsValue payload) {
+    JsValue cloned = this.cloneIssues(issues);
+    int i = 0;
+    int n = JS.number(cloned["length"]).toInt();
+    while (i < n) {
+      push(payload["issues"], cloned[i]);
+      i = i + 1;
+    }
+  }
+
+  JsValue memoEnter(JsValue payload, JsValue ctx) {
+    JsValue m = this.handle["_zod"]["memoizer"];
+    if (isUndef(m) || JS.isNullish(m)) return undef();
+    if (isUndef(m["recursive"])) {
+      m["recursive"] = this.isRecursiveWalk(newSet());
+      if (!m["recursive"].truthy()) return undef();
+    } else if (!m["recursive"].truthy()) {
+      return undef();
+    }
+    JsValue input = payload["value"];
+    if (JS.isNullish(input) || JS.typeOf(input) != "object") return undef();
+    if (isUndef(ctx) || JS.isNullish(ctx) || !isObj(ctx)) return undef();
+    JsValue state = ctx["~memo"];
+    if (isUndef(state) || JS.isNullish(state)) {
+      state = JS.object("buckets", newMap(), "backEdges", undef());
+      ctx["~memo"] = state;
+    }
+    JsValue bucket = undef();
+    if (JS.strictEqual(m["ctx"], ctx)) bucket = m["bucket"];
+    else {
+      bucket = mapGet(state["buckets"], this.handle);
+      if (isUndef(bucket) || JS.isNullish(bucket)) {
+        bucket = newMap();
+        mapSet(state["buckets"], this.handle, bucket);
+      }
+      m["ctx"] = ctx;
+      m["bucket"] = bucket;
+    }
+    JsValue hit = mapGet(bucket, input);
+    if (!isUndef(hit) && !JS.isNullish(hit)) {
+      payload["value"] = hit["value"];
+      if (!JS.isNullish(hit["issues"])) {
+        if (JS.number(hit["issues"]["length"]).toInt() > 0) this.pushClonedIssues(hit["issues"], payload);
+      } else {
+        payload["memo"] = true;
+        if (isUndef(state["backEdges"]) || JS.isNullish(state["backEdges"])) state["backEdges"] = newSet();
+        setAdd(state["backEdges"], hit["value"]);
+      }
+      return payload;
+    }
+    m["handoff"] = bucket;
+    m["openDepth"] = m["open"]["length"];
+    return undef();
+  }
+
+  JsValue memoAlloc(JsValue payload, JsValue empty) {
+    JsValue m = this.handle["_zod"]["memoizer"];
+    if (isUndef(m) || isUndef(m["handoff"]) || JS.isNullish(m["handoff"])) return empty;
+    JsValue bucket = m["handoff"];
+    m["handoff"] = undef();
+    JsValue entry = JS.object("value", empty, "issues", null);
+    mapSet(bucket, payload["value"], entry);
+    push(m["open"], entry);
+    return empty;
+  }
+
+  void memoLeave(JsValue payload) {
+    JsValue m = this.handle["_zod"]["memoizer"];
+    if (isUndef(m) || JS.isNullish(m)) return;
+    m["handoff"] = undef();
+    JsValue open = m["open"];
+    int depth = 0;
+    if (isNum(m["openDepth"])) depth = JS.number(m["openDepth"]).toInt();
+    if (isArr(open) && JS.number(open["length"]).toInt() > depth) {
+      JsValue entry = invoke0(open, "pop");
+      if (JS.number(payload["issues"]["length"]).toInt() > 0) entry["issues"] = this.cloneIssues(payload["issues"]);
+      else entry["issues"] = newArray();
+    }
+  }
+
+  JsValue tupleBoundIssue(bool tooBig, int bound, JsValue input) {
+    if (tooBig) {
+      return JS.object("code", "too_big", "maximum", 0.0 + bound, "inclusive", true, "input", input, "origin", "array");
+    }
+    return JS.object("code", "too_small", "minimum", 0.0 + bound, "inclusive", true, "input", input, "origin", "array");
+  }
+
+  void finishTuple(JsValue payload, JsValue items, JsValue input, JsValue itemResults, int optoutStart) {
+    JsValue out = payload["value"];
+    int n = JS.number(input["length"]).toInt();
+    int want = JS.number(items["length"]).toInt();
+    int i = 0;
+    while (i < want) {
+      JsValue r = itemResults[i];
+      bool present = i < n;
+      Schema? item = trySchema(items[i]);
+      int optin = 0;
+      if (item != null) {
+        Schema s = item;
+        optin = s.optin;
+      }
+      if (!present && i >= optoutStart && optin == 1) {
+        out["length"] = i;
+        break;
+      }
+      if (!isUndef(r) && !JS.isNullish(r) && JS.number(r["issues"]["length"]).toInt() > 0) {
+        if (!present && i >= optoutStart) {
+          out["length"] = i;
+          break;
+        }
+        prefixAll(r["issues"], payload["issues"], JS.number(0.0 + i));
+      }
+      if (!isUndef(r) && !JS.isNullish(r)) out[i] = r["value"];
+      i = i + 1;
+    }
+    i = JS.number(out["length"]).toInt() - 1;
+    while (i >= n) {
+      Schema? tail = trySchema(items[i]);
+      if (tail != null) {
+        Schema s = tail;
+        if (s.optout == 1 && isUndef(out[i])) {
+          out["length"] = i;
+          i = i - 1;
+          continue;
+        }
+      }
+      break;
+    }
+  }
+
+  void takeUnionResult(JsValue payload, JsValue result) {
+    payload["value"] = result["value"];
+    copyIssues(result["issues"], payload["issues"]);
+  }
+
+  void finishUnion(JsValue payload, JsValue results, JsValue ctx) {
+    int n = JS.number(results["length"]).toInt();
+    int i = 0;
+    while (i < n) {
+      JsValue r = results[i];
+      if (!isUndef(r) && !JS.isNullish(r) && JS.number(r["issues"]["length"]).toInt() == 0) {
+        this.takeUnionResult(payload, r);
+        return;
+      }
+      i = i + 1;
+    }
+    JsValue alive = newArray();
+    i = 0;
+    while (i < n) {
+      JsValue r = results[i];
+      if (!isUndef(r) && !JS.isNullish(r) && !payloadAborted(r)) push(alive, r);
+      i = i + 1;
+    }
+    if (JS.number(alive["length"]).toInt() == 1) {
+      this.takeUnionResult(payload, alive[0]);
+      return;
+    }
+    JsValue errors = newArray();
+    i = 0;
+    while (i < n) {
+      JsValue r = results[i];
+      JsValue group = newArray();
+      if (!isUndef(r) && !JS.isNullish(r)) {
+        JsValue issues = r["issues"];
+        int k = 0;
+        int kn = JS.number(issues["length"]).toInt();
+        while (k < kn) {
+          push(group, finalizeIssue(issues[k], this, ctx));
+          k = k + 1;
+        }
+      }
+      push(errors, group);
+      i = i + 1;
+    }
+    push(payload["issues"], JS.object("code", "invalid_union", "errors", errors, "path", newArray()));
+  }
+}
+
+JsValue localeErrorFn = undef();
+JsValue customErrorFn = undef();
+JsValue globalReg = undef();
+JsValue versionObj = JS.object("major", 4, "minor", 4, "patch", 3);
+
+export string typeNameOf(int kind) {
+  if (kind == KString) return "string";
+  if (kind == KNumber) return "number";
+  if (kind == KBoolean) return "boolean";
+  if (kind == KBigint) return "bigint";
+  if (kind == KSymbol) return "symbol";
+  if (kind == KDate) return "date";
+  if (kind == KNan) return "nan";
+  if (kind == KUndefined) return "undefined";
+  if (kind == KNull) return "null";
+  if (kind == KAny) return "any";
+  if (kind == KUnknown) return "unknown";
+  if (kind == KNever) return "never";
+  if (kind == KVoid) return "void";
+  if (kind == KLiteral) return "literal";
+  if (kind == KEnum) return "enum";
+  if (kind == KObject) return "object";
+  if (kind == KArray) return "array";
+  if (kind == KTuple) return "tuple";
+  if (kind == KRecord) return "record";
+  if (kind == KMap) return "map";
+  if (kind == KSet) return "set";
+  if (kind == KUnion) return "union";
+  if (kind == KXor) return "union";
+  if (kind == KIntersection) return "intersection";
+  if (kind == KOptional) return "optional";
+  if (kind == KNullable) return "nullable";
+  if (kind == KDefault) return "default";
+  if (kind == KPrefault) return "prefault";
+  if (kind == KCatch) return "catch";
+  if (kind == KNonoptional) return "nonoptional";
+  if (kind == KLazy) return "lazy";
+  if (kind == KPromise) return "promise";
+  if (kind == KTransform) return "transform";
+  if (kind == KPipe) return "pipe";
+  if (kind == KReadonly) return "readonly";
+  if (kind == KCustom) return "custom";
+  if (kind == KFile) return "file";
+  if (kind == KInstanceof) return "custom";
+  if (kind == KSuccess) return "success";
+  if (kind == KFunction) return "function";
+  if (kind == KTemplateLiteral) return "template_literal";
+  return "custom";
+}
+
+export int registerSchema(Schema schema) {
+  int id = nextId;
+  nextId = nextId + 1;
+  bag.push(schema);
+  schema.id = id;
+  return id;
+}
+
+export Schema schemaOf(JsValue inst) {
+  return bag[JS.number(inst["_zod"]["id"]).toInt()];
+}
+
+export Schema? trySchema(JsValue inst) {
+  if (JS.isNullish(inst) || !isObj(inst)) {
+    return null;
+  }
+  JsValue zint = inst["_zod"];
+  if (JS.isNullish(zint) || isUndef(zint["id"])) {
+    return null;
+  }
+  int id = JS.number(zint["id"]).toInt();
+  if (id < 0 || id >= bag.length) {
+    return null;
+  }
+  return bag[id];
+}
+
+export Schema makeSchema(JsValue def) {
+  return new Schema(def);
+}
+
+export string parsedType(JsValue data) {
+  if (isUndef(data)) return "undefined";
+  if (JS.isNullish(data) && !isUndef(data)) return "null";
+  string t = typeOf(data);
+  if (t == "number") {
+    if (isNaNNum(data)) return "nan";
+    if (!isFiniteNum(data)) return toStr(data);
+    return "number";
+  }
+  if (t == "object") {
+    if (JS.isNullish(data)) return "null";
+    if (isArr(data)) return "array";
+    JsValue proto = getPrototypeOf(data);
+    if (!JS.strictEqual(proto, gObject()["prototype"]) && isFn(data["constructor"])) {
+      string name = toStr(data["constructor"]["name"]);
+      if (name.length > 0) return name;
+    }
+    return "object";
+  }
+  return t;
+}
+
+string formatNoun(string format) {
+  if (format == "regex") return "input";
+  if (format == "email") return "email address";
+  if (format == "url") return "URL";
+  if (format == "emoji") return "emoji";
+  if (format == "uuid") return "UUID";
+  if (format == "uuidv4") return "UUIDv4";
+  if (format == "uuidv6") return "UUIDv6";
+  if (format == "uuidv7") return "UUIDv7";
+  if (format == "nanoid") return "nanoid";
+  if (format == "guid") return "GUID";
+  if (format == "cuid") return "cuid";
+  if (format == "cuid2") return "cuid2";
+  if (format == "ulid") return "ULID";
+  if (format == "xid") return "XID";
+  if (format == "ksuid") return "KSUID";
+  if (format == "datetime") return "ISO datetime";
+  if (format == "date") return "ISO date";
+  if (format == "time") return "ISO time";
+  if (format == "duration") return "ISO duration";
+  if (format == "ipv4") return "IPv4 address";
+  if (format == "ipv6") return "IPv6 address";
+  if (format == "mac") return "MAC address";
+  if (format == "cidrv4") return "IPv4 range";
+  if (format == "cidrv6") return "IPv6 range";
+  if (format == "base64") return "base64-encoded string";
+  if (format == "base64url") return "base64url-encoded string";
+  if (format == "json_string") return "JSON string";
+  if (format == "e164") return "E.164 number";
+  if (format == "credit_card") return "credit card number";
+  if (format == "jwt") return "JWT";
+  if (format == "template_literal") return "input";
+  return format;
+}
+
+export string stringifyPrimitive(JsValue value) {
+  if (isBig(value)) return toStr(value) + "n";
+  if (isStr(value)) return "\"" + toStr(value) + "\"";
+  if (isUndef(value)) return "undefined";
+  if (JS.isNullish(value)) return "null";
+  return toStr(value);
+}
+
+JsValue joinValues(JsValue values, string sep) {
+  JsValue out = "";
+  int n = JS.number(values["length"]).toInt();
+  int i = 0;
+  while (i < n) {
+    if (i > 0) out = JS.add(out, sep);
+    out = JS.add(out, stringifyPrimitive(values[i]));
+    i = i + 1;
+  }
+  return out;
+}
+
+export string localeMessage(JsValue issue) {
+  string code = toStr(issue["code"]);
+  if (code == "invalid_type") {
+    string expected = toStr(issue["expected"]);
+    if (expected == "nan") expected = "NaN";
+    string received = parsedType(issue["input"]);
+    if (received == "nan") received = "NaN";
+    if (received == "number" && isNum(issue["input"]) && !isFiniteNum(issue["input"])) {
+      received = toStr(issue["input"]);
+    }
+    return "Invalid input: expected " + expected + ", received " + received;
+  }
+  if (code == "invalid_value") {
+    JsValue values = issue["values"];
+    if (isUndef(values) || JS.isNullish(values) || !isArr(values)) return "Invalid input";
+    if (JS.number(values["length"]).toInt() == 1) {
+      return "Invalid input: expected " + stringifyPrimitive(values[0]);
+    }
+    return "Invalid option: expected one of " + toStr(joinValues(values, "|"));
+  }
+  if (code == "too_big") {
+    string adj = ">";
+    if (issue["exact"].truthy()) adj = "exactly ";
+    else if (!JS.strictEqual(issue["inclusive"], false)) adj = "<=";
+    else adj = "<";
+    string origin = "value";
+    if (!isUndef(issue["origin"])) origin = toStr(issue["origin"]);
+    if (origin == "string") return "Too big: expected string to have " + adj + toStr(issue["maximum"]) + " characters";
+    if (origin == "array") return "Too big: expected array to have " + adj + toStr(issue["maximum"]) + " items";
+    if (origin == "set") return "Too big: expected set to have " + adj + toStr(issue["maximum"]) + " items";
+    if (origin == "map") return "Too big: expected map to have " + adj + toStr(issue["maximum"]) + " entries";
+    if (origin == "file") return "Too big: expected file to have " + adj + toStr(issue["maximum"]) + " bytes";
+    return "Too big: expected " + origin + " to be " + adj + toStr(issue["maximum"]);
+  }
+  if (code == "too_small") {
+    string adj = ">";
+    if (issue["exact"].truthy()) adj = "exactly ";
+    else if (!JS.strictEqual(issue["inclusive"], false)) adj = ">=";
+    else adj = ">";
+    string origin = "value";
+    if (!isUndef(issue["origin"])) origin = toStr(issue["origin"]);
+    if (origin == "string") return "Too small: expected string to have " + adj + toStr(issue["minimum"]) + " characters";
+    if (origin == "array") return "Too small: expected array to have " + adj + toStr(issue["minimum"]) + " items";
+    if (origin == "set") return "Too small: expected set to have " + adj + toStr(issue["minimum"]) + " items";
+    if (origin == "map") return "Too small: expected map to have " + adj + toStr(issue["minimum"]) + " entries";
+    if (origin == "file") return "Too small: expected file to have " + adj + toStr(issue["minimum"]) + " bytes";
+    return "Too small: expected " + origin + " to be " + adj + toStr(issue["minimum"]);
+  }
+  if (code == "invalid_format") {
+    string format = toStr(issue["format"]);
+    if (format == "starts_with") return "Invalid string: must start with \"" + toStr(issue["prefix"]) + "\"";
+    if (format == "ends_with") return "Invalid string: must end with \"" + toStr(issue["suffix"]) + "\"";
+    if (format == "includes") return "Invalid string: must include \"" + toStr(issue["includes"]) + "\"";
+    if (format == "regex") return "Invalid string: must match pattern " + toStr(issue["pattern"]);
+    return "Invalid " + formatNoun(format);
+  }
+  if (code == "not_multiple_of") return "Invalid number: must be a multiple of " + toStr(issue["divisor"]);
+  if (code == "unrecognized_keys") {
+    JsValue keys = issue["keys"];
+    string label = "";
+    if (JS.number(keys["length"]).toInt() > 1) label = "s";
+    return "Unrecognized key" + label + ": " + toStr(joinValues(keys, ", "));
+  }
+  if (code == "invalid_key") return "Invalid key in " + toStr(issue["origin"]);
+  if (code == "invalid_union") {
+    if (isArr(issue["options"]) && JS.number(issue["options"]["length"]).toInt() > 0) {
+      JsValue opts = issue["options"];
+      string out = "";
+      int i = 0;
+      int n = JS.number(opts["length"]).toInt();
+      while (i < n) {
+        if (i > 0) out = out + " | ";
+        out = out + "'" + toStr(opts[i]) + "'";
+        i = i + 1;
+      }
+      return "Invalid discriminator value. Expected " + out;
+    }
+    if (JS.strictEqual(issue["inclusive"], false)) return "Invalid input: more than one option matched";
+    return "Invalid input";
+  }
+  if (code == "invalid_element") return "Invalid value in " + toStr(issue["origin"]);
+  if (code == "custom") {
+    if (isStr(issue["message"])) return toStr(issue["message"]);
+    return "Invalid input";
+  }
+  return "Invalid input";
+}
+
+export JsValue unwrapMessage(JsValue mapped) {
+  if (isUndef(mapped) || JS.isNullish(mapped)) return undef();
+  if (isStr(mapped)) return mapped;
+  if (isObj(mapped) && isStr(mapped["message"])) return mapped["message"];
+  return undef();
+}
+
+JsValue errorFnOf(JsValue inst) {
+  if (JS.isNullish(inst) || isUndef(inst) || !isObj(inst)) return undef();
+  JsValue intern = inst["_zod"];
+  if (JS.isNullish(intern) || isUndef(intern)) return undef();
+  return intern["def"]["error"];
+}
+
+export string finalizeMessage(JsValue raw, Schema? schema, JsValue ctx) {
+  if (isStr(raw["message"]) && toStr(raw["message"]).length > 0) return toStr(raw["message"]);
+  JsValue instErr = errorFnOf(raw["inst"]);
+  if (isFn(instErr)) {
+    JsValue mapped = unwrapMessage(call1(instErr, undef(), raw));
+    if (!isUndef(mapped)) return toStr(mapped);
+  }
+  if (isStr(instErr)) return toStr(instErr);
+  if (!JS.strictEqual(raw["schema"], raw["inst"])) {
+    JsValue schemaErr = errorFnOf(raw["schema"]);
+    if (isFn(schemaErr)) {
+      JsValue mapped = unwrapMessage(call1(schemaErr, undef(), raw));
+      if (!isUndef(mapped)) return toStr(mapped);
+    }
+    if (isStr(schemaErr)) return toStr(schemaErr);
+  }
+  if (!isUndef(ctx) && isFn(ctx["error"])) {
+    JsValue mapped = unwrapMessage(call1(ctx["error"], undef(), raw));
+    if (!isUndef(mapped)) return toStr(mapped);
+  }
+  if (isFn(customErrorFn)) {
+    JsValue mapped = unwrapMessage(call1(customErrorFn, undef(), raw));
+    if (!isUndef(mapped)) return toStr(mapped);
+  }
+  if (isFn(localeErrorFn)) {
+    JsValue mapped = unwrapMessage(call1(localeErrorFn, undef(), raw));
+    if (!isUndef(mapped)) return toStr(mapped);
+  }
+  return localeMessage(raw);
+}
+
+void stampIssueSchema(JsValue raw) {
+  JsValue inst = raw["inst"];
+  if (isUndef(inst)) return;
+  if (JS.isNullish(inst)) return;
+  if (!isObj(inst)) return;
+  JsValue intern = inst["_zod"];
+  if (isUndef(intern)) return;
+  if (JS.isNullish(intern)) return;
+  JsValue traits = intern["traits"];
+  if (isUndef(traits)) return;
+  if (JS.isNullish(traits)) return;
+  if (!setHas(traits, "$ZodType").truthy()) return;
+  if (setHas(traits, "$ZodCheck").truthy()) {
+    if (isUndef(raw["schema"])) raw["schema"] = inst;
+  } else {
+    raw["schema"] = inst;
+  }
+}
+
+export JsValue finalizeIssue(JsValue raw, Schema? schema, JsValue ctx) {
+  stampIssueSchema(raw);
+  string message = finalizeMessage(raw, schema, ctx);
+  JsValue issue = JS.object();
+  JsValue keys = objectKeys(raw);
+  int i = 0;
+  int n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    string key = toStr(keys[i]);
+    if (key != "inst") {
+      if (key != "schema") {
+        if (key != "continue") {
+          if (key != "input") issue[key] = raw[key];
+        }
+      }
+    }
+    i = i + 1;
+  }
+  if (isUndef(issue["path"]) || JS.isNullish(issue["path"])) issue["path"] = newArray();
+  issue["message"] = message;
+  if (!isUndef(ctx) && !JS.isNullish(ctx) && ctx["reportInput"].truthy()) {
+    issue["input"] = raw["input"];
+  }
+  return issue;
+}
+
+export void prefixPath(JsValue issue, JsValue part) {
+  JsValue path = issue["path"];
+  if (isUndef(path) || JS.isNullish(path)) {
+    path = newArray();
+    issue["path"] = path;
+  }
+  JS.invoke(path, "unshift", part);
+}
+
+export JsValue pushIssue(JsValue issues, JsValue issue) {
+  push(issues, issue);
+  return issues;
+}
+
+export JsValue typeIssue(string expected, JsValue input) {
+  JsValue issue = JS.object("expected", expected, "code", "invalid_type", "input", input);
+  if (expected == "number" && isNum(input)) {
+    if (isNaNNum(input)) issue["received"] = "NaN";
+    else if (!isFiniteNum(input)) issue["received"] = toStr(input);
+  }
+  if (expected == "date" && isDate(input) && isNaNNum(invoke0(input, "getTime"))) {
+    issue["received"] = "Invalid Date";
+  }
+  return issue;
+}
+
+export JsValue valueIssue(JsValue values, JsValue input) {
+  return JS.object("code", "invalid_value", "values", values, "input", input);
+}
+
+export JsValue formatIssue(string format, JsValue input, string message) {
+  JsValue issue = JS.object("code", "invalid_format", "format", format, "origin", "string", "input", input);
+  if (message.length > 0) issue["message"] = message;
+  return issue;
+}
+
+export JsValue sizeIssue(bool tooBig, string origin, float bound, bool inclusive, bool exact, JsValue input, string message) {
+  return sizeIssueValue(tooBig, origin, bound, inclusive, exact, input, message);
+}
+
+JsValue sizeIssueValue(bool tooBig, string origin, JsValue bound, bool inclusive, bool exact, JsValue input, string message) {
+  string code = "too_small";
+  if (tooBig) code = "too_big";
+  JsValue reported = bound;
+  if (isDate(bound)) reported = invoke0(bound, "getTime");
+  JsValue issue = JS.object("origin", origin, "code", code);
+  if (tooBig) issue["maximum"] = reported;
+  else issue["minimum"] = reported;
+  issue["inclusive"] = inclusive;
+  issue["input"] = input;
+  if (exact) issue["exact"] = true;
+  if (message.length > 0) issue["message"] = message;
+  issue["continue"] = true;
+  return issue;
+}
+
+void failSize(JsValue payload, bool tooBig, string origin, JsValue bound, bool inclusive, bool exact, JsValue input) {
+  push(payload["issues"], sizeIssueValue(tooBig, origin, bound, inclusive, exact, input, ""));
+}
+
+JsValue jsonReplacer(JsValue _key, JsValue value) {
+  if (isBig(value)) return toStr(value);
+  return value;
+}
+
+export JsValue initZodError(JsValue inst, JsValue issues) {
+  JsValue list = issues;
+  if (isUndef(list) || JS.isNullish(list)) list = newArray();
+  JsValue traits = newSet();
+  setAdd(traits, "$ZodError");
+  setAdd(traits, "ZodError");
+  inst["name"] = "ZodError";
+  defineProperty(inst, "issues", hiddenValue(list));
+  defineProperty(inst, "_zod", hiddenValue(JS.object("def", list, "traits", traits)));
+  defineProperty(inst, "message", JS.object(
+    "enumerable", true,
+    "configurable", true,
+    "get", JS.method0((JsValue self) => {
+      JsValue intern = self["_zod"];
+      if (!isUndef(intern["message"])) return intern["message"];
+      intern["message"] = jsonStringify(intern["def"], JS.method2((JsValue _s, JsValue k, JsValue v) => {
+        return jsonReplacer(k, v);
+      }), 2);
+      return intern["message"];
+    }),
+    "set", JS.method1((JsValue self, JsValue value) => {
+      self["_zod"]["message"] = value;
+      return undef();
+    })
+  ));
+  return inst;
+}
+
+export JsValue ZodError = JS.methodRest((JsValue self, JsValue args) => {
+  if (isUndef(self) || JS.isNullish(self) || !isObj(self)) {
+    self = objectCreate(ZodError["prototype"]);
+  }
+  initZodError(self, args[0]);
+  if (isUndef(self["stack"])) captureStackTrace(self, ZodError);
+  return self;
+});
+
+export JsValue ZodRealError = JS.methodRest((JsValue self, JsValue args) => {
+  JsValue err = objectCreate(ZodRealError["prototype"]);
+  initZodError(err, args[0]);
+  captureStackTrace(err, ZodRealError);
+  return err;
+});
+
+export JsValue ZodEncodeError = JS.methodRest((JsValue self, JsValue args) => {
+  JsValue err = construct1(gError(), "Encountered unidirectional transform during encode: " + toStr(args[0]));
+  err["name"] = "ZodEncodeError";
+  return err;
+});
+
+void hideMessage(JsValue inst, JsValue value) {
+  inst["_zod"]["message"] = value;
+}
+
+export void initErrorProto() {
+  setPrototypeOf(ZodError["prototype"], gError()["prototype"]);
+  defineProperty(ZodError, "name", hiddenConst("ZodError"));
+  defineProperty(ZodError, "init", hiddenConst(JS.method2((JsValue _s, JsValue inst, JsValue issues) => {
+    return initZodError(inst, issues);
+  })));
+  setPrototypeOf(ZodRealError["prototype"], ZodError["prototype"]);
+  defineProperty(ZodRealError, "name", hiddenConst("ZodError"));
+  defineProperty(ZodRealError, "init", ZodError["init"]);
+  defineProperty(ZodError, gSymbol()["hasInstance"], hiddenConst(JS.method1((JsValue _s, JsValue inst) => {
+    if (JS.isNullish(inst) || !isObj(inst)) return false;
+    JsValue intern = inst["_zod"];
+    if (isUndef(intern) || JS.isNullish(intern)) return false;
+    return setHas(intern["traits"], "ZodError").truthy();
+  })));
+  defineProperty(ZodRealError, gSymbol()["hasInstance"], hiddenConst(JS.method1((JsValue _s, JsValue inst) => {
+    if (isInstance(gError(), inst)) return true;
+    if (JS.isNullish(inst) || !isObj(inst)) return false;
+    JsValue intern = inst["_zod"];
+    if (isUndef(intern) || JS.isNullish(intern)) return false;
+    return setHas(intern["traits"], "ZodError").truthy();
+  })));
+  defineProperty(ZodError["prototype"], "toString", JS.object(
+    "configurable", true,
+    "enumerable", false,
+    "get", JS.method0((JsValue self) => {
+      JsValue value = JS.method0((JsValue _s) => {
+        return self["message"];
+      });
+      defineProperty(self, "toString", JS.object("value", value, "configurable", true, "writable", true));
+      return value;
+    }),
+    "set", JS.method1((JsValue self, JsValue value) => {
+      defineProperty(self, "toString", JS.object("value", value, "configurable", true, "writable", true));
+      return undef();
+    })
+  ));
+  installLazy(ZodError["prototype"], "format", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return formatError(self, args[0]);
+    });
+  }), false);
+  installLazy(ZodError["prototype"], "flatten", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return flattenError(self, args[0]);
+    });
+  }), false);
+  installLazy(ZodError["prototype"], "addIssue", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue issue) => {
+      push(self["issues"], issue);
+      self["_zod"]["message"] = jsonStringify(self["issues"], JS.method2((JsValue _x, JsValue k, JsValue v) => {
+        return jsonReplacer(k, v);
+      }), 2);
+      return undef();
+    });
+  }), false);
+  installLazy(ZodError["prototype"], "addIssues", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue issues) => {
+      int i = 0;
+      int n = JS.number(issues["length"]).toInt();
+      while (i < n) {
+        push(self["issues"], issues[i]);
+        i = i + 1;
+      }
+      self["_zod"]["message"] = jsonStringify(self["issues"], JS.method2((JsValue _x, JsValue k, JsValue v) => {
+        return jsonReplacer(k, v);
+      }), 2);
+      return undef();
+    });
+  }), false);
+  defineProperty(ZodError["prototype"], "isEmpty", JS.object(
+    "enumerable", false,
+    "configurable", true,
+    "get", JS.method0((JsValue self) => {
+      return JS.number(self["issues"]["length"]).toInt() == 0;
+    })
+  ));
+}
+
+export JsValue makeZodError(JsValue issues) {
+  return construct1(ZodRealError, issues);
+}
+
+JsValue errorMapper(JsValue mapper, JsValue issue) {
+  if (isFn(mapper)) return call1(mapper, undef(), issue);
+  return issue["message"];
+}
+
+JsValue ownNode(JsValue obj, JsValue key, JsValue make) {
+  if (!hasOwn(obj, key)) {
+    assignProp(obj, key, call0(make, undef()));
+  }
+  return obj[key];
+}
+
+export JsValue flattenError(JsValue error, JsValue mapper) {
+  JsValue fieldErrors = JS.object();
+  JsValue formErrors = newArray();
+  JsValue issues = error["issues"];
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    JsValue issue = issues[i];
+    JsValue mapped = errorMapper(mapper, issue);
+    JsValue path = issue["path"];
+    if (isArr(path) && JS.number(path["length"]).toInt() > 0) {
+      JsValue key = path[0];
+      JsValue bucket = ownNode(fieldErrors, key, JS.method0((JsValue _s) => {
+        return newArray();
+      }));
+      push(bucket, mapped);
+    } else {
+      push(formErrors, mapped);
+    }
+    i = i + 1;
+  }
+  return JS.object("formErrors", formErrors, "fieldErrors", fieldErrors);
+}
+
+void walkFormatIssues(JsValue issues, JsValue pathPrefix, JsValue root, JsValue mapper) {
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    JsValue issue = issues[i];
+    string code = toStr(issue["code"]);
+    if (code == "invalid_union" && isArr(issue["errors"]) && JS.number(issue["errors"]["length"]).toInt() > 0) {
+      JsValue groups = issue["errors"];
+      int g = 0;
+      int gn = JS.number(groups["length"]).toInt();
+      while (g < gn) {
+        JsValue nextPath = invoke1(pathPrefix, "concat", issue["path"]);
+        walkFormatIssues(groups[g], nextPath, root, mapper);
+        g = g + 1;
+      }
+    } else if (code == "invalid_key" || code == "invalid_element") {
+      JsValue nextPath = invoke1(pathPrefix, "concat", issue["path"]);
+      walkFormatIssues(issue["issues"], nextPath, root, mapper);
+    } else {
+      JsValue full = invoke1(pathPrefix, "concat", issue["path"]);
+      if (!isArr(full) || JS.number(full["length"]).toInt() == 0) {
+        push(root["_errors"], errorMapper(mapper, issue));
+      } else {
+        JsValue curr = root;
+        int p = 0;
+        int pn = JS.number(full["length"]).toInt();
+        while (p < pn) {
+          JsValue el = full[p];
+          bool terminal = p == pn - 1;
+          if (JS.strictEqual(el, "_errors")) {
+            if (terminal) push(curr["_errors"], errorMapper(mapper, issue));
+          } else {
+            JsValue next = ownNode(curr, el, JS.method0((JsValue _s) => {
+              return JS.object("_errors", newArray());
+            }));
+            if (terminal) push(next["_errors"], errorMapper(mapper, issue));
+            curr = next;
+          }
+          p = p + 1;
+        }
+      }
+    }
+    i = i + 1;
+  }
+}
+
+export JsValue formatError(JsValue error, JsValue mapper) {
+  JsValue root = JS.object("_errors", newArray());
+  walkFormatIssues(error["issues"], newArray(), root, mapper);
+  return root;
+}
+
+void walkTreeIssues(JsValue issues, JsValue pathPrefix, JsValue result, JsValue mapper) {
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    JsValue issue = issues[i];
+    string code = toStr(issue["code"]);
+    if (code == "invalid_union" && isArr(issue["errors"]) && JS.number(issue["errors"]["length"]).toInt() > 0) {
+      JsValue groups = issue["errors"];
+      int g = 0;
+      int gn = JS.number(groups["length"]).toInt();
+      while (g < gn) {
+        walkTreeIssues(groups[g], invoke1(pathPrefix, "concat", issue["path"]), result, mapper);
+        g = g + 1;
+      }
+    } else if (code == "invalid_key" || code == "invalid_element") {
+      walkTreeIssues(issue["issues"], invoke1(pathPrefix, "concat", issue["path"]), result, mapper);
+    } else {
+      JsValue full = invoke1(pathPrefix, "concat", issue["path"]);
+      if (!isArr(full) || JS.number(full["length"]).toInt() == 0) {
+        push(result["errors"], errorMapper(mapper, issue));
+      } else {
+        JsValue curr = result;
+        int p = 0;
+        int pn = JS.number(full["length"]).toInt();
+        while (p < pn) {
+          JsValue el = full[p];
+          bool terminal = p == pn - 1;
+          if (isStr(el)) {
+            if (isUndef(curr["properties"]) || JS.isNullish(curr["properties"])) curr["properties"] = JS.object();
+            JsValue next = ownNode(curr["properties"], el, JS.method0((JsValue _s) => {
+              return JS.object("errors", newArray());
+            }));
+            curr = next;
+          } else {
+            if (isUndef(curr["items"]) || JS.isNullish(curr["items"])) curr["items"] = newArray();
+            JsValue items = curr["items"];
+            if (isUndef(items[el]) || JS.isNullish(items[el])) items[el] = JS.object("errors", newArray());
+            curr = items[el];
+          }
+          if (terminal) push(curr["errors"], errorMapper(mapper, issue));
+          p = p + 1;
+        }
+      }
+    }
+    i = i + 1;
+  }
+}
+
+export JsValue treeifyError(JsValue error, JsValue mapper) {
+  JsValue result = JS.object("errors", newArray());
+  walkTreeIssues(error["issues"], newArray(), result, mapper);
+  return result;
+}
+
+export JsValue toDotPath(JsValue path) {
+  JsValue segs = newArray();
+  if (!isArr(path)) return "";
+  int i = 0;
+  int n = JS.number(path["length"]).toInt();
+  while (i < n) {
+    JsValue seg = path[i];
+    if (isObj(seg) && !JS.isNullish(seg) && !isUndef(seg["key"])) seg = seg["key"];
+    if (isNum(seg)) {
+      push(segs, "[" + toStr(seg) + "]");
+    } else if (isSym(seg)) {
+      push(segs, "[" + toStr(jsonStringify(toStringValue(seg), undef(), undef())) + "]");
+    } else {
+      string text = toStr(seg);
+      if (regexTest(newRegex("[^\\w$]", ""), text)) {
+        push(segs, "[" + toStr(jsonStringify(text, undef(), undef())) + "]");
+      } else {
+        if (JS.number(segs["length"]).toInt() > 0) push(segs, ".");
+        push(segs, text);
+      }
+    }
+    i = i + 1;
+  }
+  return invoke1(segs, "join", "");
+}
+
+export JsValue prettifyError(JsValue error) {
+  JsValue issues = invoke1(error["issues"], "slice", 0);
+  invoke1(issues, "sort", JS.method2((JsValue _s, JsValue a, JsValue b) => {
+    int al = 0;
+    int bl = 0;
+    if (isArr(a["path"])) al = JS.number(a["path"]["length"]).toInt();
+    if (isArr(b["path"])) bl = JS.number(b["path"]["length"]).toInt();
+    return al - bl;
+  }));
+  JsValue lines = newArray();
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    JsValue issue = issues[i];
+    push(lines, "✖ " + toStr(issue["message"]));
+    if (isArr(issue["path"]) && JS.number(issue["path"]["length"]).toInt() > 0) {
+      push(lines, "  → at " + toStr(toDotPath(issue["path"])));
+    }
+    i = i + 1;
+  }
+  return invoke1(lines, "join", "\n");
+}
+
+export JsValue getConfig() {
+  JsValue g = gGlobal();
+  JsValue cfg = g["__zod_globalConfig"];
+  if (JS.isNullish(cfg) || isUndef(cfg)) {
+    cfg = JS.object();
+    g["__zod_globalConfig"] = cfg;
+  }
+  return cfg;
+}
+
+export JsValue setConfig(JsValue next) {
+  JsValue cfg = getConfig();
+  if (!isUndef(next) && !JS.isNullish(next)) {
+    objectAssign(cfg, next);
+    if (inOp("localeError", next)) localeErrorFn = next["localeError"];
+    if (inOp("customError", next)) customErrorFn = next["customError"];
+  }
+  return cfg;
+}
+
+export JsValue coreUtil() {
+  JsValue allows = JS.object();
+  defineProperty(allows, "value", JS.object(
+    "enumerable", true,
+    "configurable", true,
+    "get", JS.method0((JsValue _s) => {
+      JsValue cfg = getConfig();
+      if (isObj(cfg) && cfg["jitless"].truthy()) return false;
+      try {
+        construct1(gGlobal()["Function"], "");
+        return true;
+      } catch (auto _e) {
+        return false;
+      }
+    })
+  ));
+  JsValue util = JS.object();
+  util["allowsEval"] = allows;
+  util["base64ToUint8Array"] = JS.method1((JsValue _s, JsValue base64) => {
+    JsValue binary = JS.invoke(gGlobal(), "atob", base64);
+    JsValue U8 = gGlobal()["Uint8Array"];
+    JsValue bytes = construct1(U8, binary["length"]);
+    int i = 0;
+    int n = JS.number(binary["length"]).toInt();
+    while (i < n) {
+      bytes[i] = JS.invoke(binary, "charCodeAt", i);
+      i = i + 1;
+    }
+    return bytes;
+  });
+  util["uint8ArrayToBase64"] = JS.method1((JsValue _s, JsValue bytes) => {
+    string binary = "";
+    int i = 0;
+    int n = JS.number(bytes["length"]).toInt();
+    while (i < n) {
+      binary = binary + toStr(JS.invoke(gGlobal()["String"], "fromCharCode", bytes[i]));
+      i = i + 1;
+    }
+    return JS.invoke(gGlobal(), "btoa", binary);
+  });
+  util["base64urlToUint8Array"] = JS.method1((JsValue _s, JsValue raw) => {
+    JsValue base64 = invoke2(invoke2(raw, "replace", newRegex("-", "g"), "+"), "replace", newRegex("_", "g"), "/");
+    int rem = JS.number(base64["length"]).toInt() % 4;
+    if (rem != 0) {
+      int pad = 4 - rem;
+      int p = 0;
+      while (p < pad) {
+        base64 = JS.string(toStr(base64) + "=");
+        p = p + 1;
+      }
+    }
+    return call1(util["base64ToUint8Array"], undef(), base64);
+  });
+  util["uint8ArrayToBase64url"] = JS.method1((JsValue _s, JsValue bytes) => {
+    JsValue b64 = call1(util["uint8ArrayToBase64"], undef(), bytes);
+    return invoke2(invoke2(invoke2(b64, "replace", newRegex("\\+", "g"), "-"), "replace", newRegex("/", "g"), "_"), "replace", newRegex("=", "g"), "");
+  });
+  util["hexToUint8Array"] = JS.method1((JsValue _s, JsValue hex) => {
+    JsValue clean = invoke2(hex, "replace", newRegex("^0x", ""), "");
+    JsValue U8 = gGlobal()["Uint8Array"];
+    int n = JS.number(clean["length"]).toInt() / 2;
+    JsValue bytes = construct1(U8, n);
+    int i = 0;
+    while (i < n) {
+      bytes[i] = JS.invoke(gNumber(), "parseInt", invoke2(clean, "slice", i * 2, i * 2 + 2), 16);
+      i = i + 1;
+    }
+    return bytes;
+  });
+  util["uint8ArrayToHex"] = JS.method1((JsValue _s, JsValue bytes) => {
+    JsValue parts = newArray();
+    int i = 0;
+    int n = JS.number(bytes["length"]).toInt();
+    while (i < n) {
+      string h = toStr(JS.invoke(bytes[i], "toString", 16));
+      if (h.length == 1) h = "0" + h;
+      push(parts, h);
+      i = i + 1;
+    }
+    return invoke1(parts, "join", "");
+  });
+  return util;
+}
+
+export JsValue defaultLocale() {
+  return JS.method1((JsValue _s, JsValue issue) => {
+    return localeMessage(issue);
+  });
+}
+
+export void ensureLocale() {
+  JsValue cfg = getConfig();
+  if (isUndef(cfg["localeError"])) {
+    localeErrorFn = defaultLocale();
+    cfg["localeError"] = localeErrorFn;
+  } else {
+    localeErrorFn = cfg["localeError"];
+  }
+  if (isFn(cfg["customError"])) customErrorFn = cfg["customError"];
+}
+
+JsValue buildRegistry(JsValue map, JsValue ids) {
+  JsValue reg = JS.object();
+  reg["_map"] = map;
+  reg["_idmap"] = ids;
+  reg["add"] = JS.method2((JsValue _s, JsValue schema, JsValue meta) => {
+    weakSet(map, schema, meta);
+    if (isObj(meta) && !JS.isNullish(meta) && !isUndef(meta["id"])) {
+      mapSet(ids, meta["id"], schema);
+    }
+    return schema;
+  });
+  reg["clear"] = JS.method0((JsValue self) => {
+    self["_map"] = newWeakMap();
+    self["_idmap"] = newMap();
+    map = self["_map"];
+    ids = self["_idmap"];
+    return self;
+  });
+  reg["remove"] = JS.method1((JsValue _s, JsValue schema) => {
+    JsValue meta = weakGet(map, schema);
+    if (isObj(meta) && !JS.isNullish(meta) && !isUndef(meta["id"])) {
+      JS.invoke(ids, "delete", meta["id"]);
+    }
+    JS.invoke(map, "delete", schema);
+    return undef();
+  });
+  reg["get"] = JS.method1((JsValue self, JsValue schema) => {
+    JsValue own = weakGet(map, schema);
+    JsValue parent = undef();
+    if (isObj(schema) && isObj(schema["_zod"])) parent = schema["_zod"]["parent"];
+    if (!isUndef(parent) && !JS.isNullish(parent)) {
+      JsValue inherited = JS.call(self["get"], self, parent);
+      JsValue merged = JS.object();
+      if (isObj(inherited) && !JS.isNullish(inherited)) objectAssign(merged, inherited);
+      deleteProp(merged, "id");
+      if (isObj(own) && !JS.isNullish(own)) objectAssign(merged, own);
+      if (JS.number(objectKeys(merged)["length"]).toInt() == 0) return undef();
+      return merged;
+    }
+    return own;
+  });
+  reg["has"] = JS.method1((JsValue _s, JsValue schema) => {
+    return weakHas(map, schema);
+  });
+  return reg;
+}
+
+export JsValue globalRegistry() {
+  JsValue g = gGlobal();
+  if (!isUndef(g["__zod_globalRegistry"]) && !JS.isNullish(g["__zod_globalRegistry"])) {
+    globalReg = g["__zod_globalRegistry"];
+    return globalReg;
+  }
+  if (isUndef(globalReg)) {
+    globalReg = buildRegistry(newWeakMap(), newMap());
+    g["__zod_globalRegistry"] = globalReg;
+  }
+  return globalReg;
+}
+
+export JsValue makeRegistry() {
+  return buildRegistry(newWeakMap(), newMap());
+}
+
+export JsValue version() {
+  return versionObj;
+}
+
+bool isBackward(JsValue ctx) {
+  if (isUndef(ctx) || JS.isNullish(ctx)) return false;
+  return toStr(ctx["direction"]) == "backward";
+}
+
+JsValue shallowClone(JsValue value) {
+  if (isArr(value)) return invoke1(value, "slice", 0);
+  if (isInstance(gMap(), value)) return construct1(gMap(), value);
+  if (isInstance(gSet(), value)) return construct1(gSet(), value);
+  if (isObj(value) && !isArr(value) && !isDate(value)) {
+    JsValue proto = getPrototypeOf(value);
+    if (JS.isNullish(proto) || JS.strictEqual(proto, gObject()["prototype"])) {
+      return objectAssign(JS.object(), value);
+    }
+  }
+  return value;
+}
+
+JsValue resolveDefault(Schema schema) {
+  JsValue value = schema.def["defaultValue"];
+  if (isFn(value)) value = call0(value, undef());
+  return shallowClone(value);
+}
+
+string checkCtorName(string name) {
+  if (name == "min_length") return "$ZodCheckMinLength";
+  if (name == "max_length") return "$ZodCheckMaxLength";
+  if (name == "length_equals") return "$ZodCheckLengthEquals";
+  if (name == "greater_than") return "$ZodCheckGreaterThan";
+  if (name == "less_than") return "$ZodCheckLessThan";
+  if (name == "multiple_of") return "$ZodCheckMultipleOf";
+  if (name == "min_size") return "$ZodCheckMinSize";
+  if (name == "max_size") return "$ZodCheckMaxSize";
+  if (name == "size_equals") return "$ZodCheckSizeEquals";
+  if (name == "includes") return "$ZodCheckIncludes";
+  if (name == "starts_with") return "$ZodCheckStartsWith";
+  if (name == "ends_with") return "$ZodCheckEndsWith";
+  if (name == "string_format") return "$ZodCheckStringFormat";
+  if (name == "overwrite") return "$ZodCheckOverwrite";
+  if (name == "mime_type") return "$ZodCheckMimeType";
+  if (name == "number_format") return "$ZodCheckNumberFormat";
+  if (name == "lowercase") return "$ZodCheckStringFormat";
+  if (name == "uppercase") return "$ZodCheckStringFormat";
+  return "$ZodCheck";
+}
+
+bool whenHasLengthValue(JsValue payload) {
+  JsValue val = payload["value"];
+  if (isUndef(val) || JS.isNullish(val)) return false;
+  return !isUndef(val["length"]);
+}
+
+bool whenHasSizeValue(JsValue payload) {
+  JsValue val = payload["value"];
+  if (isUndef(val) || JS.isNullish(val)) return false;
+  return !isUndef(val["size"]);
+}
+
+export JsValue createCheck(string name, JsValue fields) {
+  fields["check"] = name;
+  if (isUndef(fields["when"])) {
+    if (name == "min_length" || name == "max_length" || name == "length_equals") {
+      fields["when"] = JS.method1((JsValue _s, JsValue payload) => {
+        if (whenHasLengthValue(payload)) return payload;
+        return undef();
+      });
+    } else if (name == "min_size" || name == "max_size" || name == "size_equals") {
+      fields["when"] = JS.method1((JsValue _s, JsValue payload) => {
+        if (whenHasSizeValue(payload)) return payload;
+        return undef();
+      });
+    }
+  }
+  string ctorName = checkCtorName(name);
+  JsValue traits = newSet();
+  setAdd(traits, "$ZodCheck");
+  setAdd(traits, ctorName);
+  JsValue intern = JS.object("def", fields, "onattach", newArray(), "traits", traits);
+  JsValue inst = JS.object();
+  inst["def"] = fields;
+  JsValue ctor = JS.methodRest((JsValue _s, JsValue _a) => {
+    return inst;
+  });
+  defineProperty(ctor, "name", hiddenConst(ctorName));
+  inst["constructor"] = ctor;
+  defineProperty(inst, "_zod", hiddenValue(intern));
+  return inst;
+}
+
+export JsValue createPayloadCheck(JsValue fn, JsValue params) {
+  JsValue fields = JS.object("check", "custom");
+  if (isObj(params) && !JS.isNullish(params)) objectAssign(fields, params);
+  JsValue inst = createCheck("custom", fields);
+  inst["_zod"]["check"] = fn;
+  return inst;
+}
+
+export JsValue wrapFnCheck(JsValue fn) {
+  return createPayloadCheck(fn, undef());
+}
+
+float floatSafeRemainder(float val, float step) {
+  JsValue Math = gGlobal()["Math"];
+  float ratio = val / step;
+  float rounded = toNum(JS.invoke(Math, "round", ratio));
+  float absRatio = ratio;
+  if (absRatio < 0.0) absRatio = 0.0 - absRatio;
+  float mag = 1.0;
+  if (absRatio > mag) mag = absRatio;
+  float eps = toNum(gNumber()["EPSILON"]);
+  float tol = eps * mag;
+  float diff = ratio - rounded;
+  if (diff < 0.0) diff = 0.0 - diff;
+  if (diff < tol) return 0.0;
+  return ratio - rounded;
+}
+
+export JsValue cloneWithDef(JsValue inst, JsValue patch) {
+  Schema src = schemaOf(inst);
+  JsValue def = src.def;
+  if (!isUndef(patch) && isObj(patch)) {
+    def = JS.object();
+    copyOwn(def, src.def);
+    copyOwn(def, patch);
+  }
+  JsValue cl = construct1(src.ctor, def);
+  if (isUndef(patch)) cl["_zod"]["parent"] = inst;
+  return cl;
+}
+
+export JsValue cloneWithParent(JsValue inst, JsValue patch) {
+  JsValue cl = cloneWithDef(inst, patch);
+  cl["_zod"]["parent"] = inst;
+  return cl;
+}
+
+export JsValue withCheck(JsValue inst, JsValue check) {
+  JsValue checks = schemaOf(inst).def["checks"];
+  if (isUndef(checks) || !isArr(checks)) checks = newArray();
+  else checks = invoke1(checks, "slice", 0);
+  push(checks, check);
+  return cloneWithParent(inst, JS.object("checks", checks));
+}
+
+Schema? childOf(Schema schema, string key) {
+  return trySchema(schema.def[key]);
+}
+
+JsValue checkDef(JsValue ch) {
+  if (isObj(ch) && !isUndef(ch["_zod"]) && isObj(ch["_zod"]) && !isUndef(ch["_zod"]["def"])) {
+    return ch["_zod"]["def"];
+  }
+  if (isObj(ch) && !isUndef(ch["def"])) return ch["def"];
+  return ch;
+}
+
+export Schema unwrapLazy(Schema schema) {
+  Schema cur = schema;
+  int guard = 0;
+  while (cur.kind == KLazy && guard < 64) {
+    JsValue next = undef();
+    if (isObj(cur.handle) && isObj(cur.handle["_zod"])) next = cur.handle["_zod"]["innerType"];
+    if (isUndef(next) || JS.isNullish(next)) {
+      JsValue getter = cur.def["getter"];
+      if (!isFn(getter)) break;
+      next = call0(getter, undef());
+    }
+    Schema? inner = trySchema(next);
+    if (inner != null) {
+      cur = inner;
+      guard = guard + 1;
+    } else {
+      guard = 64;
+    }
+  }
+  return cur;
+}
+
+void failFormat(JsValue payload, string format, JsValue extra) {
+  JsValue iss = JS.object();
+  if (format != "url") {
+    if (format != "jwt") {
+      if (format != "ipv6") {
+        if (format != "cidrv6") {
+          if (format != "template_literal") iss["origin"] = "string";
+        }
+      }
+    }
+  }
+  iss["code"] = "invalid_format";
+  iss["format"] = format;
+  if (!isUndef(extra) && isObj(extra)) objectAssign(iss, extra);
+  if (isUndef(iss["continue"])) iss["continue"] = true;
+  push(payload["issues"], iss);
+}
+
+void stampMissingInst(JsValue payload, int start, JsValue inst) {
+  JsValue issues = payload["issues"];
+  int i = start;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    if (isUndef(issues[i]["inst"])) issues[i]["inst"] = inst;
+    i = i + 1;
+  }
+}
+
+void handleRefineResult(JsValue result, JsValue payload, JsValue input, JsValue inst, JsValue cdef, int before) {
+  if (JS.number(payload["issues"]["length"]).toInt() != before) return;
+  if (result.truthy()) return;
+  JsValue path = newArray();
+  if (isArr(cdef["path"])) path = invoke1(cdef["path"], "slice", 0);
+  JsValue iss = JS.object("code", "custom", "input", input, "inst", inst, "path", path);
+  iss["continue"] = !cdef["abort"].truthy();
+  if (!isUndef(cdef["params"])) iss["params"] = cdef["params"];
+  push(payload["issues"], iss);
+}
+
+bool isValidCreditCard(string input) {
+  if (!regexTest(newRegex("^\\d(?:[ -]?\\d){11,18}$", ""), input)) return false;
+  string digits = "";
+  int i = 0;
+  int n = input.length;
+  while (i < n) {
+    string ch = input.slice(i, i + 1);
+    if (ch >= "0" && ch <= "9") digits = digits + ch;
+    i = i + 1;
+  }
+  int sum = 0;
+  bool alt = false;
+  i = digits.length - 1;
+  while (i >= 0) {
+    int d = JS.number(toNumber(digits.slice(i, i + 1))).toInt();
+    if (alt) {
+      d = d * 2;
+      if (d > 9) d = d - 9;
+    }
+    sum = sum + d;
+    if (alt) alt = false;
+    else alt = true;
+    i = i - 1;
+  }
+  while (sum >= 10) sum = sum - 10;
+  return sum == 0;
+}
+
+string stripTabAndNewline(string value) {
+  return toStr(invoke2(value, "replace", newRegex("[\\t\\n\\r]", "g"), ""));
+}
+
+bool isValidJwt(string token, JsValue alg) {
+  JsValue parts = invoke1(token, "split", ".");
+  if (JS.number(parts["length"]).toInt() != 3) return false;
+  JsValue header = parts[0];
+  if (isUndef(header) || JS.isNullish(header) || toStr(header).length == 0) return false;
+  try {
+    JsValue parsed = invoke1(gGlobal()["JSON"], "parse", call1(gGlobal()["atob"], undef(), header));
+    if (!isObj(parsed) || JS.isNullish(parsed)) return false;
+    if (hasOwn(parsed, "typ") && toStr(parsed["typ"]) != "JWT") return false;
+    if (isUndef(parsed["alg"])) return false;
+    if (!isUndef(alg) && !JS.isNullish(alg) && isStr(alg)) {
+      if (toStr(parsed["alg"]) != toStr(alg)) return false;
+    }
+    return true;
+  } catch (auto _e) {
+    return false;
+  }
+}
+
+bool isValidBase64(string data) {
+  if (data.length == 0) return true;
+  if (regexTest(newRegex("\\s", ""), data)) return false;
+  int rem = 0;
+  int i = 0;
+  while (i < data.length) {
+    rem = rem + 1;
+    if (rem == 4) rem = 0;
+    i = i + 1;
+  }
+  if (rem != 0) return false;
+  try {
+    call1(gGlobal()["atob"], undef(), data);
+    return true;
+  } catch (auto _e) {
+    return false;
+  }
+}
+
+bool isValidBase64Url(string data) {
+  if (!regexTest(newRegex("^[A-Za-z0-9_-]*$", ""), data)) return false;
+  string b64 = toStr(invoke2(invoke2(data, "replace", newRegex("-", "g"), "+"), "replace", newRegex("_", "g"), "/"));
+  int rem = 0;
+  int i = 0;
+  while (i < b64.length) {
+    rem = rem + 1;
+    if (rem == 4) rem = 0;
+    i = i + 1;
+  }
+  if (rem == 1) b64 = b64 + "===";
+  if (rem == 2) b64 = b64 + "==";
+  if (rem == 3) b64 = b64 + "=";
+  return isValidBase64(b64);
+}
+
+bool isValidIPv6(string value) {
+  if (!regexTest(newRegex("^[0-9a-fA-F:.]+$", ""), value)) return false;
+  try {
+    construct1(gURL(), "http://[" + value + "]");
+    return true;
+  } catch (auto _e) {
+    return false;
+  }
+}
+
+bool isValidCIDRv6(string value) {
+  JsValue parts = invoke1(value, "split", "/");
+  if (JS.number(parts["length"]).toInt() != 2) return false;
+  string prefix = toStr(parts[1]);
+  if (prefix.length == 0) return false;
+  JsValue prefixNum = toNumber(prefix);
+  if (toStr(prefixNum) != prefix) return false;
+  float n = toNum(prefixNum);
+  if (n < 0.0) return false;
+  if (n > 128.0) return false;
+  return isValidIPv6(toStr(parts[0]));
+}
+
+void runUrlFormat(JsValue cdef, JsValue payload, JsValue value) {
+  string trimmed = toStr(value).trim();
+  if (!cdef["normalize"].truthy() && !isUndef(cdef["protocol"]) && !JS.isNullish(cdef["protocol"])) {
+    if (!regexTest(newRegex("^https?:\\/\\/", "i"), trimmed)) {
+      failFormat(payload, "url", undef());
+      return;
+    }
+  }
+  JsValue urlObj = undef();
+  try {
+    urlObj = construct1(gURL(), trimmed);
+  } catch (auto _e) {
+    failFormat(payload, "url", undef());
+    return;
+  }
+  if (!isUndef(cdef["hostname"]) && !JS.isNullish(cdef["hostname"])) {
+    JsValue host = cdef["hostname"];
+    host["lastIndex"] = 0;
+    if (!regexTest(host, toStr(urlObj["hostname"]))) {
+      failFormat(payload, "url", JS.object("note", "Invalid hostname", "pattern", host["source"]));
+    }
+  }
+  if (!isUndef(cdef["protocol"]) && !JS.isNullish(cdef["protocol"])) {
+    JsValue proto = cdef["protocol"];
+    string p = toStr(urlObj["protocol"]);
+    if (p.endsWith(":")) p = p.slice(0, p.length - 1);
+    proto["lastIndex"] = 0;
+    if (!regexTest(proto, p)) {
+      failFormat(payload, "url", JS.object("note", "Invalid protocol", "pattern", proto["source"]));
+    }
+  }
+  payload["value"] = stripTabAndNewline(trimmed);
+  if (cdef["normalize"].truthy()) payload["value"] = urlObj["href"];
+}
+
+void runOfficialCheck(JsValue ch, JsValue payload, JsValue ctx) {
+  if (isObj(ch) && isObj(ch["_zod"]) && isFn(ch["_zod"]["check"])) {
+    JsValue result = call1(ch["_zod"]["check"], ch, payload);
+    if (isPromise(result)) {
+      if (!isUndef(ctx) && JS.strictEqual(ctx["async"], false)) {
+        throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+      }
+      payload["$pending"] = result;
+    }
+    return;
+  }
+  JsValue cdef = checkDef(ch);
+  string name = toStr(cdef["check"]);
+  JsValue value = payload["value"];
+  if (name == "min_length" || name == "max_length" || name == "length_equals") {
+    if (!isStr(value) && !isArr(value)) return;
+    float n = toNum(value["length"]);
+    if (isStr(value)) n = toNum(invoke1(gArray(), "from", value)["length"]);
+    string origin = "string";
+    if (isArr(value)) origin = "array";
+    if (name == "min_length" && n < toNum(cdef["minimum"])) {
+      push(payload["issues"], sizeIssue(false, origin, toNum(cdef["minimum"]), true, false, value, ""));
+    }
+    if (name == "max_length" && n > toNum(cdef["maximum"])) {
+      push(payload["issues"], sizeIssue(true, origin, toNum(cdef["maximum"]), true, false, value, ""));
+    }
+    if (name == "length_equals" && n != toNum(cdef["length"])) {
+      if (n < toNum(cdef["length"])) push(payload["issues"], sizeIssue(false, origin, toNum(cdef["length"]), true, true, value, ""));
+      else push(payload["issues"], sizeIssue(true, origin, toNum(cdef["length"]), true, true, value, ""));
+    }
+    return;
+  }
+  if (name == "min_size" || name == "max_size" || name == "size_equals") {
+    float n = 0.0;
+    if (isArr(value)) n = toNum(value["length"]);
+    else if (isObj(value) && !isUndef(value["size"])) n = toNum(value["size"]);
+    else return;
+    string origin = "set";
+    if (isArr(value)) origin = "array";
+    if (isInstance(gMap(), value)) origin = "map";
+    JsValue File = gGlobal()["File"];
+    if (!isUndef(File) && isInstance(File, value)) origin = "file";
+    if (name == "min_size" && n < toNum(cdef["minimum"])) {
+      failSize(payload, false, origin, cdef["minimum"], true, false, value);
+    }
+    if (name == "max_size" && n > toNum(cdef["maximum"])) {
+      failSize(payload, true, origin, cdef["maximum"], true, false, value);
+    }
+    if (name == "size_equals" && n != toNum(cdef["size"])) {
+      if (n < toNum(cdef["size"])) failSize(payload, false, origin, cdef["size"], true, true, value);
+      else failSize(payload, true, origin, cdef["size"], true, true, value);
+    }
+    return;
+  }
+  if (name == "greater_than" || name == "less_than") {
+    if (!isNum(value) && !isDate(value) && !isBig(value)) return;
+    JsValue bound = cdef["value"];
+    bool inclusive = !JS.strictEqual(cdef["inclusive"], false);
+    string origin = "number";
+    if (isDate(value)) origin = "date";
+    if (isBig(value)) origin = "bigint";
+    if (!isUndef(cdef["origin"])) origin = toStr(cdef["origin"]);
+    if (name == "greater_than") {
+      bool ok = JS.greaterThan(value, bound);
+      if (inclusive) ok = JS.greaterThanOrEqual(value, bound);
+      if (ok) return;
+      failSize(payload, false, origin, bound, inclusive, false, value);
+    } else {
+      bool ok = JS.lessThan(value, bound);
+      if (inclusive) ok = JS.lessThanOrEqual(value, bound);
+      if (ok) return;
+      failSize(payload, true, origin, bound, inclusive, false, value);
+    }
+    return;
+  }
+  if (name == "multiple_of") {
+    if (isBig(value)) {
+      if (!JS.strictEqual(JS.mod(value, cdef["value"]), toBigInt(0))) {
+        push(payload["issues"], JS.object("code", "not_multiple_of", "divisor", cdef["value"], "path", newArray()));
+      }
+      return;
+    }
+    if (!isNum(value)) return;
+    float n = toNum(value);
+    float step = toNum(cdef["value"]);
+    if (floatSafeRemainder(n, step) != 0.0) {
+      push(payload["issues"], JS.object("origin", "number", "code", "not_multiple_of", "divisor", cdef["value"], "input", value));
+    }
+    return;
+  }
+  if (name == "number_format") {
+    string fmt = toStr(cdef["format"]);
+    if (fmt == "safeint" && !isSafeInteger(value)) {
+      if (toNum(value) > 0.0) push(payload["issues"], sizeIssue(true, "number", 9007199254740991.0, true, false, value, ""));
+      else push(payload["issues"], sizeIssue(false, "number", -9007199254740991.0, true, false, value, ""));
+    }
+    if (fmt == "int32" || fmt == "safeint" || fmt == "int") {
+      if (!isInteger(value)) push(payload["issues"], typeIssue("int", value));
+    }
+    if (fmt == "finite" && !isFiniteNum(value)) push(payload["issues"], typeIssue("number", value));
+    return;
+  }
+  if (name == "includes") {
+    if (!isStr(value)) return;
+    string s = toStr(value);
+    string needle = toStr(cdef["includes"]);
+    bool ok = s.includes(needle);
+    if (isNum(cdef["position"])) ok = s.slice(JS.number(cdef["position"]).toInt()).includes(needle);
+    if (ok) return;
+    failFormat(payload, "includes", JS.object("includes", cdef["includes"]));
+    return;
+  }
+  if (name == "starts_with") {
+    if (!isStr(value)) return;
+    if (toStr(value).startsWith(toStr(cdef["prefix"]))) return;
+    failFormat(payload, "starts_with", JS.object("prefix", cdef["prefix"]));
+    return;
+  }
+  if (name == "ends_with") {
+    if (!isStr(value)) return;
+    if (toStr(value).endsWith(toStr(cdef["suffix"]))) return;
+    failFormat(payload, "ends_with", JS.object("suffix", cdef["suffix"]));
+    return;
+  }
+  if (name == "string_format" || name == "lowercase" || name == "uppercase") {
+    if (!isStr(value)) return;
+    string s = toStr(value);
+    string format = name;
+    if (name == "string_format") format = toStr(cdef["format"]);
+    if (format == "lowercase" && s != s.toLowerCase()) {
+      failFormat(payload, "lowercase", undef());
+      return;
+    }
+    if (format == "uppercase" && s != s.toUpperCase()) {
+      failFormat(payload, "uppercase", undef());
+      return;
+    }
+    if (format == "url") {
+      runUrlFormat(cdef, payload, value);
+      return;
+    }
+    if (format == "credit_card") {
+      if (isValidCreditCard(s)) return;
+      failFormat(payload, "credit_card", undef());
+      return;
+    }
+    if (format == "jwt") {
+      if (isValidJwt(s, cdef["alg"])) return;
+      JsValue jwtIss = JS.object("code", "invalid_format", "format", "jwt", "input", value);
+      if (!isUndef(cdef["alg"]) && !JS.isNullish(cdef["alg"])) jwtIss["algorithm"] = cdef["alg"];
+      push(payload["issues"], jwtIss);
+      return;
+    }
+    if (format == "base64") {
+      if (isValidBase64(s)) return;
+      failFormat(payload, "base64", undef());
+      return;
+    }
+    if (format == "base64url") {
+      if (isValidBase64Url(s)) return;
+      failFormat(payload, "base64url", undef());
+      return;
+    }
+    if (format == "ipv6") {
+      if (isValidIPv6(s)) return;
+      failFormat(payload, "ipv6", undef());
+      return;
+    }
+    if (format == "cidrv6") {
+      if (!isValidCIDRv6(s)) failFormat(payload, "cidrv6", undef());
+      return;
+    }
+    if (isFn(cdef["fn"])) {
+      JsValue ok = call1(cdef["fn"], undef(), value);
+      if (isPromise(ok)) {
+        payload["$pending"] = invoke1(ok, "then", JS.method1((JsValue _s, JsValue next) => {
+          if (!next.truthy()) {
+            push(payload["issues"], JS.object("code", "invalid_format", "format", format, "input", value, "continue", !cdef["abort"].truthy()));
+          }
+          return payload;
+        }));
+        return;
+      }
+      if (ok.truthy()) return;
+      push(payload["issues"], JS.object("code", "invalid_format", "format", format, "input", value, "continue", !cdef["abort"].truthy()));
+      return;
+    }
+    if (!isUndef(cdef["pattern"])) {
+      cdef["pattern"]["lastIndex"] = 0;
+      if (regexTest(cdef["pattern"], s)) return;
+      JsValue extra = JS.object();
+      extra["pattern"] = invoke0(cdef["pattern"], "toString");
+      failFormat(payload, format, extra);
+    }
+    return;
+  }
+  if (name == "mime_type") {
+    JsValue list = cdef["mime"];
+    if (!isArr(list)) return;
+    string typ = toStr(value["type"]);
+    int mi = 0;
+    int mn = JS.number(list["length"]).toInt();
+    while (mi < mn) {
+      if (toStr(list[mi]) == typ) return;
+      mi = mi + 1;
+    }
+    failValue(payload, list, value["type"]);
+    return;
+  }
+  if (name == "property") {
+    Schema? propSch = trySchema(cdef["schema"]);
+    if (propSch != null) {
+      JsValue inner = parseOpt(propSch, value[cdef["property"]], ctx);
+      JsValue iss = inner["issues"];
+      int pi = 0;
+      int pn = JS.number(iss["length"]).toInt();
+      while (pi < pn) {
+        prefixPath(iss[pi], cdef["property"]);
+        push(payload["issues"], iss[pi]);
+        pi = pi + 1;
+      }
+    }
+    return;
+  }
+  if (name == "overwrite") {
+    if (isFn(cdef["transform"])) payload["value"] = call1(cdef["transform"], undef(), value);
+    return;
+  }
+  if (name == "custom") {
+    JsValue bag = undef();
+    if (isObj(ch["_zod"])) bag = ch["_zod"]["bag"];
+    if (isObj(bag) && !isUndef(bag["Class"])) {
+      if (isInstance(bag["Class"], value)) return;
+      push(payload["issues"], typeIssue(toStr(bag["Class"]["name"]), value));
+      return;
+    }
+    if (!isFn(cdef["fn"])) return;
+    JsValue issues = payload["issues"];
+    JsValue refCtx = JS.object("value", value, "issues", issues);
+    refCtx["addIssue"] = JS.method1((JsValue _s, JsValue issue) => {
+      JsValue next = issue;
+      if (isStr(issue)) next = JS.object("message", issue, "code", "custom", "input", value, "inst", ch);
+      else {
+        if (next["fatal"].truthy()) next["continue"] = false;
+        if (isUndef(next["code"])) next["code"] = "custom";
+        if (!inOp("input", next)) next["input"] = value;
+        if (isUndef(next["inst"])) next["inst"] = ch;
+        if (isUndef(next["continue"])) next["continue"] = !cdef["abort"].truthy();
+      }
+      push(issues, next);
+      return undef();
+    });
+    int before = JS.number(issues["length"]).toInt();
+    JsValue ok = call2(cdef["fn"], undef(), value, refCtx);
+    if (isPromise(ok)) {
+      if (!isUndef(ctx) && JS.strictEqual(ctx["async"], false)) {
+        throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+      }
+      payload["$pending"] = invoke1(ok, "then", JS.method1((JsValue _x, JsValue result) => {
+        handleRefineResult(result, payload, value, ch, cdef, before);
+        return payload;
+      }));
+      return;
+    }
+    handleRefineResult(ok, payload, value, ch, cdef, before);
+    return;
+  }
+}
+
+JsValue takePending(JsValue payload) {
+  JsValue pending = payload["$pending"];
+  if (isPromise(pending)) {
+    deleteProp(payload, "$pending");
+    return pending;
+  }
+  return undef();
+}
+
+bool payloadAborted(JsValue payload) {
+  if (payload["aborted"].truthy()) return true;
+  JsValue issues = payload["issues"];
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    if (!JS.strictEqual(issues[i]["continue"], true)) return true;
+    i = i + 1;
+  }
+  return false;
+}
+
+bool payloadExplicitAbort(JsValue payload) {
+  if (payload["aborted"].truthy()) return true;
+  JsValue issues = payload["issues"];
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    if (JS.strictEqual(issues[i]["continue"], false)) return true;
+    i = i + 1;
+  }
+  return false;
+}
+
+void attachOwningSchema(JsValue payload, int start, JsValue inst) {
+  JsValue issues = payload["issues"];
+  int i = start;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    if (isUndef(issues[i]["schema"])) issues[i]["schema"] = inst;
+    i = i + 1;
+  }
+}
+
+void stampContinue(JsValue payload, int start, JsValue cdef) {
+  bool cont = !cdef["abort"].truthy();
+  JsValue issues = payload["issues"];
+  int i = start;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    issues[i]["continue"] = cont;
+    i = i + 1;
+  }
+}
+
+void afterCheck(JsValue payload, int start, JsValue ch, JsValue owner) {
+  stampMissingInst(payload, start, ch);
+  attachOwningSchema(payload, start, owner);
+}
+
+JsValue runAttachedChecks(Schema schema, JsValue payload, JsValue ctx, int i) {
+  JsValue checks = schema.def["checks"];
+  if (isUndef(checks) || !isArr(checks)) return payload;
+  int n = JS.number(checks["length"]).toInt();
+  while (i < n) {
+    JsValue ch = checks[i];
+    JsValue cdef = checkDef(ch);
+    if (isFn(cdef["when"])) {
+      if (payloadExplicitAbort(payload)) {
+        i = i + 1;
+        continue;
+      }
+      if (!call1(cdef["when"], undef(), payload).truthy()) {
+        i = i + 1;
+        continue;
+      }
+    } else if (payloadAborted(payload)) {
+      i = i + 1;
+      continue;
+    }
+    int before = JS.number(payload["issues"]["length"]).toInt();
+    runOfficialCheck(ch, payload, ctx);
+    i = i + 1;
+    JsValue pending = takePending(payload);
+    if (isPromise(pending)) {
+      int next = i;
+      return invoke1(pending, "then", JS.method1((JsValue _s, JsValue _p) => {
+        afterCheck(payload, before, ch, schema.handle);
+        return runAttachedChecks(schema, payload, ctx, next);
+      }));
+    }
+    afterCheck(payload, before, ch, schema.handle);
+  }
+  return payload;
+}
+
+JsValue runChecks(Schema schema, JsValue payload, JsValue ctx) {
+  if (payload["memo"].truthy()) return payload;
+  stampMissingInst(payload, 0, schema.handle);
+    if (isStr(schema.def["check"])) {
+    int before = JS.number(payload["issues"]["length"]).toInt();
+    runOfficialCheck(schema.handle, payload, ctx);
+    stampMissingInst(payload, before, schema.handle);
+    stampContinue(payload, before, schema.def);
+    JsValue pending = takePending(payload);
+    if (isPromise(pending)) {
+      return invoke1(pending, "then", JS.method1((JsValue _s, JsValue _p) => {
+        return runAttachedChecks(schema, payload, ctx, 0);
+      }));
+    }
+    if (schema.def["abort"].truthy()) {
+      if (JS.number(payload["issues"]["length"]).toInt() > before) return payload;
+    }
+  }
+  return runAttachedChecks(schema, payload, ctx, 0);
+}
+
+JsValue finishPayload(Schema schema, JsValue payload, JsValue ctx) {
+  return runChecks(schema, payload, ctx);
+}
+
+JsValue settleWaits(JsValue payload) {
+  JsValue list = payload["$waits"];
+  if (isUndef(list) || !isArr(list)) return payload;
+  deleteProp(payload, "$waits");
+  if (JS.number(list["length"]).toInt() == 0) return payload;
+  return invoke1(promiseAll(list), "then", JS.method1((JsValue _s, JsValue _v) => {
+    return payload;
+  }));
+}
+
+void queueWait(JsValue payload, JsValue inner, JsValue apply) {
+  if (isPromise(inner)) {
+    JsValue list = payload["$waits"];
+    if (isUndef(list) || !isArr(list)) {
+      list = newArray();
+      payload["$waits"] = list;
+    }
+    push(list, invoke1(inner, "then", apply));
+  } else {
+    call1(apply, undef(), inner);
+  }
+}
+
+JsValue finishAfterParse(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue pending = takePending(payload);
+  if (isPromise(pending)) {
+    return invoke1(pending, "then", JS.method1((JsValue _s, JsValue _p) => {
+      return finishAfterParse(schema, payload, ctx);
+    }));
+  }
+  JsValue waited = settleWaits(payload);
+  if (isPromise(waited)) {
+    return invoke1(waited, "then", JS.method1((JsValue _s, JsValue next) => {
+      schema.memoLeave(next);
+      return finishPayload(schema, next, ctx);
+    }));
+  }
+  schema.memoLeave(payload);
+  return finishPayload(schema, payload, ctx);
+}
+
+bool schemaHasChecks(Schema schema) {
+  if (isStr(schema.def["check"])) return true;
+  JsValue checks = schema.def["checks"];
+  if (isArr(checks) && JS.number(checks["length"]).toInt() > 0) return true;
+  return false;
+}
+
+JsValue parseOnly(Schema schema, JsValue payload, JsValue ctx) {
+  if (schema.kind == KPipe || schema.kind == KTransform) return parsePipe(schema, payload, ctx);
+  parseKind(schema, payload, ctx);
+  JsValue pending = takePending(payload);
+  if (isPromise(pending)) {
+    return invoke1(pending, "then", JS.method1((JsValue _s, JsValue _p) => {
+      return settleWaits(payload);
+    }));
+  }
+  return settleWaits(payload);
+}
+
+JsValue handleCanaryResult(Schema schema, JsValue canary, JsValue payload, JsValue ctx) {
+  if (payloadAborted(canary)) {
+    canary["aborted"] = true;
+    return canary;
+  }
+  JsValue checked = runChecks(schema, payload, ctx);
+  if (isPromise(checked)) {
+    if (!isUndef(ctx) && JS.strictEqual(ctx["async"], false)) {
+      throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+    }
+    return invoke1(checked, "then", JS.method1((JsValue _s, JsValue next) => {
+      return parseOnly(schema, next, ctx);
+    }));
+  }
+  return parseOnly(schema, checked, ctx);
+}
+
+JsValue runOnPayload(Schema schema, JsValue payload, JsValue ctx) {
+  Schema s = unwrapLazy(schema);
+  if (s.isContainer()) {
+    JsValue hit = s.memoEnter(payload, ctx);
+    if (!isUndef(hit)) return finishPayload(s, hit, ctx);
+  }
+  if (s.kind == KPromise) {
+    if (isUndef(ctx) || JS.strictEqual(ctx["async"], false)) {
+      throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+    }
+    return invoke1(promiseResolve(payload["value"]), "then", JS.method1((JsValue _x, JsValue inner) => {
+      payload["value"] = inner;
+      Schema? inn = childOf(s, "innerType");
+      if (inn != null) return runOnPayload(inn, payload, ctx);
+      return payload;
+    }));
+  }
+  if (!isUndef(ctx) && isObj(ctx) && ctx["skipChecks"].truthy()) {
+    return parseOnly(s, payload, ctx);
+  }
+  if (isBackward(ctx) && schemaHasChecks(s)) {
+    JsValue canaryCtx = objectAssign(JS.object(), ctx);
+    canaryCtx["skipChecks"] = true;
+    JsValue canary = parseOnly(s, JS.object("value", payload["value"], "issues", newArray()), canaryCtx);
+    if (isPromise(canary)) {
+      if (!isUndef(ctx) && JS.strictEqual(ctx["async"], false)) {
+        throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+      }
+      return invoke1(canary, "then", JS.method1((JsValue _s, JsValue next) => {
+        return handleCanaryResult(s, next, payload, ctx);
+      }));
+    }
+    return handleCanaryResult(s, canary, payload, ctx);
+  }
+  if (s.kind == KPipe || s.kind == KTransform) {
+    JsValue ran = parsePipe(s, payload, ctx);
+    if (isPromise(ran)) {
+      return invoke1(ran, "then", JS.method1((JsValue _s, JsValue next) => {
+        return finishAfterParse(s, next, ctx);
+      }));
+    }
+    return finishAfterParse(s, payload, ctx);
+  }
+  parseKind(s, payload, ctx);
+  return finishAfterParse(s, payload, ctx);
+}
+
+JsValue parsePayload(Schema schema, JsValue value, JsValue ctx) {
+  return runOnPayload(schema, JS.object("value", value, "issues", newArray()), ctx);
+}
+
+JsValue parseOpt(Schema? schema, JsValue value, JsValue ctx) {
+  if (schema != null) {
+    return parsePayload(schema, value, ctx);
+  }
+  return JS.object("value", value, "issues", newArray());
+}
+
+export JsValue handleOf(Schema? schema, JsValue fallback) {
+  if (schema != null) {
+    return schema.handle;
+  }
+  return fallback;
+}
+
+void failType(JsValue payload, string expected, JsValue value) {
+  push(payload["issues"], typeIssue(expected, value));
+}
+
+void failValue(JsValue payload, JsValue values, JsValue value) {
+  push(payload["issues"], valueIssue(values, value));
+}
+
+bool isPlainNumber(JsValue value) {
+  if (!isNum(value)) return false;
+  if (isNaNNum(value)) return false;
+  if (!isFiniteNum(value)) return false;
+  return true;
+}
+
+bool isNanValue(JsValue value) {
+  if (!isNum(value)) return false;
+  return isNaNNum(value);
+}
+
+bool isNullValue(JsValue value) {
+  if (isUndef(value)) return false;
+  return JS.isNullish(value);
+}
+
+bool isVoidValue(JsValue value) {
+  return isUndef(value);
+}
+
+bool isValidDate(JsValue value) {
+  if (!isDate(value)) return false;
+  if (isNaNNum(invoke0(value, "getTime"))) return false;
+  return true;
+}
+
+void resolveOptionalFailure(JsValue payload) {
+  if (JS.number(payload["issues"]["length"]).toInt() == 0) return;
+  payload["issues"]["length"] = 0;
+  payload["value"] = undef();
+  payload["aborted"] = false;
+}
+
+void applyCatchResult(JsValue payload, Schema s, JsValue ctx) {
+  if (JS.number(payload["issues"]["length"]).toInt() == 0) return;
+  JsValue fallback = s.def["catchValue"];
+  if (isUndef(fallback)) fallback = s.def["defaultValue"];
+  if (isFn(fallback)) {
+    JsValue finalized = newArray();
+    JsValue issues = payload["issues"];
+    int i = 0;
+    int n = JS.number(issues["length"]).toInt();
+    while (i < n) {
+      push(finalized, finalizeIssue(issues[i], s, ctx));
+      i = i + 1;
+    }
+    fallback = call1(fallback, undef(), JS.object(
+      "value", payload["value"],
+      "issues", payload["issues"],
+      "error", JS.object("issues", finalized),
+      "input", payload["value"]
+    ));
+  }
+  payload["value"] = fallback;
+  payload["issues"]["length"] = 0;
+  payload["aborted"] = false;
+}
+
+void handleNonOptionalResult(JsValue payload) {
+  if (JS.number(payload["issues"]["length"]).toInt() == 0 && isUndef(payload["value"])) {
+    push(payload["issues"], JS.object("code", "invalid_type", "expected", "nonoptional", "input", payload["value"]));
+  }
+}
+
+void queueInner(JsValue payload, JsValue inner) {
+  if (isPromise(inner)) payload["$pending"] = inner;
+}
+
+void parseKind(Schema schema, JsValue payload, JsValue ctx) {
+  Schema s = unwrapLazy(schema);
+  JsValue value = payload["value"];
+  int kind = s.kind;
+  if (kind == KAny || kind == KUnknown) return;
+  if (kind == KString) {
+    if (s.def["coerce"].truthy()) {
+      try {
+        payload["value"] = toStringValue(value);
+        value = payload["value"];
+      } catch (auto _e) {}
+    }
+    if (isStr(value)) return;
+    failType(payload, "string", value);
+    return;
+  }
+  if (kind == KNumber) {
+    if (s.def["coerce"].truthy()) {
+      try {
+        payload["value"] = toNumber(value);
+        value = payload["value"];
+      } catch (auto _e) {}
+    }
+    if (isPlainNumber(value)) return;
+    failType(payload, "number", value);
+    return;
+  }
+  if (kind == KBoolean) {
+    if (s.def["coerce"].truthy()) payload["value"] = toBoolean(value);
+    value = payload["value"];
+    if (isBool(value)) return;
+    failType(payload, "boolean", value);
+    return;
+  }
+  if (kind == KBigint) {
+    if (s.def["coerce"].truthy()) {
+      try {
+        payload["value"] = toBigInt(value);
+      } catch (auto _e) {
+        failType(payload, "bigint", value);
+        return;
+      }
+      value = payload["value"];
+    }
+    if (typeOf(value) == "bigint") return;
+    failType(payload, "bigint", value);
+    return;
+  }
+  if (kind == KSymbol) {
+    if (isSym(value)) return;
+    failType(payload, "symbol", value);
+    return;
+  }
+  if (kind == KDate) {
+    if (s.def["coerce"].truthy()) {
+      try {
+        payload["value"] = construct1(gDate(), value);
+        value = payload["value"];
+      } catch (auto _e) {}
+    }
+    if (isValidDate(value)) return;
+    failType(payload, "date", value);
+    return;
+  }
+  if (kind == KNan) {
+    if (isNanValue(value)) return;
+    failType(payload, "nan", value);
+    return;
+  }
+  if (kind == KUndefined) {
+    if (isUndef(value)) return;
+    failType(payload, "undefined", value);
+    return;
+  }
+  if (kind == KVoid) {
+    if (isVoidValue(value)) return;
+    failType(payload, "void", value);
+    return;
+  }
+  if (kind == KNull) {
+    if (isNullValue(value)) return;
+    failType(payload, "null", value);
+    return;
+  }
+  if (kind == KNever) {
+    failType(payload, "never", value);
+    return;
+  }
+  if (kind == KLiteral) {
+    if (!isUndef(s.values) && setHas(s.values, value).truthy()) return;
+    failValue(payload, invoke1(gArray(), "from", s.values), value);
+    return;
+  }
+  if (kind == KEnum) {
+    if (!isUndef(s.values) && setHas(s.values, value).truthy()) return;
+    failValue(payload, invoke1(gArray(), "from", s.values), value);
+    return;
+  }
+  if (kind == KOptional) {
+    Schema? maybeInner = childOf(s, "innerType");
+    if (s.def["exact"].truthy()) {
+      if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+      return;
+    }
+    if (isUndef(value)) {
+      if (maybeInner != null) {
+        Schema innerSchema = maybeInner;
+        if (innerSchema.optin == 2) {
+          JsValue inner = runOnPayload(innerSchema, payload, ctx);
+          if (isPromise(inner)) {
+            payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+              resolveOptionalFailure(next);
+              return next;
+            }));
+          } else {
+            resolveOptionalFailure(payload);
+          }
+        }
+      }
+      return;
+    }
+    if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+    return;
+  }
+  if (kind == KNullable) {
+    if (JS.isNullish(value) && !isUndef(value)) {
+      payload["value"] = value;
+      return;
+    }
+    Schema? maybeInner = childOf(s, "innerType");
+    if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+    return;
+  }
+  if (kind == KDefault || kind == KPrefault) {
+    Schema? maybeInner = childOf(s, "innerType");
+    if (isBackward(ctx)) {
+      if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+      return;
+    }
+    if (isUndef(value)) {
+      payload["value"] = resolveDefault(s);
+      if (kind == KPrefault && maybeInner != null) {
+        queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+      }
+      return;
+    }
+    if (maybeInner != null) {
+      JsValue inner = runOnPayload(maybeInner, payload, ctx);
+      if (isPromise(inner)) {
+        int isDef = 0;
+        if (kind == KDefault) isDef = 1;
+        payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+          if (isDef == 1 && isUndef(next["value"])) next["value"] = resolveDefault(s);
+          return next;
+        }));
+        return;
+      }
+    }
+    if (kind == KDefault && isUndef(payload["value"])) {
+      payload["value"] = resolveDefault(s);
+    }
+    return;
+  }
+  if (kind == KCatch) {
+    Schema? maybeInner = childOf(s, "innerType");
+    if (isBackward(ctx)) {
+      if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+      return;
+    }
+    if (maybeInner != null) {
+      JsValue inner = runOnPayload(maybeInner, payload, ctx);
+      if (isPromise(inner)) {
+        payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+          applyCatchResult(next, s, ctx);
+          return next;
+        }));
+        return;
+      }
+      applyCatchResult(payload, s, ctx);
+    }
+    return;
+  }
+  if (kind == KNonoptional) {
+    Schema? maybeInner = childOf(s, "innerType");
+    if (maybeInner != null) {
+      JsValue inner = runOnPayload(maybeInner, payload, ctx);
+      if (isPromise(inner)) {
+        payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+          handleNonOptionalResult(next);
+          return next;
+        }));
+        return;
+      }
+    }
+    handleNonOptionalResult(payload);
+    return;
+  }
+  if (kind == KReadonly) {
+    if (!isBackward(ctx)) {
+      Schema? maybeInner = childOf(s, "innerType");
+      if (maybeInner != null) {
+        JsValue inner = runOnPayload(maybeInner, payload, ctx);
+        if (isPromise(inner)) {
+          payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+            if (!next["memo"].truthy()) next["value"] = JS.invoke(gObject(), "freeze", next["value"]);
+            return next;
+          }));
+        } else if (!payload["memo"].truthy()) {
+          payload["value"] = JS.invoke(gObject(), "freeze", payload["value"]);
+        }
+      }
+      return;
+    }
+    Schema? maybeInner = childOf(s, "innerType");
+    if (maybeInner != null) queueInner(payload, runOnPayload(maybeInner, payload, ctx));
+    return;
+  }
+  if (kind == KArray) parseArray(s, payload, ctx);
+  else if (kind == KTuple) parseTuple(s, payload, ctx);
+  else if (kind == KObject) parseObject(s, payload, ctx);
+  else if (kind == KRecord) parseRecord(s, payload, ctx);
+  else if (kind == KUnion || kind == KXor) parseUnion(s, payload, ctx);
+  else if (kind == KIntersection) parseIntersection(s, payload, ctx);
+  else if (kind == KMap) parseMap(s, payload, ctx);
+  else if (kind == KSet) parseSet(s, payload, ctx);
+  else if (kind == KFunction) parseFunction(s, payload, ctx);
+  else if (kind == KTemplateLiteral) {
+    if (!isStr(value)) {
+      failType(payload, "string", value);
+      return;
+    }
+    JsValue pat = s.handle["_zod"]["pattern"];
+    if (!isUndef(pat) && !JS.isNullish(pat)) {
+      pat["lastIndex"] = 0;
+      if (!regexTest(pat, toStr(value))) {
+        JsValue extra = JS.object("pattern", pat["source"]);
+        failFormat(payload, "template_literal", extra);
+      }
+    }
+  }
+  else if (kind == KCustom) {
+  } else if (kind == KSuccess) {
+    Schema? inner = childOf(s, "innerType");
+    if (inner != null) {
+      JsValue parsed = parseOpt(inner, value, ctx);
+      payload["value"] = JS.number(parsed["issues"]["length"]).toInt() == 0;
+    }
+  } else if (kind == KFile) {
+    JsValue File = gGlobal()["File"];
+    if (isUndef(File)) {
+      failType(payload, "file", value);
+    } else if (isInstance(File, value)) {
+    } else {
+      failType(payload, "file", value);
+    }
+  }
+}
+
+void copyIssues(JsValue from, JsValue into) {
+  int i = 0;
+  int n = JS.number(from["length"]).toInt();
+  while (i < n) {
+    push(into, from[i]);
+    i = i + 1;
+  }
+}
+
+void prefixAll(JsValue issues, JsValue into, JsValue part) {
+  int j = 0;
+  int jn = JS.number(issues["length"]).toInt();
+  while (j < jn) {
+    prefixPath(issues[j], part);
+    push(into, issues[j]);
+    j = j + 1;
+  }
+}
+
+void parseArray(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isArr(value)) {
+    push(payload["issues"], typeIssue("array", value));
+    return;
+  }
+  Schema? el = childOf(schema, "element");
+  JsValue out = schema.memoAlloc(payload, newArray());
+  int i = 0;
+  int n = JS.number(value["length"]).toInt();
+  while (i < n) {
+    if (el != null) {
+      JsValue idx = JS.number(0.0 + i);
+      JsValue inner = parseOpt(el, value[i], ctx);
+      queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+        schema.applyIndexedField(payload, out, idx, parsed);
+        return undef();
+      }));
+    } else {
+      push(out, value[i]);
+    }
+    i = i + 1;
+  }
+  payload["value"] = out;
+}
+
+int tupleOptStart(JsValue items, bool forIn) {
+  int i = JS.number(items["length"]).toInt() - 1;
+  while (i >= 0) {
+    Schema? item = trySchema(items[i]);
+    bool omittable = false;
+    if (item != null) {
+      Schema s = item;
+      if (forIn) {
+        if (s.optin != 0) omittable = true;
+      } else if (s.optout == 1) {
+        omittable = true;
+      }
+    }
+    if (!omittable) return i + 1;
+    i = i - 1;
+  }
+  return 0;
+}
+
+void parseTuple(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isArr(value)) {
+    push(payload["issues"], typeIssue("tuple", value));
+    return;
+  }
+  JsValue items = schema.def["items"];
+  if (!isArr(items)) items = newArray();
+  int n = JS.number(value["length"]).toInt();
+  int want = JS.number(items["length"]).toInt();
+  int optinStart = tupleOptStart(items, true);
+  int optoutStart = tupleOptStart(items, false);
+  Schema? rest = childOf(schema, "rest");
+  if (rest == null) {
+    if (n < optinStart) {
+      push(payload["issues"], schema.tupleBoundIssue(false, optinStart, value));
+      return;
+    }
+    if (n > want) push(payload["issues"], schema.tupleBoundIssue(true, want, value));
+  }
+  JsValue out = schema.memoAlloc(payload, newArray());
+  payload["value"] = out;
+  JsValue itemResults = newArray();
+  JsValue proms = newArray();
+  int i = 0;
+  while (i < want) {
+    push(itemResults, undef());
+    i = i + 1;
+  }
+  i = 0;
+  while (i < want) {
+    JsValue slot = JS.object("i", 0.0 + i);
+    JsValue inner = parseOpt(trySchema(items[i]), value[i], ctx);
+    if (isPromise(inner)) {
+      push(proms, invoke1(inner, "then", JS.method1((JsValue _s, JsValue parsed) => {
+        itemResults[slot["i"]] = parsed;
+        return undef();
+      })));
+    } else {
+      itemResults[i] = inner;
+    }
+    i = i + 1;
+  }
+  if (n > want && rest != null) {
+    while (i < n) {
+      JsValue slot = JS.object("i", 0.0 + i);
+      JsValue inner = parseOpt(rest, value[i], ctx);
+      if (isPromise(inner)) {
+        push(proms, invoke1(inner, "then", JS.method1((JsValue _s, JsValue parsed) => {
+          schema.applyIndexedField(payload, out, slot["i"], parsed);
+          return undef();
+        })));
+      } else {
+        schema.applyIndexedField(payload, out, slot["i"], inner);
+      }
+      i = i + 1;
+    }
+  }
+  if (JS.number(proms["length"]).toInt() > 0) {
+    payload["$pending"] = invoke1(promiseAll(proms), "then", JS.method1((JsValue _s, JsValue _v) => {
+      schema.finishTuple(payload, items, value, itemResults, optoutStart);
+      return payload;
+    }));
+    return;
+  }
+  schema.finishTuple(payload, items, value, itemResults, optoutStart);
+}
+
+void parseObject(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isObj(value) || isArr(value)) {
+    push(payload["issues"], typeIssue("object", value));
+    return;
+  }
+  JsValue draft = undef();
+  JsValue shape = schema.def["shape"];
+  if (isUndef(shape) || JS.isNullish(shape)) shape = JS.object();
+  JsValue shapeKeys = objectKeys(shape);
+  JsValue out = schema.memoAlloc(payload, JS.object());
+  int i = 0;
+  int kn = JS.number(shapeKeys["length"]).toInt();
+  while (i < kn) {
+    string key = toStr(shapeKeys[i]);
+    if (key == "__proto__") {
+      i = i + 1;
+      continue;
+    }
+    Schema? maybeField = trySchema(getProp(shape, key));
+    if (maybeField != null) {
+      Schema field = maybeField;
+      bool present = inOp(key, value);
+      JsValue fieldVal = undef();
+      if (present) fieldVal = value[key];
+      JsValue inner = parsePayload(field, fieldVal, ctx);
+      string k = key;
+      bool present2 = present;
+      int optin = field.internOptin();
+      int optout = field.internOptout();
+      queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+        schema.applyObjField(payload, out, k, present2, optin, optout, parsed);
+        return undef();
+      }));
+    }
+    i = i + 1;
+  }
+  JsValue catchall = schema.def["catchall"];
+  if (!isUndef(catchall) && !JS.isNullish(catchall)) {
+    Schema? extra = trySchema(catchall);
+    JsValue extraKeys = newArray();
+    JsValue keys = objectKeys(value);
+    int k = 0;
+    int vn = JS.number(keys["length"]).toInt();
+    while (k < vn) {
+      string key = toStr(keys[k]);
+      bool known = hasOwn(shape, key);
+      if (!known) {
+        if (key == "__proto__") {
+          if (extra != null) {
+            Schema extraSchema = extra;
+            if (extraSchema.kind == KNever) push(extraKeys, key);
+          }
+        } else if (extra != null) {
+          Schema extraSchema = extra;
+          if (extraSchema.kind == KNever) push(extraKeys, key);
+          else {
+            JsValue inner = parsePayload(extraSchema, value[key], ctx);
+            if (JS.number(inner["issues"]["length"]).toInt() > 0) prefixAll(inner["issues"], payload["issues"], key);
+            else out[key] = inner["value"];
+          }
+        } else {
+          out[key] = value[key];
+        }
+      }
+      k = k + 1;
+    }
+    if (JS.number(extraKeys["length"]).toInt() > 0) {
+      push(payload["issues"], JS.object("code", "unrecognized_keys", "keys", extraKeys, "input", value, "path", newArray(), "continue", true));
+    }
+  }
+  payload["value"] = out;
+}
+
+bool isPlainObject(JsValue value) {
+  if (!isObj(value) || isArr(value)) return false;
+  JsValue proto = getPrototypeOf(value);
+  if (JS.isNullish(proto)) return true;
+  return JS.strictEqual(proto, gObject()["prototype"]);
+}
+
+bool looksNumericKey(JsValue key) {
+  if (!isStr(key)) return false;
+  JsValue n = toNumber(key);
+  if (!isNum(n) || !isFiniteNum(n)) return false;
+  return toStr(n) == toStr(key);
+}
+
+void writeRecordValue(JsValue payload, JsValue out, JsValue key, JsValue inner) {
+  if (JS.number(inner["issues"]["length"]).toInt() > 0) prefixAll(inner["issues"], payload["issues"], key);
+  assignProp(out, key, inner["value"]);
+}
+
+void parseRecord(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isPlainObject(value)) {
+    failType(payload, "record", value);
+    return;
+  }
+  JsValue out = schema.memoAlloc(payload, JS.object());
+  payload["value"] = out;
+  bool loose = false;
+  if (isStr(schema.def["mode"]) && toStr(schema.def["mode"]) == "loose") loose = true;
+  bool partial = schema.def["partial"].truthy();
+  Schema? keySchema = childOf(schema, "keyType");
+  Schema? valSchema = childOf(schema, "valueType");
+  JsValue keyValues = undef();
+  if (keySchema != null) {
+    Schema keys = keySchema;
+    if (!isUndef(keys.values)) keyValues = invoke1(gArray(), "from", keys.values);
+  }
+  if (!isUndef(keyValues) && isArr(keyValues) && !partial) {
+    JsValue expected = keyValues;
+    JsValue recordKeys = newSet();
+    int e = 0;
+    int en = JS.number(expected["length"]).toInt();
+    while (e < en) {
+      JsValue key = expected[e];
+      string kt = typeOf(key);
+      if (kt != "string") {
+        if (kt != "number") {
+          if (kt != "symbol") {
+            e = e + 1;
+            continue;
+          }
+        }
+      }
+      if (isNum(key)) key = toStr(key);
+      setAdd(recordKeys, key);
+      if (isStr(key) && toStr(key) == "__proto__") {
+        e = e + 1;
+        continue;
+      }
+      JsValue keyR = parseOpt(keySchema, expected[e], ctx);
+      if (isPromise(keyR)) {
+        e = e + 1;
+        continue;
+      }
+      if (JS.number(keyR["issues"]["length"]).toInt() > 0) {
+        JsValue finalized = newArray();
+        int fi = 0;
+        int fn = JS.number(keyR["issues"]["length"]).toInt();
+        while (fi < fn) {
+          push(finalized, finalizeIssue(keyR["issues"][fi], keySchema, ctx));
+          fi = fi + 1;
+        }
+        JsValue path = newArray();
+        push(path, expected[e]);
+        push(payload["issues"], JS.object("code", "invalid_key", "origin", "record", "issues", finalized, "input", expected[e], "path", path));
+        e = e + 1;
+        continue;
+      }
+      JsValue outKey = keyR["value"];
+      if (isStr(outKey) && toStr(outKey) == "__proto__") {
+        e = e + 1;
+        continue;
+      }
+      JsValue inner = parseOpt(valSchema, getProp(value, expected[e]), ctx);
+      queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+        writeRecordValue(payload, out, outKey, parsed);
+        return undef();
+      }));
+      e = e + 1;
+    }
+    JsValue extraKeys = newArray();
+    JsValue keys = objectKeys(value);
+    int i = 0;
+    int n = JS.number(keys["length"]).toInt();
+    while (i < n) {
+      JsValue key = keys[i];
+      if (!setHas(recordKeys, key).truthy()) {
+        if (loose) {
+          if (toStr(key) != "__proto__") out[key] = value[key];
+        } else {
+          push(extraKeys, key);
+        }
+      }
+      i = i + 1;
+    }
+    if (JS.number(extraKeys["length"]).toInt() > 0) {
+      push(payload["issues"], JS.object("code", "unrecognized_keys", "keys", extraKeys, "input", value, "continue", true));
+    }
+    return;
+  }
+  JsValue extraKeys = newArray();
+  JsValue keys = ownKeys(value);
+  int i = 0;
+  int n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    JsValue key = keys[i];
+    if (isStr(key) && toStr(key) == "__proto__") {
+      i = i + 1;
+      continue;
+    }
+    if (!propertyIsEnumerable(value, key)) {
+      i = i + 1;
+      continue;
+    }
+    JsValue keyR = parseOpt(keySchema, key, ctx);
+    if (!isPromise(keyR) && JS.number(keyR["issues"]["length"]).toInt() > 0 && looksNumericKey(key)) {
+      JsValue retry = parseOpt(keySchema, toNumber(key), ctx);
+      if (!isPromise(retry) && JS.number(retry["issues"]["length"]).toInt() == 0) keyR = retry;
+    }
+    if (isPromise(keyR) || JS.number(keyR["issues"]["length"]).toInt() > 0) {
+      if (loose) out[key] = value[key];
+      else if (!isUndef(keyValues)) {
+        push(extraKeys, key);
+      } else {
+        JsValue finalized = newArray();
+        if (!isPromise(keyR)) {
+          int fi = 0;
+          int fn = JS.number(keyR["issues"]["length"]).toInt();
+          while (fi < fn) {
+            push(finalized, finalizeIssue(keyR["issues"][fi], keySchema, ctx));
+            fi = fi + 1;
+          }
+        }
+        JsValue path = newArray();
+        push(path, key);
+        push(payload["issues"], JS.object("code", "invalid_key", "origin", "record", "issues", finalized, "input", key, "path", path));
+      }
+      i = i + 1;
+      continue;
+    }
+    JsValue outKey = keyR["value"];
+    if (isStr(outKey) && toStr(outKey) == "__proto__") {
+      i = i + 1;
+      continue;
+    }
+    JsValue inner = parseOpt(valSchema, value[key], ctx);
+    queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+      writeRecordValue(payload, out, outKey, parsed);
+      return undef();
+    }));
+    i = i + 1;
+  }
+  if (JS.number(extraKeys["length"]).toInt() > 0) {
+    push(payload["issues"], JS.object("code", "unrecognized_keys", "keys", extraKeys, "input", value, "continue", true));
+  }
+}
+
+JsValue finalizeIssueList(JsValue issues, Schema schema, JsValue ctx) {
+  JsValue out = newArray();
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    push(out, finalizeIssue(issues[i], schema, ctx));
+    i = i + 1;
+  }
+  return out;
+}
+
+JsValue finalizeRawIssues(JsValue issues, JsValue ctx) {
+  JsValue out = newArray();
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    push(out, finalizeIssue(issues[i], null, ctx));
+    i = i + 1;
+  }
+  return out;
+}
+
+export JsValue propValuesOf(JsValue inst) {
+  if (JS.isNullish(inst) || !isObj(inst) || isUndef(inst["_zod"])) return undef();
+  JsValue intern = inst["_zod"];
+  if (!isUndef(intern["bag"]["propValues"])) return intern["bag"]["propValues"];
+  Schema s = schemaOf(inst);
+  if (s.kind == KObject) {
+    JsValue pv = JS.object();
+    JsValue shape = s.def["shape"];
+    if (isObj(shape)) {
+      JsValue keys = objectKeys(shape);
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        JsValue key = keys[i];
+        Schema? field = trySchema(shape[key]);
+        if (field != null) {
+          Schema f = field;
+          if (!isUndef(f.values)) {
+            JsValue set = newSet();
+            JsValue list = invoke1(gArray(), "from", f.values);
+            int t = 0;
+            int tn = JS.number(list["length"]).toInt();
+            while (t < tn) {
+              setAdd(set, list[t]);
+              t = t + 1;
+            }
+            if (f.optin != 0) setAdd(set, undef());
+            assignProp(pv, key, set);
+          }
+        }
+        i = i + 1;
+      }
+    }
+    intern["bag"]["propValues"] = pv;
+    return pv;
+  }
+  if (s.kind == KPipe) return propValuesOf(s.def["in"]);
+  if (s.kind == KLazy) return propValuesOf(unwrapLazy(s).handle);
+  if (s.kind == KUnion || s.kind == KXor) {
+    JsValue pv = JS.object();
+    JsValue options = s.def["options"];
+    if (isArr(options)) {
+      int i = 0;
+      int n = JS.number(options["length"]).toInt();
+      while (i < n) {
+        JsValue child = propValuesOf(options[i]);
+        if (isUndef(child) || JS.isNullish(child) || JS.number(objectKeys(child)["length"]).toInt() == 0) {
+          throw newError("Invalid discriminated union option at index \"" + toStr(i) + "\"");
+        }
+        JsValue keys = objectKeys(child);
+        int k = 0;
+        int kn = JS.number(keys["length"]).toInt();
+        while (k < kn) {
+          JsValue key = keys[k];
+          if (!hasOwn(pv, key)) assignProp(pv, key, newSet());
+          JsValue src = child[key];
+          if (!isUndef(src) && !JS.isNullish(src)) {
+            JsValue list = invoke1(gArray(), "from", src);
+            int t = 0;
+            int tn = JS.number(list["length"]).toInt();
+            while (t < tn) {
+              setAdd(pv[key], list[t]);
+              t = t + 1;
+            }
+          }
+          k = k + 1;
+        }
+        i = i + 1;
+      }
+    }
+    intern["bag"]["propValues"] = pv;
+    return pv;
+  }
+  return undef();
+}
+
+JsValue discMapOf(Schema schema) {
+  JsValue intern = schema.handle["_zod"];
+  JsValue bag = intern["bag"];
+  if (!isUndef(bag["optionsMap"])) return bag["optionsMap"];
+  JsValue map = newMap();
+  string disc = toStr(schema.def["discriminator"]);
+  JsValue options = schema.def["options"];
+  int i = 0;
+  int n = JS.number(options["length"]).toInt();
+  while (i < n) {
+    JsValue pv = propValuesOf(options[i]);
+    JsValue values = undef();
+    if (isObj(pv) && hasOwn(pv, disc)) values = pv[disc];
+    if (isUndef(values)) {
+      throw newError("Invalid discriminated union option at index \"" + toStr(i) + "\"");
+    }
+    if (JS.isNullish(values)) {
+      throw newError("Invalid discriminated union option at index \"" + toStr(i) + "\"");
+    }
+    if (JS.number(values["size"]).toInt() == 0) {
+      throw newError("Invalid discriminated union option at index \"" + toStr(i) + "\"");
+    }
+    JsValue list = invoke1(gArray(), "from", values);
+    int t = 0;
+    int tn = JS.number(list["length"]).toInt();
+    while (t < tn) {
+      if (mapHas(map, list[t])) {
+        throw newError("Duplicate discriminator value \"" + toStr(list[t]) + "\"");
+      }
+      mapSet(map, list[t], options[i]);
+      t = t + 1;
+    }
+    i = i + 1;
+  }
+  bag["optionsMap"] = map;
+  return map;
+}
+
+export JsValue getDiscriminatedOption(JsValue union, JsValue value) {
+  Schema schema = schemaOf(union);
+  return mapGet(discMapOf(schema), value);
+}
+
+void parseUnion(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  JsValue options = schema.def["options"];
+  if (!isArr(options)) options = newArray();
+  string disc = "";
+  if (isStr(schema.def["discriminator"])) disc = toStr(schema.def["discriminator"]);
+  int n = JS.number(options["length"]).toInt();
+  if (disc.length > 0) {
+    if (!isObj(value) || isArr(value)) {
+      push(payload["issues"], typeIssue("object", value));
+      return;
+    }
+    JsValue map = discMapOf(schema);
+    JsValue opt = mapGet(map, value[disc]);
+    if (!isUndef(opt) && !JS.isNullish(opt)) {
+      JsValue inner = parsePayload(schemaOf(opt), value, ctx);
+      if (isPromise(inner)) {
+        payload["$pending"] = invoke1(inner, "then", JS.method1((JsValue _s, JsValue next) => {
+          schema.takeUnionResult(payload, next);
+          return payload;
+        }));
+        return;
+      }
+      schema.takeUnionResult(payload, inner);
+      return;
+    }
+    if (schema.def["unionFallback"].truthy() || isBackward(ctx)) {
+    } else {
+      JsValue keys = invoke1(gArray(), "from", invoke0(map, "keys"));
+      JsValue iss = JS.object(
+        "code", "invalid_union",
+        "errors", newArray(),
+        "note", "No matching discriminator",
+        "discriminator", disc,
+        "options", keys,
+        "path", JS.array()
+      );
+      prefixPath(iss, disc);
+      push(payload["issues"], iss);
+      return;
+    }
+  }
+  JsValue results = newArray();
+  JsValue matchIdx = newArray();
+  JsValue proms = newArray();
+  int i = 0;
+  while (i < n) {
+    push(results, undef());
+    i = i + 1;
+  }
+  i = 0;
+  while (i < n) {
+    Schema? opt = trySchema(options[i]);
+    JsValue inner = parseOpt(opt, value, ctx);
+    if (isPromise(inner)) {
+      JsValue slot = JS.object("i", 0.0 + i);
+      push(proms, invoke1(inner, "then", JS.method1((JsValue _s, JsValue parsed) => {
+        results[slot["i"]] = parsed;
+        return undef();
+      })));
+    } else {
+      results[i] = inner;
+      if (JS.number(inner["issues"]["length"]).toInt() == 0) {
+        if (schema.kind != KXor) {
+          schema.takeUnionResult(payload, inner);
+          return;
+        }
+        push(matchIdx, i);
+      }
+    }
+    i = i + 1;
+  }
+  if (JS.number(proms["length"]).toInt() > 0) {
+    payload["$pending"] = invoke1(promiseAll(proms), "then", JS.method1((JsValue _s, JsValue _v) => {
+      if (schema.kind == KXor) {
+        JsValue idx = newArray();
+        int k = 0;
+        while (k < n) {
+          JsValue r = results[k];
+          if (!isUndef(r) && !JS.isNullish(r) && JS.number(r["issues"]["length"]).toInt() == 0) push(idx, k);
+          k = k + 1;
+        }
+        if (JS.number(idx["length"]).toInt() == 1) {
+          schema.takeUnionResult(payload, results[idx[0]]);
+          return payload;
+        }
+      }
+      schema.finishUnion(payload, results, ctx);
+      return payload;
+    }));
+    return;
+  }
+  if (schema.kind == KXor) {
+    if (JS.number(matchIdx["length"]).toInt() == 1) {
+      payload["value"] = results[matchIdx[0]]["value"];
+      return;
+    }
+    if (JS.number(matchIdx["length"]).toInt() == 0) {
+      JsValue errors = newArray();
+      i = 0;
+      while (i < n) {
+        Schema? opt = trySchema(options[i]);
+        Schema owner = schema;
+        if (opt != null) owner = opt;
+        push(errors, finalizeIssueList(results[i]["issues"], owner, ctx));
+        i = i + 1;
+      }
+      push(payload["issues"], JS.object("code", "invalid_union", "errors", errors, "path", newArray()));
+      return;
+    }
+    push(payload["issues"], JS.object("code", "invalid_union", "errors", newArray(), "inclusive", false, "matches", matchIdx, "path", newArray()));
+    return;
+  }
+  schema.finishUnion(payload, results, ctx);
+}
+
+JsValue mergeValues(JsValue a, JsValue b) {
+  if (objectIs(a, b)) return JS.object("valid", true, "data", a);
+  if (isDate(a) && isDate(b) && JS.strictEqual(invoke0(a, "getTime"), invoke0(b, "getTime"))) {
+    return JS.object("valid", true, "data", a);
+  }
+  if (isPlainObject(a) && isPlainObject(b)) {
+    JsValue newObj = JS.object();
+    JsValue srcs = newArray();
+    push(srcs, a);
+    push(srcs, b);
+    int si = 0;
+    while (si < 2) {
+      JsValue src = srcs[si];
+      JsValue keys = ownKeys(src);
+      int ki = 0;
+      int kn = JS.number(keys["length"]).toInt();
+      while (ki < kn) {
+        JsValue key = keys[ki];
+        bool skipProto = false;
+        if (isStr(key)) {
+          if (toStr(key) == "__proto__") skipProto = true;
+        }
+        if (!skipProto) assignProp(newObj, key, src[key]);
+        ki = ki + 1;
+      }
+      si = si + 1;
+    }
+    JsValue aKeys = objectKeys(a);
+    JsValue bKeys = objectKeys(b);
+    int i = 0;
+    int n = JS.number(aKeys["length"]).toInt();
+    while (i < n) {
+      string key = toStr(aKeys[i]);
+      if (key != "__proto__") {
+        bool shared = false;
+        int j = 0;
+        int jn = JS.number(bKeys["length"]).toInt();
+        while (j < jn) {
+          if (toStr(bKeys[j]) == key) shared = true;
+          j = j + 1;
+        }
+        if (shared) {
+          JsValue inner = mergeValues(a[key], b[key]);
+          if (!inner["valid"].truthy()) {
+            JsValue path = newArray();
+            push(path, key);
+            JsValue rest = inner["mergeErrorPath"];
+            if (isArr(rest)) {
+              int ri = 0;
+              int rn = JS.number(rest["length"]).toInt();
+              while (ri < rn) {
+                push(path, rest[ri]);
+                ri = ri + 1;
+              }
+            }
+            return JS.object("valid", false, "mergeErrorPath", path);
+          }
+          newObj[key] = inner["data"];
+        }
+      }
+      i = i + 1;
+    }
+    return JS.object("valid", true, "data", newObj);
+  }
+  if (isArr(a) && isArr(b)) {
+    if (JS.number(a["length"]).toInt() != JS.number(b["length"]).toInt()) {
+      return JS.object("valid", false, "mergeErrorPath", newArray());
+    }
+    JsValue next = newArray();
+    int i = 0;
+    int n = JS.number(a["length"]).toInt();
+    while (i < n) {
+      JsValue inner = mergeValues(a[i], b[i]);
+      if (!inner["valid"].truthy()) {
+        JsValue path = newArray();
+        push(path, i);
+        JsValue rest = inner["mergeErrorPath"];
+        if (isArr(rest)) {
+          int ri = 0;
+          int rn = JS.number(rest["length"]).toInt();
+          while (ri < rn) {
+            push(path, rest[ri]);
+            ri = ri + 1;
+          }
+        }
+        return JS.object("valid", false, "mergeErrorPath", path);
+      }
+      push(next, inner["data"]);
+      i = i + 1;
+    }
+    return JS.object("valid", true, "data", next);
+  }
+  return JS.object("valid", false, "mergeErrorPath", newArray());
+}
+
+void parseIntersection(Schema schema, JsValue payload, JsValue ctx) {
+  Schema? left = childOf(schema, "left");
+  Schema? right = childOf(schema, "right");
+  if (left == null || right == null) return;
+  JsValue a = parseOpt(left, payload["value"], ctx);
+  JsValue b = parseOpt(right, payload["value"], ctx);
+  if (isPromise(a) || isPromise(b)) {
+    JsValue waits = newArray();
+    push(waits, promiseResolve(a));
+    push(waits, promiseResolve(b));
+    payload["$pending"] = invoke1(promiseAll(waits), "then", JS.method1((JsValue _s, JsValue pair) => {
+      finishIntersection(payload, pair[0], pair[1]);
+      return payload;
+    }));
+    return;
+  }
+  finishIntersection(payload, a, b);
+}
+
+void finishIntersection(JsValue payload, JsValue left, JsValue right) {
+  JsValue unrec = JS.object();
+  JsValue unrecIssue = undef();
+  JsValue keyIssues = JS.object();
+  int i = 0;
+  int n = JS.number(left["issues"]["length"]).toInt();
+  while (i < n) {
+    if (!collectIntersectIssue(left["issues"][i], "l", unrec, keyIssues, unrecIssue)) {
+      push(payload["issues"], left["issues"][i]);
+    } else if (isUndef(unrecIssue) && toStr(left["issues"][i]["code"]) == "unrecognized_keys") {
+      unrecIssue = left["issues"][i];
+    }
+    i = i + 1;
+  }
+  i = 0;
+  n = JS.number(right["issues"]["length"]).toInt();
+  while (i < n) {
+    if (!collectIntersectIssue(right["issues"][i], "r", unrec, keyIssues, unrecIssue)) {
+      push(payload["issues"], right["issues"][i]);
+    } else if (isUndef(unrecIssue) && toStr(right["issues"][i]["code"]) == "unrecognized_keys") {
+      unrecIssue = right["issues"][i];
+    }
+    i = i + 1;
+  }
+  JsValue both = newArray();
+  JsValue keys = objectKeys(unrec);
+  i = 0;
+  n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    string k = toStr(keys[i]);
+    if (unrec[k]["l"].truthy() && unrec[k]["r"].truthy()) push(both, k);
+    i = i + 1;
+  }
+  if (JS.number(both["length"]).toInt() > 0) {
+    if (!isUndef(unrecIssue)) {
+      JsValue aggregated = newArray();
+      JsValue src = unrecIssue["keys"];
+      int bi = 0;
+      int bn = JS.number(both["length"]).toInt();
+      while (bi < bn) {
+        int si = 0;
+        int sn = JS.number(src["length"]).toInt();
+        while (si < sn) {
+          if (toStr(src[si]) == toStr(both[bi])) push(aggregated, both[bi]);
+          si = si + 1;
+        }
+        bi = bi + 1;
+      }
+      if (JS.number(aggregated["length"]).toInt() > 0) {
+        JsValue next = objectAssign(JS.object(), unrecIssue);
+        next["keys"] = aggregated;
+        push(payload["issues"], next);
+      }
+    }
+  }
+  JsValue merged = mergeValues(left["value"], right["value"]);
+  if (merged["valid"].truthy()) payload["value"] = merged["data"];
+  else if (!payloadAborted(payload)) {
+    throw newError("Unmergable intersection. Error path: " + toStr(jsonStringify(merged["mergeErrorPath"], undef(), undef())));
+  }
+}
+
+bool collectIntersectIssue(JsValue iss, string side, JsValue unrec, JsValue keyIssues, JsValue unrecIssue) {
+  JsValue path = iss["path"];
+  bool noPath = isUndef(path) || JS.isNullish(path) || JS.number(path["length"]).toInt() == 0;
+  if (toStr(iss["code"]) == "unrecognized_keys" && noPath) {
+    JsValue keys = iss["keys"];
+    int i = 0;
+    int n = JS.number(keys["length"]).toInt();
+    while (i < n) {
+      string k = toStr(keys[i]);
+      if (isUndef(unrec[k]) || JS.isNullish(unrec[k])) unrec[k] = JS.object();
+      unrec[k][side] = true;
+      i = i + 1;
+    }
+    return true;
+  }
+  if (toStr(iss["code"]) == "invalid_key" && toStr(iss["origin"]) == "record") {
+    if (!isUndef(path) && JS.number(path["length"]).toInt() == 1) {
+      string k = toStr(path[0]);
+      if (isUndef(keyIssues[k])) keyIssues[k] = iss;
+      if (isUndef(unrec[k]) || JS.isNullish(unrec[k])) unrec[k] = JS.object();
+      unrec[k][side] = true;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool isPropertyKey(JsValue key) {
+  string t = typeOf(key);
+  if (t == "string") return true;
+  if (t == "number") return true;
+  if (t == "symbol") return true;
+  return false;
+}
+
+void handleMapResult(JsValue kr, JsValue vr, JsValue payload, JsValue key, JsValue input, JsValue ctx) {
+  if (JS.number(kr["issues"]["length"]).toInt() > 0) {
+    if (isPropertyKey(key)) prefixAll(kr["issues"], payload["issues"], key);
+    else {
+      push(payload["issues"], JS.object("code", "invalid_key", "origin", "map", "issues", finalizeRawIssues(kr["issues"], ctx), "input", input, "path", newArray()));
+    }
+  }
+  if (JS.number(vr["issues"]["length"]).toInt() > 0) {
+    if (isPropertyKey(key)) prefixAll(vr["issues"], payload["issues"], key);
+    else {
+      push(payload["issues"], JS.object("code", "invalid_element", "origin", "map", "key", key, "issues", finalizeRawIssues(vr["issues"], ctx), "input", input, "path", newArray()));
+    }
+  }
+}
+
+void parseMap(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isInstance(gMap(), value)) {
+    push(payload["issues"], typeIssue("map", value));
+    return;
+  }
+  JsValue out = schema.memoAlloc(payload, newMap());
+  JsValue waits = newArray();
+  JsValue entries = invoke0(value, "entries");
+  JsValue iter = invoke0(entries, "next");
+  while (!iter["done"].truthy()) {
+    JsValue pair = iter["value"];
+    JsValue key = pair[0];
+    JsValue val = pair[1];
+    JsValue kr = JS.object("value", key, "issues", newArray());
+    JsValue vr = JS.object("value", val, "issues", newArray());
+    Schema? keySchema = childOf(schema, "keyType");
+    if (keySchema != null) kr = parseOpt(keySchema, key, ctx);
+    Schema? valSchema = childOf(schema, "valueType");
+    if (valSchema != null) vr = parseOpt(valSchema, val, ctx);
+    if (isPromise(kr) || isPromise(vr)) {
+      JsValue pairWait = newArray();
+      push(pairWait, promiseResolve(kr));
+      push(pairWait, promiseResolve(vr));
+      JsValue captured = key;
+      push(waits, invoke1(promiseAll(pairWait), "then", JS.method1((JsValue _s, JsValue both) => {
+        handleMapResult(both[0], both[1], payload, captured, value, ctx);
+        mapSet(out, both[0]["value"], both[1]["value"]);
+        return undef();
+      })));
+    } else {
+      handleMapResult(kr, vr, payload, key, value, ctx);
+      mapSet(out, kr["value"], vr["value"]);
+    }
+    iter = invoke0(entries, "next");
+  }
+  payload["value"] = out;
+  if (JS.number(waits["length"]).toInt() > 0) {
+    payload["$pending"] = invoke1(promiseAll(waits), "then", JS.method1((JsValue _s, JsValue _v) => {
+      payload["value"] = out;
+      return payload;
+    }));
+  }
+}
+
+void parseSet(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isObj(value) || isUndef(value["add"])) {
+    push(payload["issues"], typeIssue("set", value));
+    return;
+  }
+  JsValue out = schema.memoAlloc(payload, newSet());
+  JsValue values = invoke0(value, "values");
+  JsValue iter = invoke0(values, "next");
+  while (!iter["done"].truthy()) {
+    JsValue item = iter["value"];
+    Schema? el = childOf(schema, "valueType");
+    if (el != null) {
+      JsValue inner = parseOpt(el, item, ctx);
+      queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+        if (JS.number(parsed["issues"]["length"]).toInt() > 0) {
+          copyIssues(parsed["issues"], payload["issues"]);
+        }
+        setAdd(out, parsed["value"]);
+        return undef();
+      }));
+    } else {
+      setAdd(out, item);
+    }
+    iter = invoke0(values, "next");
+  }
+  payload["value"] = out;
+}
+
+JsValue applyParsed(JsValue payload, JsValue parsed) {
+  copyIssues(parsed["issues"], payload["issues"]);
+  payload["value"] = parsed["value"];
+  return payload;
+}
+
+JsValue runTransform(Schema schema, JsValue payload, JsValue ctx, JsValue fn) {
+  if (!isFn(fn)) return payload;
+  JsValue ctxObj = JS.object("addIssue", JS.method1((JsValue _s, JsValue iss) => {
+    JsValue next = iss;
+    if (isStr(iss)) next = JS.object("message", iss, "code", "custom", "input", payload["value"], "inst", schema.handle);
+    else {
+      if (next["fatal"].truthy()) next["continue"] = false;
+      if (isUndef(next["code"])) next["code"] = "custom";
+      if (!inOp("input", next)) next["input"] = payload["value"];
+      if (isUndef(next["inst"])) next["inst"] = schema.handle;
+    }
+    push(payload["issues"], next);
+    return undef();
+  }), "value", payload["value"], "issues", payload["issues"]);
+  JsValue value = call2(fn, undef(), payload["value"], ctxObj);
+  if (isPromise(value)) {
+    if (!isUndef(ctx) && JS.strictEqual(ctx["async"], false)) {
+      throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+    }
+    return invoke1(value, "then", JS.method1((JsValue _s, JsValue next) => {
+      payload["value"] = next;
+      return payload;
+    }));
+  }
+  payload["value"] = value;
+  return payload;
+}
+
+bool pipeBlocked(JsValue payload) {
+  JsValue issues = payload["issues"];
+  int i = 0;
+  int n = JS.number(issues["length"]).toInt();
+  while (i < n) {
+    if (toStr(issues[i]["code"]) != "unrecognized_keys") return true;
+    i = i + 1;
+  }
+  return false;
+}
+
+JsValue parseAfterTransform(Schema schema, JsValue payload, JsValue ctx, Schema? right) {
+  if (right != null) return runOnPayload(right, payload, ctx);
+  return payload;
+}
+
+JsValue parseAfterLeft(Schema schema, JsValue payload, JsValue ctx) {
+  if (pipeBlocked(payload)) {
+    payload["aborted"] = true;
+    return payload;
+  }
+  JsValue tx = schema.def["transform"];
+  Schema? right = childOf(schema, "out");
+  if (isFn(tx)) {
+    JsValue ran = runTransform(schema, payload, ctx, tx);
+    if (isPromise(ran)) {
+      return invoke1(ran, "then", JS.method1((JsValue _s, JsValue next) => {
+        return parseAfterTransform(schema, next, ctx, right);
+      }));
+    }
+  }
+  return parseAfterTransform(schema, payload, ctx, right);
+}
+
+JsValue parsePipe(Schema schema, JsValue payload, JsValue ctx) {
+  Schema? left = childOf(schema, "in");
+  Schema? right = childOf(schema, "out");
+  JsValue tx = schema.def["transform"];
+  JsValue rev = schema.def["reverseTransform"];
+  if (schema.kind == KTransform) {
+    if (isBackward(ctx)) {
+      throw construct1(ZodEncodeError, "ZodTransform");
+    }
+    if (!isUndef(ctx) && isObj(ctx)) {
+      JsValue state = ctx["~memo"];
+      if (isObj(state) && !isUndef(state["backEdges"]) && !JS.isNullish(state["backEdges"])) {
+        if (setHas(state["backEdges"], payload["value"]).truthy()) {
+          JsValue err = construct1(gError(), "Cannot parse a reference cycle that closes through a transform");
+          err["name"] = "ZodCyclicError";
+          throw err;
+        }
+      }
+    }
+    if (isFn(tx)) return runTransform(schema, payload, ctx, tx);
+    return payload;
+  }
+  if (isBackward(ctx)) {
+    if (right != null) {
+      JsValue parsed = runOnPayload(right, payload, ctx);
+      if (isPromise(parsed)) {
+        return invoke1(parsed, "then", JS.method1((JsValue _s, JsValue next) => {
+          if (pipeBlocked(next)) {
+            next["aborted"] = true;
+            return next;
+          }
+          JsValue ran = next;
+          if (isFn(rev)) ran = runTransform(schema, next, ctx, rev);
+          if (isPromise(ran)) {
+            return invoke1(ran, "then", JS.method1((JsValue _a, JsValue mid) => {
+              return parseAfterTransform(schema, mid, ctx, left);
+            }));
+          }
+          return parseAfterTransform(schema, next, ctx, left);
+        }));
+      }
+      if (pipeBlocked(payload)) {
+        payload["aborted"] = true;
+        return payload;
+      }
+    }
+    if (isFn(rev)) {
+      JsValue ran = runTransform(schema, payload, ctx, rev);
+      if (isPromise(ran)) {
+        return invoke1(ran, "then", JS.method1((JsValue _s, JsValue next) => {
+          return parseAfterTransform(schema, next, ctx, left);
+        }));
+      }
+    }
+    return parseAfterTransform(schema, payload, ctx, left);
+  }
+  if (left != null) {
+    JsValue parsed = runOnPayload(left, payload, ctx);
+    if (isPromise(parsed)) {
+      return invoke1(parsed, "then", JS.method1((JsValue _s, JsValue next) => {
+        return parseAfterLeft(schema, next, ctx);
+      }));
+    }
+  }
+  return parseAfterLeft(schema, payload, ctx);
+}
+
+export JsValue implementFn(JsValue fn, JsValue input, JsValue output, bool asyncOut) {
+  if (asyncOut) {
+    return asyncImplement(
+      JS.method2((JsValue _s, JsValue schema, JsValue data) => {
+        return parseAsyncInst(schema, data, undef());
+      }),
+      JS.methodRest((JsValue _s, JsValue args) => {
+        return apply(args[0], args[1], args[2]);
+      }),
+      input,
+      output,
+      fn
+    );
+  }
+  return JS.methodRest((JsValue self, JsValue args) => {
+    JsValue parsed = parseInst(input, invoke1(gArray(), "from", args), undef());
+    JsValue result = apply(fn, self, parsed);
+    return parseInst(output, result, undef());
+  });
+}
+
+void parseFunction(Schema schema, JsValue payload, JsValue ctx) {
+  JsValue value = payload["value"];
+  if (!isFn(value)) {
+    failType(payload, "function", value);
+    return;
+  }
+  JsValue input = schema.def["input"];
+  JsValue output = schema.def["output"];
+  bool asyncOut = false;
+  Schema? outSch = trySchema(output);
+  if (outSch != null) {
+    Schema o = outSch;
+    if (o.kind == KPromise) asyncOut = true;
+  }
+  payload["value"] = implementFn(value, input, output, asyncOut);
+}
+
+JsValue finalizeParsed(JsValue payload, Schema schema, JsValue ctx) {
+  JsValue finalized = newArray();
+  int i = 0;
+  int n = JS.number(payload["issues"]["length"]).toInt();
+  while (i < n) {
+    push(finalized, finalizeIssue(payload["issues"][i], schema, ctx));
+    i = i + 1;
+  }
+  return JS.object("value", payload["value"], "issues", finalized);
+}
+
+JsValue toSafe(JsValue parsed) {
+  if (JS.number(parsed["issues"]["length"]).toInt() > 0) {
+    return JS.object("success", false, "error", makeZodError(parsed["issues"]));
+  }
+  return JS.object("success", true, "data", parsed["value"]);
+}
+
+export JsValue runParse(JsValue inst, JsValue data, JsValue ctx) {
+  ensureLocale();
+  Schema schema = schemaOf(inst);
+  JsValue payload = parsePayload(schema, data, ctx);
+  if (isPromise(payload)) {
+    return invoke1(payload, "then", JS.method1((JsValue _s, JsValue next) => {
+      return finalizeParsed(next, schema, ctx);
+    }));
+  }
+  return finalizeParsed(payload, schema, ctx);
+}
+
+export JsValue safeParseInst(JsValue inst, JsValue data, JsValue ctx) {
+  JsValue parseCtx = ctx;
+  if (isUndef(ctx)) parseCtx = JS.object("async", false);
+  JsValue result = runParse(inst, data, parseCtx);
+  if (isPromise(result)) {
+    throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+  }
+  return toSafe(result);
+}
+
+export JsValue parseWithCallee(JsValue inst, JsValue data, JsValue ctx, JsValue callee) {
+  JsValue result = safeParseInst(inst, data, ctx);
+  if (result["success"].truthy()) return result["data"];
+  JsValue skip = callee;
+  if (isUndef(skip) || JS.isNullish(skip)) skip = parseWithCallee;
+  captureStackTrace(result["error"], skip);
+  throw result["error"];
+}
+
+export JsValue parseInst(JsValue inst, JsValue data, JsValue ctx) {
+  return parseWithCallee(inst, data, ctx, undef());
+}
+
+export JsValue safeParseAsyncInst(JsValue inst, JsValue data, JsValue ctx) {
+  JsValue parseCtx = ctx;
+  if (isUndef(ctx) || JS.isNullish(ctx)) parseCtx = JS.object("async", true);
+  else {
+    parseCtx = objectAssign(JS.object(), ctx);
+    parseCtx["async"] = true;
+  }
+  JsValue result = runParse(inst, data, parseCtx);
+  if (isPromise(result)) {
+    return invoke1(result, "then", JS.method1((JsValue _s, JsValue parsed) => {
+      return toSafe(parsed);
+    }));
+  }
+  return promiseResolve(toSafe(result));
+}
+
+export JsValue parseAsyncWithCallee(JsValue inst, JsValue data, JsValue ctx, JsValue callee) {
+  return invoke1(safeParseAsyncInst(inst, data, ctx), "then", JS.method1((JsValue _s, JsValue result) => {
+    if (result["success"].truthy()) return result["data"];
+    JsValue skip = callee;
+    if (isUndef(skip) || JS.isNullish(skip)) skip = parseAsyncWithCallee;
+    captureStackTrace(result["error"], skip);
+    throw result["error"];
+  }));
+}
+
+export JsValue parseAsyncInst(JsValue inst, JsValue data, JsValue ctx) {
+  return parseAsyncWithCallee(inst, data, ctx, undef());
+}
+
+export JsValue installLazy(JsValue proto, string key, JsValue make, bool enumerable) {
+  defineProperty(proto, key, JS.object(
+    "configurable", true,
+    "enumerable", false,
+    "get", JS.method0((JsValue self) => {
+      JsValue value = call1(make, undef(), self);
+      defineProperty(self, key, JS.object(
+        "configurable", true,
+        "writable", true,
+        "enumerable", enumerable,
+        "value", value
+      ));
+      return value;
+    }),
+    "set", JS.method1((JsValue self, JsValue value) => {
+      defineProperty(self, key, JS.object("configurable", true, "writable", true, "enumerable", true, "value", value));
+      return undef();
+    })
+  ));
+  return proto;
+}
+
+export JsValue enumValues(JsValue entries) {
+  JsValue list = newArray();
+  if (isArr(entries)) {
+    int i = 0;
+    int n = JS.number(entries["length"]).toInt();
+    while (i < n) {
+      push(list, entries[i]);
+      i = i + 1;
+    }
+    return list;
+  }
+  if (!isObj(entries) || JS.isNullish(entries)) return list;
+  JsValue numeric = newArray();
+  JsValue keys = objectKeys(entries);
+  int i = 0;
+  int n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    JsValue val = entries[keys[i]];
+    if (isNum(val)) push(numeric, val);
+    i = i + 1;
+  }
+  i = 0;
+  while (i < n) {
+    string key = toStr(keys[i]);
+    JsValue asNum = toNumber(key);
+    bool skip = false;
+    if (isNum(asNum)) {
+      int k = 0;
+      int kn = JS.number(numeric["length"]).toInt();
+      while (k < kn) {
+        if (JS.strictEqual(numeric[k], asNum)) {
+          skip = true;
+          break;
+        }
+        k = k + 1;
+      }
+    }
+    if (!skip) push(list, entries[keys[i]]);
+    i = i + 1;
+  }
+  return list;
+}
+
+Schema schemaFromDef(JsValue def) {
+  return new Schema(def);
+}
+
+export JsValue shapePhase(JsValue def) {
+  return weakGet(propShapes, def);
+}
+
+void wrapObjectShape(JsValue def) {
+  JsValue desc = getDescriptor(def, "shape");
+  if (!isUndef(desc)) {
+    if (!JS.isNullish(desc)) {
+      if (isFn(desc["get"])) return;
+    }
+  }
+  JsValue sh = def["shape"];
+  if (isUndef(sh)) sh = JS.object();
+  if (JS.isNullish(sh)) sh = JS.object();
+  weakSet(propShapes, def, sh);
+  defineProperty(def, "shape", JS.object(
+    "configurable", true,
+    "get", JS.method0((JsValue _s) => {
+      JsValue newSh = JS.object();
+      JsValue sk = ownKeys(sh);
+      int si = 0;
+      int sn = JS.number(sk["length"]).toInt();
+      while (si < sn) {
+        assignProp(newSh, sk[si], getProp(sh, sk[si]));
+        si = si + 1;
+      }
+      defineProperty(def, "shape", JS.object("value", newSh, "writable", true, "enumerable", true, "configurable", true));
+      weakSet(propShapes, def, newSh);
+      return newSh;
+    })
+  ));
+}
+
+void installFieldGetter(JsValue proto, string key, string defKey) {
+  defineProperty(proto, key, JS.object(
+    "configurable", true,
+    "enumerable", true,
+    "get", JS.method0((JsValue self) => {
+      return self["_zod"]["def"][defKey];
+    })
+  ));
+}
+
+export void installCtorAccessors(JsValue ctor, string name) {
+  JsValue proto = ctor["prototype"];
+  if (name == "ZodArray") installFieldGetter(proto, "element", "element");
+  if (name == "ZodRecord" || name == "ZodMap") {
+    installFieldGetter(proto, "keyType", "keyType");
+    installFieldGetter(proto, "valueType", "valueType");
+  }
+  if (name == "ZodSet") installFieldGetter(proto, "valueType", "valueType");
+  if (name == "ZodUnion" || name == "ZodDiscriminatedUnion" || name == "ZodXor") {
+    installFieldGetter(proto, "options", "options");
+    installFieldGetter(proto, "discriminator", "discriminator");
+  }
+  if (name == "ZodPipe" || name == "ZodCodec" || name == "ZodPreprocess") {
+    installFieldGetter(proto, "in", "in");
+    installFieldGetter(proto, "out", "out");
+  }
+  if (name == "ZodEnum") {
+    defineProperty(proto, "enum", JS.object(
+      "configurable", true,
+      "enumerable", true,
+      "get", JS.method0((JsValue self) => {
+        JsValue entries = self["_zod"]["def"]["entries"];
+        if (isObj(entries) && !isArr(entries)) return entries;
+        JsValue obj = JS.object();
+        if (isArr(entries)) {
+          int i = 0;
+          int n = JS.number(entries["length"]).toInt();
+          while (i < n) {
+            obj[entries[i]] = entries[i];
+            i = i + 1;
+          }
+        }
+        return obj;
+      })
+    ));
+    defineProperty(proto, "options", JS.object(
+      "configurable", true,
+      "enumerable", true,
+      "get", JS.method0((JsValue self) => {
+        return enumValues(self["_zod"]["def"]["entries"]);
+      })
+    ));
+  }
+  if (name == "ZodLiteral") {
+    defineProperty(proto, "values", JS.object(
+      "configurable", true,
+      "enumerable", true,
+      "get", JS.method0((JsValue self) => {
+        return self["_zod"]["values"];
+      })
+    ));
+    defineProperty(proto, "value", JS.object(
+      "configurable", true,
+      "enumerable", true,
+      "get", JS.method0((JsValue self) => {
+        JsValue list = self["_zod"]["def"]["values"];
+        if (!isArr(list)) list = invoke1(gArray(), "from", self["_zod"]["values"]);
+        if (JS.number(list["length"]).toInt() > 1) {
+          throw construct1(gError(), "This schema contains multiple valid literal values. Use `.values` instead.");
+        }
+        return list[0];
+      })
+    ));
+  }
+}
+
+JsValue traitsFor(string name, JsValue ctor) {
+  JsValue traits = newSet();
+  setAdd(traits, "ZodType");
+  setAdd(traits, "$ZodType");
+  setAdd(traits, name);
+  if (name.length > 0) setAdd(traits, "$" + name);
+  JsValue cur = ctor["__parent"];
+  int guard = 0;
+  while (!isUndef(cur) && !JS.isNullish(cur) && guard < 8) {
+    string n = toStr(cur["name"]);
+    if (n.length > 0) {
+      setAdd(traits, n);
+      setAdd(traits, "$" + n);
+    }
+    cur = cur["__parent"];
+    guard = guard + 1;
+  }
+  return traits;
+}
+
+void applyOneCheckBag(JsValue bag, JsValue cdef) {
+  string name = toStr(cdef["check"]);
+  if (name == "min_length" || name == "min_size") {
+    JsValue curr = bag["minimum"];
+    if (isUndef(curr) || JS.greaterThan(cdef["minimum"], curr)) bag["minimum"] = cdef["minimum"];
+  }
+  if (name == "max_length" || name == "max_size") {
+    JsValue curr = bag["maximum"];
+    if (isUndef(curr) || JS.lessThan(cdef["maximum"], curr)) bag["maximum"] = cdef["maximum"];
+  }
+  if (name == "length_equals") {
+    bag["minimum"] = cdef["length"];
+    bag["maximum"] = cdef["length"];
+    bag["length"] = cdef["length"];
+  }
+  if (name == "size_equals") {
+    bag["minimum"] = cdef["size"];
+    bag["maximum"] = cdef["size"];
+    bag["size"] = cdef["size"];
+  }
+  if (name == "greater_than") {
+    if (JS.strictEqual(cdef["inclusive"], false)) {
+      JsValue curr = bag["exclusiveMinimum"];
+      if (isUndef(curr) || JS.greaterThan(cdef["value"], curr)) bag["exclusiveMinimum"] = cdef["value"];
+    } else {
+      JsValue curr = bag["minimum"];
+      if (isUndef(curr) || JS.greaterThan(cdef["value"], curr)) bag["minimum"] = cdef["value"];
+    }
+  }
+  if (name == "less_than") {
+    if (JS.strictEqual(cdef["inclusive"], false)) {
+      JsValue curr = bag["exclusiveMaximum"];
+      if (isUndef(curr) || JS.lessThan(cdef["value"], curr)) bag["exclusiveMaximum"] = cdef["value"];
+    } else {
+      JsValue curr = bag["maximum"];
+      if (isUndef(curr) || JS.lessThan(cdef["value"], curr)) bag["maximum"] = cdef["value"];
+    }
+  }
+  if (name == "multiple_of") {
+    if (isUndef(bag["multipleOf"])) bag["multipleOf"] = cdef["value"];
+  }
+  if (name == "number_format") {
+    bag["format"] = cdef["format"];
+    string fmt = toStr(cdef["format"]);
+    if (fmt == "safeint" || fmt == "int") {
+      bag["minimum"] = gNumber()["MIN_SAFE_INTEGER"];
+      bag["maximum"] = gNumber()["MAX_SAFE_INTEGER"];
+    }
+    if (fmt == "int32") {
+      bag["minimum"] = 0.0 - 2147483648.0;
+      bag["maximum"] = 2147483647.0;
+    }
+    if (fmt == "uint32") {
+      bag["minimum"] = 0.0;
+      bag["maximum"] = 4294967295.0;
+    }
+    if (fmt == "float32") {
+      bag["minimum"] = -3.4028234663852886e38;
+      bag["maximum"] = 3.4028234663852886e38;
+    }
+    if (fmt == "float64") {
+      bag["minimum"] = 0.0 - toNum(gNumber()["MAX_VALUE"]);
+      bag["maximum"] = gNumber()["MAX_VALUE"];
+    }
+    if (fmt.includes("int")) bag["pattern"] = newRegex("^-?\\d+$", "");
+  }
+  if (name == "string_format" || name == "lowercase" || name == "uppercase") {
+    if (name == "string_format") bag["format"] = cdef["format"];
+    else bag["format"] = name;
+    if (!isUndef(cdef["pattern"]) && !JS.isNullish(cdef["pattern"]) && toStr(bag["format"]) != "jwt") {
+      if (isUndef(bag["patterns"])) bag["patterns"] = newSet();
+      setAdd(bag["patterns"], cdef["pattern"]);
+    }
+    if (toStr(bag["format"]) == "base64") bag["contentEncoding"] = "base64";
+  }
+  if (name == "starts_with") {
+    if (isUndef(bag["patterns"])) bag["patterns"] = newSet();
+    JsValue escaped = invoke2(JS.string(toStr(cdef["prefix"])), "replace", newRegex("[.*+?^${}()|[\\]\\\\]", "g"), "\\$&");
+    setAdd(bag["patterns"], newRegex("^" + toStr(escaped) + ".*", ""));
+  }
+  if (name == "ends_with") {
+    if (isUndef(bag["patterns"])) bag["patterns"] = newSet();
+    JsValue escaped = invoke2(JS.string(toStr(cdef["suffix"])), "replace", newRegex("[.*+?^${}()|[\\]\\\\]", "g"), "\\$&");
+    setAdd(bag["patterns"], newRegex(".*" + toStr(escaped) + "$", ""));
+  }
+  if (name == "includes") {
+    if (isUndef(bag["patterns"])) bag["patterns"] = newSet();
+    JsValue escaped = invoke2(JS.string(toStr(cdef["includes"])), "replace", newRegex("[.*+?^${}()|[\\]\\\\]", "g"), "\\$&");
+    if (isNum(cdef["position"])) setAdd(bag["patterns"], newRegex("^." + "{" + toStr(cdef["position"]) + "}" + toStr(escaped), ""));
+    else setAdd(bag["patterns"], newRegex(toStr(escaped), ""));
+  }
+  if (name == "mime_type") bag["mime"] = cdef["mime"];
+}
+
+void applyChecksBag(JsValue inst, JsValue def) {
+  JsValue bag = inst["_zod"]["bag"];
+  if (isStr(def["check"])) applyOneCheckBag(bag, def);
+  if (isStr(def["format"]) && isUndef(bag["format"])) bag["format"] = def["format"];
+  JsValue checks = def["checks"];
+  if (!isArr(checks)) return;
+  int i = 0;
+  int n = JS.number(checks["length"]).toInt();
+  while (i < n) {
+    applyOneCheckBag(bag, checkDef(checks[i]));
+    i = i + 1;
+  }
+}
+
+export void hydrateInst(JsValue inst, JsValue def, JsValue ctor, string trait) {
+  ensureLocale();
+  if (isObj(inst["_zod"]) && !isUndef(inst["_zod"]["id"])) return;
+  Schema schema = schemaFromDef(def);
+  schema.ctor = ctor;
+  schema.trait = trait;
+  JsValue traits = traitsFor(trait, ctor);
+  if (isStr(def["check"])) setAdd(traits, "$ZodCheck");
+  attachInternals(inst, schema, traits);
+  if (schema.kind == KObject) wrapObjectShape(def);
+  applyChecksBag(inst, def);
+  schema.installDerived();
+}
+
+export JsValue makeCtor(string name, JsValue parent) {
+  JsValue zodProto = JS.object();
+  if (!isUndef(parent) && isObj(parent["_zodProto"])) {
+    setPrototypeOf(zodProto, parent["_zodProto"]);
+  }
+  JsValue ctor = JS.methodRest((JsValue self, JsValue args) => {
+    if (isUndef(self) || JS.isNullish(self) || !isObj(self)) {
+      self = objectCreate(ctor["prototype"]);
+    }
+    JsValue def = args[0];
+    if (!isUndef(def) && isObj(def) && isStr(def["type"])) {
+      hydrateInst(self, def, ctor, name);
+    }
+    return self;
+  });
+  ctor["__parent"] = parent;
+  ctor["_zodProto"] = zodProto;
+  if (!isUndef(parent)) {
+    setPrototypeOf(ctor["prototype"], parent["prototype"]);
+  }
+  defineProperty(ctor["prototype"], "def", JS.object(
+    "configurable", true,
+    "enumerable", true,
+    "get", JS.method0((JsValue self) => {
+      return self["_zod"]["def"];
+    })
+  ));
+  defineProperty(ctor["prototype"], "type", JS.object(
+    "configurable", true,
+    "enumerable", true,
+    "get", JS.method0((JsValue self) => {
+      return self["_zod"]["def"]["type"];
+    })
+  ));
+  defineProperty(ctor, "name", hiddenConst(name));
+  defineProperty(ctor, "init", hiddenConst(JS.method2((JsValue _s, JsValue inst, JsValue def) => {
+    if (!isUndef(def) && isObj(def)) hydrateInst(inst, def, ctor, name);
+    return inst;
+  })));
+  defineProperty(ctor, gSymbol()["hasInstance"], hiddenConst(JS.method1((JsValue _s, JsValue inst) => {
+    if (JS.isNullish(inst) || !isObj(inst)) return false;
+    JsValue traits = inst["_zod"];
+    if (JS.isNullish(traits) || isUndef(traits)) return false;
+    return setHas(traits["traits"], name).truthy();
+  })));
+  return ctor;
+}
+
+export void attachInternals(JsValue inst, Schema schema, JsValue traits) {
+  schema.handle = inst;
+  JsValue proto = schema.ctor["_zodProto"];
+  if (isUndef(proto) || JS.isNullish(proto)) proto = JS.object();
+  JsValue intern = objectCreate(proto);
+  intern["id"] = schema.id;
+  intern["def"] = schema.def;
+  intern["bag"] = JS.object();
+  intern["version"] = versionObj;
+  intern["traits"] = traits;
+  intern["constr"] = schema.ctor;
+  intern["run"] = JS.method2((JsValue _s, JsValue payload, JsValue ctx) => {
+    return runOnPayload(schema, payload, ctx);
+  });
+  intern["parse"] = intern["run"];
+  if (schema.isContainer()) {
+    intern["memoizer"] = JS.object(
+      "recursive", undef(),
+      "handoff", undef(),
+      "ctx", undef(),
+      "bucket", undef(),
+      "open", newArray()
+    );
+  }
+  defineProperty(intern, "propValues", JS.object(
+    "enumerable", true,
+    "configurable", true,
+    "get", JS.method0((JsValue _s) => {
+      return propValuesOf(inst);
+    })
+  ));
+  defineProperty(inst, "_zod", hiddenValue(intern));
+}
+
+export JsValue paramMessage(JsValue params) {
+  if (isStr(params)) return params;
+  if (isObj(params) && !JS.isNullish(params)) {
+    if (isStr(params["error"])) return params["error"];
+    if (isStr(params["message"])) return params["message"];
+  }
+  return "";
+}
+
+export JsValue paramErrorMap(JsValue params) {
+  if (isFn(params)) return params;
+  if (isObj(params) && !JS.isNullish(params) && isFn(params["error"])) return params["error"];
+  return undef();
+}
+
+export JsValue normalizeParams(JsValue params) {
+  if (isUndef(params) || JS.isNullish(params)) return JS.object();
+  if (isStr(params)) {
+    JsValue text = params;
+    return JS.object("error", JS.method0((JsValue _s) => {
+      return text;
+    }));
+  }
+  if (isFn(params)) return JS.object("error", params);
+  if (!isObj(params)) return JS.object();
+  if (!isUndef(params["message"])) {
+    if (!isUndef(params["error"])) throw newError("Cannot specify both `message` and `error` params");
+    params["error"] = params["message"];
+  }
+  deleteProp(params, "message");
+  if (isStr(params["error"])) {
+    JsValue text = params["error"];
+    JsValue out = objectAssign(JS.object(), params);
+    out["error"] = JS.method0((JsValue _s) => {
+      return text;
+    });
+    return out;
+  }
+  return params;
+}
+
+export Regex emailRe = new Regex("^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$");
+export Regex uuidRe = new Regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$");
+export Regex guidRe = new Regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$");
+export Regex cuidRe = new Regex("^[cC][0-9a-z]{6,}$");
+export Regex cuid2Re = new Regex("^[0-9a-z]+$");
+export Regex ulidRe = new Regex("^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$");
+export Regex nanoidRe = new Regex("^[a-zA-Z0-9_-]{21}$");
+export Regex ipv4Re = new Regex("^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$");
+export Regex ipv6Re = new Regex("^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$");
+export Regex base64Re = new Regex("^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$");
+string dateSource = "(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))";
+
+string timeSource(JsValue precision) {
+  string hhmm = "(?:[01]\\d|2[0-3]):[0-5]\\d";
+  if (isNum(precision)) {
+    int p = JS.number(precision).toInt();
+    if (p == 0 - 1) return hhmm;
+    if (p == 0) return hhmm + ":[0-5]\\d";
+    return hhmm + ":[0-5]\\d\\.\\d{" + toStr(p) + "}";
+  }
+  return hhmm + "(?::[0-5]\\d(?:\\.\\d+)?)?";
+}
+
+export JsValue dateRegex() {
+  return newRegex("^" + dateSource + "$", "");
+}
+
+export JsValue timeRegex(JsValue params) {
+  JsValue precision = undef();
+  if (isObj(params) && !JS.isNullish(params)) precision = params["precision"];
+  return newRegex("^" + timeSource(precision) + "$", "");
+}
+
+export JsValue datetimeRegex(JsValue params) {
+  JsValue precision = undef();
+  bool offset = false;
+  bool local = false;
+  if (isObj(params) && !JS.isNullish(params)) {
+    precision = params["precision"];
+    if (params["offset"].truthy()) offset = true;
+    if (params["local"].truthy()) local = true;
+  }
+  string time = timeSource(precision);
+  string opts = "Z";
+  if (offset) opts = "Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)";
+  string tail = "(?:" + opts + ")";
+  if (local) tail = tail + "?";
+  return newRegex("^" + dateSource + "T(?:" + time + tail + ")$", "");
+}
+
+export Regex isoDateRe = new Regex("^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$");
+export Regex isoTimeRe = new Regex("^(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?$");
+export Regex isoDateTimeRe = new Regex("^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?)Z$");
+export Regex durationRe = new Regex("^P(?:(\\d+W)|(?!.*W)(?=\\d|T\\d)(\\d+Y)?(\\d+M)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+([.,]\\d+)?S)?)?)$");
+export Regex xidRe = new Regex("^[0-9a-vA-V]{20}$");
+export Regex ksuidRe = new Regex("^[A-Za-z0-9]{27}$");
+export Regex e164Re = new Regex("^\\+[1-9]\\d{6,14}$");
+export Regex jwtRe = new Regex("^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$");
+export Regex emojiRe = new Regex("^[\\p{Extended_Pictographic}\\p{Emoji_Component}]+$", "u");
+export Regex base64urlRe = new Regex("^[A-Za-z0-9_-]*$");
+export Regex cidrv4Re = new Regex("^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\/([0-9]|[1-2][0-9]|3[0-2])$");
+export Regex cidrv6Re = new Regex("^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$");
+export Regex creditCardRe = new Regex("^\\d(?:[ -]?\\d){11,18}$");
+export Regex macRe = new Regex("^(?:[0-9A-F]{2}:){5}[0-9A-F]{2}$|^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}$");
+export Regex hexRe = new Regex("^[0-9a-fA-F]*$");
+export Regex hostnameRe = new Regex("^(?=.{1,253}\\.?$)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[-0-9a-zA-Z]{0,61}[0-9a-zA-Z])?)*\\.?$");
+export Regex httpProtocolRe = new Regex("^https?$");
+export Regex domainRe = new Regex("^(?=.{1,253}$)([a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,63}$");
+export Regex md5HexRe = new Regex("^[0-9a-fA-F]{32}$");
+export Regex sha1HexRe = new Regex("^[0-9a-fA-F]{40}$");
+export Regex sha256HexRe = new Regex("^[0-9a-fA-F]{64}$");
+export Regex sha384HexRe = new Regex("^[0-9a-fA-F]{96}$");
+export Regex sha512HexRe = new Regex("^[0-9a-fA-F]{128}$");
+
+export JsValue regexJs(Regex re) {
+  return JS.assume(re);
+}
+
+export void setCoerce(JsValue inst) {
+  schemaOf(inst).def["coerce"] = true;
+}

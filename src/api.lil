@@ -1,0 +1,2257 @@
+import {
+  apply,
+  call0,
+  call1,
+  call2,
+  construct1,
+  defineProperty,
+  gDate,
+  gGlobal,
+  gNumber,
+  isFiniteNum,
+  isSafeInteger,
+  assignProp,
+  copyDescriptors,
+  copyOwn,
+  deleteProp,
+  getDescriptor,
+  hasOwn,
+  inOp,
+  isArr,
+  isFn,
+  isInstance,
+  isNullish,
+  isNum,
+  isObj,
+  isStr,
+  makeAsync2,
+  isUndef,
+  invoke0,
+  invoke1,
+  invoke2,
+  isValidUrl,
+  newArray,
+  newError,
+  newRegex,
+  newSet,
+  objectAssign,
+  objectKeys,
+  ownKeys,
+  promiseResolve,
+  push,
+  setAdd,
+  setHas,
+  toBigInt,
+  toStr,
+  undef
+} from "./host.lil";
+import {
+  KAny,
+  KArray,
+  KBigint,
+  KBoolean,
+  KCatch,
+  KCustom,
+  KDate,
+  KDefault,
+  KEnum,
+  KFile,
+  KFunction,
+  KIntersection,
+  KLazy,
+  KLiteral,
+  KMap,
+  KNan,
+  KNever,
+  KNonoptional,
+  KNull,
+  KNullable,
+  KNumber,
+  KObject,
+  KOptional,
+  KPipe,
+  KPrefault,
+  KPromise,
+  KReadonly,
+  KRecord,
+  KSet,
+  KString,
+  KSuccess,
+  KSymbol,
+  KTemplateLiteral,
+  KTransform,
+  KTuple,
+  KUndefined,
+  KUnion,
+  KUnknown,
+  KVoid,
+  KXor,
+  Schema,
+  ZodError,
+  ZodRealError,
+  base64Re,
+  base64urlRe,
+  cidrv4Re,
+  cidrv6Re,
+  creditCardRe,
+  macRe,
+  cloneWithDef,
+  createCheck,
+  createPayloadCheck,
+  dateRegex,
+  datetimeRegex,
+  cuid2Re,
+  cuidRe,
+  defaultLocale,
+  durationRe,
+  e164Re,
+  emailRe,
+  emojiRe,
+  enumValues,
+  ensureLocale,
+  flattenError,
+  formatError,
+  getDiscriminatedOption,
+  implementFn,
+  getConfig,
+  globalRegistry,
+  guidRe,
+  hexRe,
+  hostnameRe,
+  httpProtocolRe,
+  domainRe,
+  md5HexRe,
+  sha1HexRe,
+  sha256HexRe,
+  sha384HexRe,
+  sha512HexRe,
+  initErrorProto,
+  installLazy,
+  ipv4Re,
+  ipv6Re,
+  isoDateRe,
+  isoDateTimeRe,
+  isoTimeRe,
+  jwtRe,
+  ksuidRe,
+  installCtorAccessors,
+  makeCtor,
+  makeRegistry,
+  nanoidRe,
+  normalizeParams,
+  paramErrorMap,
+  paramMessage,
+  parseAsyncWithCallee,
+  parseWithCallee,
+  shapePhase,
+  prettifyError,
+  safeParseAsyncInst,
+  regexJs,
+  safeParseInst,
+  schemaOf,
+  setConfig,
+  toDotPath,
+  treeifyError,
+  timeRegex,
+  trySchema,
+  typeNameOf,
+  withCheck,
+  ulidRe,
+  uuidRe,
+  version,
+  xidRe
+} from "./engine.lil";
+
+export JsValue ZodType = makeCtor("ZodType", undef());
+export JsValue ZodString = makeCtor("ZodString", ZodType);
+export JsValue ZodNumber = makeCtor("ZodNumber", ZodType);
+export JsValue ZodBoolean = makeCtor("ZodBoolean", ZodType);
+export JsValue ZodBigInt = makeCtor("ZodBigInt", ZodType);
+export JsValue ZodSymbol = makeCtor("ZodSymbol", ZodType);
+export JsValue ZodDate = makeCtor("ZodDate", ZodType);
+export JsValue ZodNaN = makeCtor("ZodNaN", ZodType);
+export JsValue ZodUndefined = makeCtor("ZodUndefined", ZodType);
+export JsValue ZodNull = makeCtor("ZodNull", ZodType);
+export JsValue ZodAny = makeCtor("ZodAny", ZodType);
+export JsValue ZodUnknown = makeCtor("ZodUnknown", ZodType);
+export JsValue ZodNever = makeCtor("ZodNever", ZodType);
+export JsValue ZodVoid = makeCtor("ZodVoid", ZodType);
+export JsValue ZodLiteral = makeCtor("ZodLiteral", ZodType);
+export JsValue ZodEnum = makeCtor("ZodEnum", ZodType);
+export JsValue ZodObject = makeCtor("ZodObject", ZodType);
+export JsValue ZodArray = makeCtor("ZodArray", ZodType);
+export JsValue ZodTuple = makeCtor("ZodTuple", ZodType);
+export JsValue ZodRecord = makeCtor("ZodRecord", ZodType);
+export JsValue ZodMap = makeCtor("ZodMap", ZodType);
+export JsValue ZodSet = makeCtor("ZodSet", ZodType);
+export JsValue ZodUnion = makeCtor("ZodUnion", ZodType);
+export JsValue ZodDiscriminatedUnion = makeCtor("ZodDiscriminatedUnion", ZodUnion);
+export JsValue ZodXor = makeCtor("ZodXor", ZodUnion);
+export JsValue ZodIntersection = makeCtor("ZodIntersection", ZodType);
+export JsValue ZodOptional = makeCtor("ZodOptional", ZodType);
+export JsValue ZodExactOptional = makeCtor("ZodExactOptional", ZodOptional);
+export JsValue ZodNullable = makeCtor("ZodNullable", ZodType);
+export JsValue ZodDefault = makeCtor("ZodDefault", ZodType);
+export JsValue ZodPrefault = makeCtor("ZodPrefault", ZodType);
+export JsValue ZodCatch = makeCtor("ZodCatch", ZodType);
+export JsValue ZodNonOptional = makeCtor("ZodNonOptional", ZodType);
+export JsValue ZodLazy = makeCtor("ZodLazy", ZodType);
+export JsValue ZodPromise = makeCtor("ZodPromise", ZodType);
+export JsValue ZodTransform = makeCtor("ZodTransform", ZodType);
+export JsValue ZodPipe = makeCtor("ZodPipe", ZodType);
+export JsValue ZodCodec = makeCtor("ZodCodec", ZodPipe);
+export JsValue ZodPreprocess = makeCtor("ZodPreprocess", ZodPipe);
+export JsValue ZodReadonly = makeCtor("ZodReadonly", ZodType);
+export JsValue ZodCustom = makeCtor("ZodCustom", ZodType);
+export JsValue ZodFile = makeCtor("ZodFile", ZodType);
+export JsValue ZodSuccess = makeCtor("ZodSuccess", ZodType);
+export JsValue ZodFunction = makeCtor("ZodFunction", ZodType);
+export JsValue ZodTemplateLiteral = makeCtor("ZodTemplateLiteral", ZodType);
+export JsValue ZodISODateTime = makeCtor("ZodISODateTime", ZodString);
+export JsValue ZodISODate = makeCtor("ZodISODate", ZodString);
+export JsValue ZodISOTime = makeCtor("ZodISOTime", ZodString);
+export JsValue ZodISODuration = makeCtor("ZodISODuration", ZodString);
+export JsValue ZodEmail = makeCtor("ZodEmail", ZodString);
+export JsValue ZodGUID = makeCtor("ZodGUID", ZodString);
+export JsValue ZodUUID = makeCtor("ZodUUID", ZodString);
+export JsValue ZodURL = makeCtor("ZodURL", ZodString);
+export JsValue ZodCUID = makeCtor("ZodCUID", ZodString);
+export JsValue ZodCUID2 = makeCtor("ZodCUID2", ZodString);
+export JsValue ZodULID = makeCtor("ZodULID", ZodString);
+export JsValue ZodNanoID = makeCtor("ZodNanoID", ZodString);
+export JsValue ZodBase64 = makeCtor("ZodBase64", ZodString);
+export JsValue ZodIPv4 = makeCtor("ZodIPv4", ZodString);
+export JsValue ZodIPv6 = makeCtor("ZodIPv6", ZodString);
+export JsValue ZodJWT = makeCtor("ZodJWT", ZodString);
+export JsValue ZodEmoji = makeCtor("ZodEmoji", ZodString);
+
+JsValue ctorFor(int kind) {
+  if (kind == KString) return ZodString;
+  if (kind == KNumber) return ZodNumber;
+  if (kind == KBoolean) return ZodBoolean;
+  if (kind == KBigint) return ZodBigInt;
+  if (kind == KSymbol) return ZodSymbol;
+  if (kind == KDate) return ZodDate;
+  if (kind == KNan) return ZodNaN;
+  if (kind == KUndefined) return ZodUndefined;
+  if (kind == KNull) return ZodNull;
+  if (kind == KAny) return ZodAny;
+  if (kind == KUnknown) return ZodUnknown;
+  if (kind == KNever) return ZodNever;
+  if (kind == KVoid) return ZodVoid;
+  if (kind == KLiteral) return ZodLiteral;
+  if (kind == KEnum) return ZodEnum;
+  if (kind == KObject) return ZodObject;
+  if (kind == KArray) return ZodArray;
+  if (kind == KTuple) return ZodTuple;
+  if (kind == KRecord) return ZodRecord;
+  if (kind == KMap) return ZodMap;
+  if (kind == KSet) return ZodSet;
+  if (kind == KUnion) return ZodUnion;
+  if (kind == KXor) return ZodXor;
+  if (kind == KIntersection) return ZodIntersection;
+  if (kind == KOptional) return ZodOptional;
+  if (kind == KNullable) return ZodNullable;
+  if (kind == KDefault) return ZodDefault;
+  if (kind == KPrefault) return ZodPrefault;
+  if (kind == KCatch) return ZodCatch;
+  if (kind == KNonoptional) return ZodNonOptional;
+  if (kind == KLazy) return ZodLazy;
+  if (kind == KPromise) return ZodPromise;
+  if (kind == KTransform) return ZodTransform;
+  if (kind == KPipe) return ZodPipe;
+  if (kind == KReadonly) return ZodReadonly;
+  if (kind == KCustom) return ZodCustom;
+  if (kind == KFile) return ZodFile;
+  if (kind == KSuccess) return ZodSuccess;
+  if (kind == KFunction) return ZodFunction;
+  if (kind == KTemplateLiteral) return ZodTemplateLiteral;
+  return ZodType;
+}
+
+JsValue typedDef(string typ, JsValue params) {
+  JsValue def = JS.object("type", typ);
+  objectAssign(def, normalizeParams(params));
+  return def;
+}
+
+JsValue checked(JsValue inst, string name, JsValue fields, JsValue params) {
+  objectAssign(fields, normalizeParams(params));
+  return withCheck(inst, createCheck(name, fields));
+}
+
+JsValue cloneInst(JsValue inst) {
+  return cloneWithDef(inst, undef());
+}
+
+JsValue wrap(int kind, JsValue inner, JsValue params) {
+  JsValue def = typedDef(typeNameOf(kind), params);
+  def["innerType"] = inner;
+  return construct1(ctorFor(kind), def);
+}
+
+JsValue shapeOf(JsValue inst) {
+  JsValue sh = schemaOf(inst).def["shape"];
+  if (isUndef(sh) || isNullish(sh)) return JS.object();
+  return sh;
+}
+
+bool objectHasChecks(JsValue inst) {
+  JsValue checks = schemaOf(inst).def["checks"];
+  return isArr(checks) && JS.number(checks["length"]).toInt() > 0;
+}
+
+void assertMaskKeys(JsValue shape, JsValue mask) {
+  JsValue keys = ownKeys(mask);
+  int i = 0;
+  int n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    if (!isStr(keys[i])) {
+      i = i + 1;
+      continue;
+    }
+    if (!hasOwn(shape, keys[i])) {
+      throw newError("Unrecognized key: \"" + toStr(keys[i]) + "\"");
+    }
+    i = i + 1;
+  }
+}
+
+JsValue overlayShapeGetter(JsValue srcInst, JsValue incoming) {
+  JsValue overlay = JS.object();
+  defineProperty(overlay, "shape", JS.object(
+    "configurable", true,
+    "enumerable", true,
+    "get", JS.method0((JsValue self) => {
+      JsValue next = JS.object();
+      copyOwn(next, shapeOf(srcInst));
+      if (!isUndef(incoming) && isObj(incoming) && !isNullish(incoming)) copyOwn(next, incoming);
+      defineProperty(self, "shape", JS.object("value", next, "writable", true, "enumerable", true, "configurable", true));
+      return next;
+    })
+  ));
+  return overlay;
+}
+
+JsValue remapObjectFields(JsValue inst, JsValue mask, bool optionalize, bool exact) {
+  if (optionalize && objectHasChecks(inst)) {
+    if (exact) throw newError(".exactPartial() cannot be used on object schemas containing refinements");
+    throw newError(".partial() cannot be used on object schemas containing refinements");
+  }
+  JsValue srcInst = inst;
+  JsValue def = copyDescriptors(JS.object(), schemaOf(inst).def);
+  defineProperty(def, "shape", JS.object(
+    "configurable", true,
+    "enumerable", true,
+    "get", JS.method0((JsValue self) => {
+      JsValue src = schemaOf(srcInst).def["shape"];
+      if (isUndef(src) || isNullish(src)) src = JS.object();
+      if (!isUndef(mask) && !JS.isNullish(mask)) assertMaskKeys(src, mask);
+      JsValue keys = ownKeys(src);
+      JsValue shape = JS.object();
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        JsValue key = keys[i];
+        if (!isStr(key)) {
+          i = i + 1;
+          continue;
+        }
+        JsValue field = src[key];
+        bool take = isUndef(mask) || JS.isNullish(mask) || mask[key].truthy();
+        if (take) {
+          if (optionalize) {
+            if (exact) field = construct1(ZodExactOptional, JS.object("type", "optional", "innerType", field, "exact", true));
+            else field = wrap(KOptional, field, undef());
+          } else {
+            field = wrap(KNonoptional, field, undef());
+          }
+        }
+        assignProp(shape, key, field);
+        i = i + 1;
+      }
+      defineProperty(self, "shape", JS.object("value", shape, "writable", true, "enumerable", true, "configurable", true));
+      return shape;
+    })
+  ));
+  if (optionalize) def["checks"] = newArray();
+  return construct1(ZodObject, def);
+}
+
+export JsValue schemaString(JsValue params) {
+  return construct1(ZodString, typedDef("string", params));
+}
+
+export JsValue schemaNumber(JsValue params) {
+  return construct1(ZodNumber, typedDef("number", params));
+}
+
+export JsValue schemaBoolean(JsValue params) {
+  return construct1(ZodBoolean, typedDef("boolean", params));
+}
+
+export JsValue schemaBigint(JsValue params) {
+  return construct1(ZodBigInt, typedDef("bigint", params));
+}
+
+export JsValue schemaSymbol(JsValue params) {
+  return construct1(ZodSymbol, typedDef("symbol", params));
+}
+
+export JsValue schemaDate(JsValue params) {
+  return construct1(ZodDate, typedDef("date", params));
+}
+
+export JsValue schemaNan(JsValue params) {
+  return construct1(ZodNaN, typedDef("nan", params));
+}
+
+export JsValue schemaUndefined() {
+  return construct1(ZodUndefined, JS.object("type", "undefined"));
+}
+
+export JsValue schemaNull() {
+  return construct1(ZodNull, JS.object("type", "null"));
+}
+
+export JsValue schemaAny() {
+  return construct1(ZodAny, JS.object("type", "any"));
+}
+
+export JsValue schemaUnknown() {
+  return construct1(ZodUnknown, JS.object("type", "unknown"));
+}
+
+export JsValue schemaNever() {
+  return construct1(ZodNever, JS.object("type", "never"));
+}
+
+export JsValue schemaVoid() {
+  return construct1(ZodVoid, JS.object("type", "void"));
+}
+
+export JsValue schemaLiteral(JsValue values, JsValue params) {
+  JsValue list = values;
+  if (!isArr(values)) {
+    list = newArray();
+    push(list, values);
+  }
+  JsValue def = typedDef("literal", params);
+  def["values"] = list;
+  return construct1(ZodLiteral, def);
+}
+
+export JsValue schemaEnum(JsValue entries, JsValue params) {
+  JsValue obj = entries;
+  if (isArr(entries)) {
+    obj = JS.object();
+    int i = 0;
+    int n = JS.number(entries["length"]).toInt();
+    while (i < n) {
+      assignProp(obj, entries[i], entries[i]);
+      i = i + 1;
+    }
+  }
+  JsValue def = typedDef("enum", params);
+  def["entries"] = obj;
+  return construct1(ZodEnum, def);
+}
+
+export JsValue schemaObject(JsValue shape, JsValue params) {
+  JsValue sh = shape;
+  if (isUndef(shape) || isNullish(shape)) sh = JS.object();
+  JsValue def = typedDef("object", params);
+  def["shape"] = sh;
+  return construct1(ZodObject, def);
+}
+
+export JsValue schemaArray(JsValue element, JsValue params) {
+  JsValue def = typedDef("array", params);
+  def["element"] = element;
+  return construct1(ZodArray, def);
+}
+
+export JsValue schemaTuple(JsValue items, JsValue rest, JsValue params) {
+  JsValue def = typedDef("tuple", params);
+  def["items"] = items;
+  if (!isUndef(rest) && !isNullish(rest)) def["rest"] = rest;
+  return construct1(ZodTuple, def);
+}
+
+export JsValue schemaRecord(JsValue key, JsValue val, JsValue params) {
+  JsValue keyType = key;
+  JsValue valueType = val;
+  JsValue p = params;
+  if (isUndef(val) || JS.isNullish(val) || isUndef(val["_zod"])) {
+    valueType = key;
+    keyType = schemaString(undef());
+    p = val;
+  }
+  JsValue def = typedDef("record", p);
+  def["keyType"] = keyType;
+  def["valueType"] = valueType;
+  return construct1(ZodRecord, def);
+}
+
+export JsValue schemaUnion(JsValue options, JsValue params) {
+  JsValue def = typedDef("union", params);
+  def["options"] = options;
+  return construct1(ZodUnion, def);
+}
+
+export JsValue schemaXor(JsValue options, JsValue params) {
+  JsValue def = typedDef("union", params);
+  def["options"] = options;
+  def["inclusive"] = false;
+  return construct1(ZodXor, def);
+}
+
+export JsValue schemaDiscUnion(string key, JsValue options, JsValue params) {
+  JsValue def = typedDef("union", params);
+  def["options"] = options;
+  def["discriminator"] = key;
+  def["inclusive"] = false;
+  if (isArr(options)) {
+    int i = 0;
+    int n = JS.number(options["length"]).toInt();
+    while (i < n) {
+      JsValue option = options[i];
+      if (isUndef(option)) {
+        i = i + 1;
+        continue;
+      }
+      if (JS.isNullish(option)) {
+        i = i + 1;
+        continue;
+      }
+      if (!isObj(option)) {
+        i = i + 1;
+        continue;
+      }
+      JsValue intern = option["_zod"];
+      if (isUndef(intern)) {
+        i = i + 1;
+        continue;
+      }
+      if (JS.isNullish(intern)) {
+        i = i + 1;
+        continue;
+      }
+      JsValue odef = intern["def"];
+      if (isUndef(odef)) {
+        i = i + 1;
+        continue;
+      }
+      if (JS.isNullish(odef)) {
+        i = i + 1;
+        continue;
+      }
+      JsValue propShape = shapePhase(odef);
+      if (isUndef(propShape)) {
+        i = i + 1;
+        continue;
+      }
+      if (JS.isNullish(propShape)) {
+        i = i + 1;
+        continue;
+      }
+      if (!hasOwn(propShape, key)) {
+        throw newError("Invalid discriminated union option at index \"" + toStr(i) + "\"");
+      }
+      i = i + 1;
+    }
+  }
+  return construct1(ZodDiscriminatedUnion, def);
+}
+
+export JsValue schemaIntersection(JsValue left, JsValue right) {
+  return construct1(ZodIntersection, JS.object("type", "intersection", "left", left, "right", right));
+}
+
+export JsValue schemaMap(JsValue key, JsValue val) {
+  return construct1(ZodMap, JS.object("type", "map", "keyType", key, "valueType", val));
+}
+
+export JsValue schemaSetType(JsValue val, JsValue params) {
+  JsValue def = typedDef("set", params);
+  def["valueType"] = val;
+  return construct1(ZodSet, def);
+}
+
+export JsValue schemaLazy(JsValue fn) {
+  return construct1(ZodLazy, JS.object("type", "lazy", "getter", fn));
+}
+
+export JsValue schemaPromise(JsValue inner) {
+  return construct1(ZodPromise, JS.object("type", "promise", "innerType", inner));
+}
+
+export JsValue schemaCheck(JsValue fn, JsValue params) {
+  return createPayloadCheck(fn, params);
+}
+
+export JsValue schemaRefine(JsValue fn, JsValue params) {
+  JsValue def = typedDef("custom", params);
+  def["fn"] = fn;
+  def["check"] = "custom";
+  return construct1(ZodCustom, def);
+}
+
+export JsValue schemaSuperRefine(JsValue fn, JsValue params) {
+  JsValue ch = createPayloadCheck(JS.method1((JsValue self, JsValue payload) => {
+    payload["addIssue"] = JS.method1((JsValue _s, JsValue issue) => {
+      JsValue next = issue;
+      if (isStr(issue)) next = JS.object("message", issue, "code", "custom", "input", payload["value"], "inst", self, "path", newArray());
+      else {
+        if (next["fatal"].truthy()) next["continue"] = false;
+        if (isUndef(next["code"])) next["code"] = "custom";
+        if (!inOp("input", next)) next["input"] = payload["value"];
+        if (isUndef(next["inst"])) next["inst"] = self;
+        if (isUndef(next["continue"])) next["continue"] = true;
+      }
+      push(payload["issues"], next);
+      return undef();
+    });
+    return call2(fn, undef(), payload["value"], payload);
+  }), params);
+  return ch;
+}
+
+export JsValue schemaCustom(JsValue fn, JsValue params) {
+  JsValue check = fn;
+  if (!isFn(fn)) {
+    check = JS.method1((JsValue _s, JsValue _d) => {
+      return true;
+    });
+  }
+  JsValue def = typedDef("custom", params);
+  def["fn"] = check;
+  def["check"] = "custom";
+  return construct1(ZodCustom, def);
+}
+
+export JsValue schemaFile(JsValue params) {
+  return construct1(ZodFile, typedDef("file", params));
+}
+
+export JsValue schemaInstanceof(JsValue ctor, JsValue params) {
+  JsValue def = typedDef("custom", params);
+  def["check"] = "custom";
+  def["abort"] = true;
+  def["fn"] = JS.method1((JsValue _s, JsValue data) => {
+    if (isInstance(ctor, data)) return true;
+    return false;
+  });
+  JsValue inst = construct1(ZodCustom, def);
+  schemaOf(inst).handle["_zod"]["bag"]["Class"] = ctor;
+  return inst;
+}
+
+export JsValue schemaTransform(JsValue fn) {
+  return construct1(ZodTransform, JS.object("type", "transform", "transform", fn));
+}
+
+export JsValue schemaPipe(JsValue left, JsValue right) {
+  return construct1(ZodPipe, JS.object("type", "pipe", "in", left, "out", right));
+}
+
+export JsValue schemaCodec(JsValue inn, JsValue out, JsValue params) {
+  return construct1(ZodCodec, JS.object(
+    "type", "pipe",
+    "in", inn,
+    "out", out,
+    "transform", params["decode"],
+    "reverseTransform", params["encode"]
+  ));
+}
+
+export JsValue schemaInvertCodec(JsValue codec) {
+  Schema s = schemaOf(codec);
+  return schemaCodec(s.def["out"], s.def["in"], JS.object(
+    "decode", s.def["reverseTransform"],
+    "encode", s.def["transform"]
+  ));
+}
+
+export JsValue schemaPreprocess(JsValue fn, JsValue schema) {
+  return construct1(ZodPreprocess, JS.object("type", "pipe", "in", schemaTransform(fn), "out", schema));
+}
+
+export JsValue schemaUrl(JsValue params) {
+  JsValue def = typedDef("string", params);
+  def["format"] = "url";
+  def["check"] = "string_format";
+  def["abort"] = false;
+  return construct1(ZodURL, def);
+}
+
+JsValue defaultTruthy() {
+  JsValue list = newArray();
+  push(list, "true");
+  push(list, "1");
+  push(list, "yes");
+  push(list, "on");
+  push(list, "y");
+  push(list, "enabled");
+  return list;
+}
+
+JsValue defaultFalsy() {
+  JsValue list = newArray();
+  push(list, "false");
+  push(list, "0");
+  push(list, "no");
+  push(list, "off");
+  push(list, "n");
+  push(list, "disabled");
+  return list;
+}
+
+export JsValue schemaStringbool(JsValue params) {
+  JsValue norm = normalizeParams(params);
+  JsValue truthy = norm["truthy"];
+  JsValue falsy = norm["falsy"];
+  if (isUndef(truthy) || !isArr(truthy)) truthy = defaultTruthy();
+  if (isUndef(falsy) || !isArr(falsy)) falsy = defaultFalsy();
+  bool sensitive = false;
+  if (isStr(norm["case"]) && toStr(norm["case"]) == "sensitive") sensitive = true;
+  if (!sensitive) {
+    JsValue t2 = newArray();
+    int i = 0;
+    int n = JS.number(truthy["length"]).toInt();
+    while (i < n) {
+      if (isStr(truthy[i])) push(t2, toStr(truthy[i]).toLowerCase());
+      else push(t2, truthy[i]);
+      i = i + 1;
+    }
+    truthy = t2;
+    JsValue f2 = newArray();
+    i = 0;
+    n = JS.number(falsy["length"]).toInt();
+    while (i < n) {
+      if (isStr(falsy[i])) push(f2, toStr(falsy[i]).toLowerCase());
+      else push(f2, falsy[i]);
+      i = i + 1;
+    }
+    falsy = f2;
+  }
+  JsValue truthySet = newSet();
+  JsValue falsySet = newSet();
+  int ti = 0;
+  int tn = JS.number(truthy["length"]).toInt();
+  while (ti < tn) {
+    setAdd(truthySet, truthy[ti]);
+    ti = ti + 1;
+  }
+  int fi = 0;
+  int fn = JS.number(falsy["length"]).toInt();
+  while (fi < fn) {
+    setAdd(falsySet, falsy[fi]);
+    fi = fi + 1;
+  }
+  JsValue stringSchema = construct1(ZodString, JS.object("type", "string", "error", norm["error"]));
+  JsValue booleanSchema = construct1(ZodBoolean, JS.object("type", "boolean", "error", norm["error"]));
+  JsValue codec = undef();
+  JsValue decode = JS.method2((JsValue _s, JsValue input, JsValue payload) => {
+    string data = toStr(input);
+    if (!sensitive) data = data.toLowerCase();
+    if (setHas(truthySet, data).truthy()) return true;
+    if (setHas(falsySet, data).truthy()) return false;
+    JsValue values = newArray();
+    int ti2 = 0;
+    int tn2 = JS.number(truthy["length"]).toInt();
+    while (ti2 < tn2) {
+      push(values, truthy[ti2]);
+      ti2 = ti2 + 1;
+    }
+    int j = 0;
+    int jn = JS.number(falsy["length"]).toInt();
+    while (j < jn) {
+      push(values, falsy[j]);
+      j = j + 1;
+    }
+    push(payload["issues"], JS.object(
+      "code", "invalid_value",
+      "expected", "stringbool",
+      "values", values,
+      "input", payload["value"],
+      "inst", codec
+    ));
+    return JS.object();
+  });
+  JsValue encode = JS.method2((JsValue _s, JsValue input, JsValue _payload) => {
+    if (JS.strictEqual(input, true)) return truthy[0];
+    return falsy[0];
+  });
+  codec = construct1(ZodCodec, JS.object(
+    "type", "pipe",
+    "in", stringSchema,
+    "out", booleanSchema,
+    "transform", decode,
+    "reverseTransform", encode,
+    "error", norm["error"]
+  ));
+  return codec;
+}
+
+export JsValue schemaSuccess(JsValue inner) {
+  return construct1(ZodSuccess, JS.object("type", "success", "innerType", inner));
+}
+
+export JsValue schemaPartialRecord(JsValue key, JsValue val, JsValue params) {
+  JsValue inst = schemaRecord(key, val, params);
+  schemaOf(inst).def["partial"] = true;
+  return inst;
+}
+
+export JsValue schemaJson(JsValue params) {
+  JsValue jsonSchema = undef();
+  jsonSchema = schemaLazy(JS.method0((JsValue _s) => {
+    JsValue opts = newArray();
+    push(opts, schemaString(params));
+    push(opts, schemaNumber(undef()));
+    push(opts, schemaBoolean(undef()));
+    push(opts, schemaNull());
+    push(opts, schemaArray(jsonSchema, undef()));
+    push(opts, schemaRecord(schemaString(undef()), jsonSchema, undef()));
+    return schemaUnion(opts, undef());
+  }));
+  return jsonSchema;
+}
+
+export JsValue schemaFormat(JsValue ctor, string format, JsValue regex, JsValue params) {
+  JsValue use = ctor;
+  if (isUndef(ctor) || JS.isNullish(ctor)) use = ZodString;
+  JsValue def = typedDef("string", params);
+  def["format"] = format;
+  def["check"] = "string_format";
+  if (!isUndef(regex) && !JS.isNullish(regex)) def["pattern"] = regex;
+  return construct1(use, def);
+}
+
+export JsValue schemaHex(JsValue params) {
+  return schemaFormat(undef(), "hex", regexJs(hexRe), params);
+}
+
+export JsValue schemaHostname(JsValue params) {
+  return schemaFormat(undef(), "hostname", regexJs(hostnameRe), params);
+}
+
+export JsValue schemaHttpUrl(JsValue params) {
+  JsValue def = typedDef("string", params);
+  def["format"] = "url";
+  def["check"] = "string_format";
+  def["abort"] = false;
+  def["protocol"] = regexJs(httpProtocolRe);
+  def["hostname"] = regexJs(domainRe);
+  return construct1(ZodURL, def);
+}
+
+export JsValue schemaCreditCard(JsValue params) {
+  return schemaFormat(undef(), "credit_card", regexJs(creditCardRe), params);
+}
+
+export JsValue schemaMac(JsValue params) {
+  JsValue delim = ":";
+  if (isObj(params) && isStr(params["delimiter"])) delim = params["delimiter"];
+  string d = toStr(delim);
+  JsValue re = newRegex("^(?:[0-9A-F]{2}" + d + "){5}[0-9A-F]{2}$|^(?:[0-9a-f]{2}" + d + "){5}[0-9a-f]{2}$", "");
+  return schemaFormat(undef(), "mac", re, params);
+}
+
+export JsValue schemaLooseRecord(JsValue key, JsValue val, JsValue params) {
+  JsValue inst = schemaRecord(key, val, params);
+  schemaOf(inst).def["mode"] = "loose";
+  return inst;
+}
+
+export JsValue schemaHash(JsValue alg, JsValue params) {
+  string encoding = "hex";
+  if (isObj(params) && isStr(params["enc"])) encoding = toStr(params["enc"]);
+  string name = toStr(alg) + "_" + encoding;
+  string a = toStr(alg);
+  JsValue re = regexJs(sha256HexRe);
+  if (encoding == "hex") {
+    if (a == "md5") re = regexJs(md5HexRe);
+    if (a == "sha1") re = regexJs(sha1HexRe);
+    if (a == "sha256") re = regexJs(sha256HexRe);
+    if (a == "sha384") re = regexJs(sha384HexRe);
+    if (a == "sha512") re = regexJs(sha512HexRe);
+  }
+  if (encoding == "base64") {
+    if (a == "md5") re = newRegex("^[A-Za-z0-9+/]{22}==$", "");
+    if (a == "sha1") re = newRegex("^[A-Za-z0-9+/]{27}=$", "");
+    if (a == "sha256") re = newRegex("^[A-Za-z0-9+/]{43}=$", "");
+    if (a == "sha384") re = newRegex("^[A-Za-z0-9+/]{64}$", "");
+    if (a == "sha512") re = newRegex("^[A-Za-z0-9+/]{86}==$", "");
+  }
+  if (encoding == "base64url") {
+    if (a == "md5") re = newRegex("^[A-Za-z0-9_-]{22}$", "");
+    if (a == "sha1") re = newRegex("^[A-Za-z0-9_-]{27}$", "");
+    if (a == "sha256") re = newRegex("^[A-Za-z0-9_-]{43}$", "");
+    if (a == "sha384") re = newRegex("^[A-Za-z0-9_-]{64}$", "");
+    if (a == "sha512") re = newRegex("^[A-Za-z0-9_-]{86}$", "");
+  }
+  return schemaFormat(undef(), name, re, params);
+}
+
+export JsValue schemaInt(JsValue params) {
+  return withCheck(schemaNumber(params), createCheck("number_format", JS.object("format", "int")));
+}
+
+export JsValue schemaNumberFormat(string format, JsValue params) {
+  return withCheck(schemaNumber(params), createCheck("number_format", JS.object("format", format)));
+}
+
+export JsValue schemaTemplateLiteral(JsValue parts, JsValue params) {
+  JsValue def = typedDef("template_literal", params);
+  def["parts"] = parts;
+  JsValue inst = construct1(ZodTemplateLiteral, def);
+  defineProperty(inst["_zod"], "pattern", JS.object(
+    "value", schemaOf(inst).templatePattern(parts),
+    "writable", true,
+    "configurable", true,
+    "enumerable", true
+  ));
+  return inst;
+}
+
+export JsValue schemaStringFormat(JsValue format, JsValue fnOrRegex, JsValue params) {
+  JsValue def = typedDef("string", params);
+  def["check"] = "string_format";
+  def["format"] = format;
+  if (isFn(fnOrRegex)) def["fn"] = fnOrRegex;
+  if (isObj(fnOrRegex) && !isNullish(fnOrRegex) && isFn(fnOrRegex["test"])) {
+    def["pattern"] = fnOrRegex;
+    if (isUndef(def["fn"])) {
+      def["fn"] = JS.method1((JsValue _s, JsValue val) => {
+        return invoke1(fnOrRegex, "test", val);
+      });
+    }
+  }
+  return construct1(ZodString, def);
+}
+
+export JsValue schemaProperty(JsValue property, JsValue schema, JsValue params) {
+  JsValue fields = JS.object("property", property, "schema", schema);
+  objectAssign(fields, normalizeParams(params));
+  return createCheck("property", fields);
+}
+
+export JsValue schemaFunction(JsValue params) {
+  JsValue input = undef();
+  JsValue output = undef();
+  if (isObj(params) && !isNullish(params)) {
+    input = params["input"];
+    output = params["output"];
+  }
+  if (isArr(input)) input = schemaTuple(input, undef(), undef());
+  if (isUndef(input)) input = schemaArray(schemaUnknown(), undef());
+  if (isUndef(output)) output = schemaUnknown();
+  return construct1(ZodFunction, JS.object("type", "function", "input", input, "output", output));
+}
+
+JsValue addFormat(JsValue inst, string format, JsValue regex, JsValue params) {
+  JsValue fields = JS.object("format", format, "pattern", regex);
+  string msg = toStr(paramMessage(params));
+  if (msg.length > 0) fields["error"] = msg;
+  return withCheck(inst, createCheck("string_format", fields));
+}
+
+void installTypeMethods() {
+  defineProperty(ZodType["prototype"], "_def", JS.object(
+    "configurable", true,
+    "get", JS.method0((JsValue self) => {
+      return self["_zod"]["def"];
+    })
+  ));
+  installLazy(ZodType["prototype"], "parse", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = JS.methodRest((JsValue _s, JsValue args) => {
+      return parseWithCallee(self, args[0], args[1], fn);
+    });
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "safeParse", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return safeParseInst(self, args[0], args[1]);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "parseAsync", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = makeAsync2(JS.method2((JsValue _s, JsValue data, JsValue params) => {
+      return parseAsyncWithCallee(self, data, params, fn);
+    }));
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "safeParseAsync", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return safeParseAsyncInst(self, args[0], args[1]);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "spa", JS.method1((JsValue _p, JsValue self) => {
+    return self["safeParseAsync"];
+  }), true);
+  installLazy(ZodType["prototype"], "encode", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue ctx = args[1];
+      if (isUndef(ctx) || JS.isNullish(ctx)) ctx = JS.object();
+      else ctx = objectAssign(JS.object(), ctx);
+      ctx["direction"] = "backward";
+      return parseWithCallee(self, args[0], ctx, fn);
+    });
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "decode", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue ctx = args[1];
+      if (isUndef(ctx) || JS.isNullish(ctx)) ctx = JS.object();
+      else ctx = objectAssign(JS.object(), ctx);
+      ctx["direction"] = "forward";
+      return parseWithCallee(self, args[0], ctx, fn);
+    });
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "encodeAsync", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = makeAsync2(JS.method2((JsValue _s, JsValue data, JsValue params) => {
+      JsValue ctx = params;
+      if (isUndef(ctx) || JS.isNullish(ctx)) ctx = JS.object();
+      else ctx = objectAssign(JS.object(), ctx);
+      ctx["direction"] = "backward";
+      return parseAsyncWithCallee(self, data, ctx, fn);
+    }));
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "decodeAsync", JS.method1((JsValue _p, JsValue self) => {
+    JsValue fn = undef();
+    fn = makeAsync2(JS.method2((JsValue _s, JsValue data, JsValue params) => {
+      JsValue ctx = params;
+      if (isUndef(ctx) || JS.isNullish(ctx)) ctx = JS.object();
+      else ctx = objectAssign(JS.object(), ctx);
+      ctx["direction"] = "forward";
+      return parseAsyncWithCallee(self, data, ctx, fn);
+    }));
+    return fn;
+  }), true);
+  installLazy(ZodType["prototype"], "optional", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return wrap(KOptional, self, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "exactOptional", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return construct1(ZodExactOptional, JS.object("type", "optional", "innerType", self, "exact", true));
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "nullable", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return wrap(KNullable, self, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "nullish", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return wrap(KOptional, wrap(KNullable, self, undef()), undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "array", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaArray(self, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "or", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue other) => {
+      JsValue opts = newArray();
+      push(opts, self);
+      push(opts, other);
+      return schemaUnion(opts, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "and", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue other) => {
+      return schemaIntersection(self, other);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "optional", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return wrap(KOptional, self, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "default", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue value) => {
+      JsValue def = JS.object("type", "default", "innerType", self);
+      defineProperty(def, "defaultValue", JS.object(
+        "configurable", true,
+        "enumerable", true,
+        "get", JS.method0((JsValue _d) => {
+          if (isFn(value)) return call0(value, undef());
+          return value;
+        })
+      ));
+      return construct1(ZodDefault, def);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "prefault", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue value) => {
+      JsValue def = JS.object("type", "prefault", "innerType", self);
+      defineProperty(def, "defaultValue", JS.object(
+        "configurable", true,
+        "enumerable", true,
+        "get", JS.method0((JsValue _d) => {
+          if (isFn(value)) return call0(value, undef());
+          return value;
+        })
+      ));
+      return construct1(ZodPrefault, def);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "catch", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue value) => {
+      JsValue catchValue = value;
+      if (!isFn(value)) {
+        catchValue = JS.method0((JsValue _s) => {
+          return value;
+        });
+      }
+      JsValue def = JS.object("type", "catch", "innerType", self, "catchValue", catchValue);
+      return construct1(ZodCatch, def);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "removeDefault", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "removeCatch", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "nonoptional", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return wrap(KNonoptional, self, args[0]);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "transform", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue fn) => {
+      return schemaPipe(self, schemaTransform(fn));
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "pipe", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue target) => {
+      return schemaPipe(self, target);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "readonly", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return wrap(KReadonly, self, undef());
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "brand", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue _args) => {
+      return self;
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "describe", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue desc) => {
+      JsValue cl = cloneInst(self);
+      call1(globalRegistry()["add"], globalRegistry(), cl);
+      JsValue reg = globalRegistry();
+      JS.call(reg["add"], reg, cl, JS.object("description", desc));
+      return cl;
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "meta", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue reg = globalRegistry();
+      if (isUndef(args[0])) return JS.call(reg["get"], reg, self);
+      JsValue cl = cloneInst(self);
+      JS.call(reg["add"], reg, cl, args[0]);
+      return cl;
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "refine", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, schemaRefine(args[0], args[1]));
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "superRefine", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, schemaSuperRefine(args[0], args[1]));
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "overwrite", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue fn) => {
+      return withCheck(self, createCheck("overwrite", JS.object("transform", fn)));
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "check", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue cur = self;
+      int i = 0;
+      int n = JS.number(args["length"]).toInt();
+      while (i < n) {
+        JsValue ch = args[i];
+        if (isFn(ch)) cur = withCheck(cur, createPayloadCheck(ch, undef()));
+        else if (isObj(ch) && !isUndef(ch["_zod"])) cur = withCheck(cur, ch);
+        i = i + 1;
+      }
+      return cur;
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "with", JS.method1((JsValue _p, JsValue self) => {
+    return self["check"];
+  }), true);
+  installLazy(ZodType["prototype"], "clone", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return cloneWithDef(self, args[0]);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "description", JS.method1((JsValue _p, JsValue self) => {
+    JsValue meta = JS.call(globalRegistry()["get"], globalRegistry(), self);
+    if (isUndef(meta) || JS.isNullish(meta)) return undef();
+    return meta["description"];
+  }), true);
+  installLazy(ZodType["prototype"], "isOptional", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return safeParseInst(self, undef(), undef())["success"];
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "isNullable", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return safeParseInst(self, null, undef())["success"];
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "apply", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue fn = args[0];
+      JsValue callArgs = newArray();
+      push(callArgs, self);
+      int i = 1;
+      int n = JS.number(args["length"]).toInt();
+      while (i < n) {
+        push(callArgs, args[i]);
+        i = i + 1;
+      }
+      return apply(fn, undef(), callArgs);
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "register", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JS.call(args[0]["add"], args[0], self, args[1]);
+      return self;
+    });
+  }), true);
+  installLazy(ZodType["prototype"], "~standard", JS.method1((JsValue _p, JsValue self) => {
+    return JS.object(
+      "version", 1,
+      "vendor", "zod",
+      "validate", JS.method1((JsValue _s, JsValue value) => {
+        try {
+          JsValue result = safeParseInst(self, value, undef());
+          if (result["success"].truthy()) return JS.object("value", result["data"]);
+          return JS.object("issues", result["error"]["issues"]);
+        } catch (auto _err) {
+          return invoke1(safeParseAsyncInst(self, value, undef()), "then", JS.method1((JsValue _t, JsValue result) => {
+            if (result["success"].truthy()) return JS.object("value", result["data"]);
+            return JS.object("issues", result["error"]["issues"]);
+          }));
+        }
+      }),
+      "jsonSchema", JS.object(
+        "input", JS.methodRest((JsValue _s, JsValue args) => {
+          JsValue toj = self["constructor"];
+          if (isObj(self["_zod"]) && isFn(self["toJSONSchema"])) {
+            JsValue params = args[0];
+            if (isUndef(params) || JS.isNullish(params)) params = JS.object();
+            else params = objectAssign(JS.object(), params);
+            params["io"] = "input";
+            return call1(self["toJSONSchema"], self, params);
+          }
+          return JS.object("type", schemaOf(self).typeName);
+        }),
+        "output", JS.methodRest((JsValue _s, JsValue args) => {
+          if (isFn(self["toJSONSchema"])) {
+            JsValue params = args[0];
+            if (isUndef(params) || JS.isNullish(params)) params = JS.object();
+            else params = objectAssign(JS.object(), params);
+            params["io"] = "output";
+            return call1(self["toJSONSchema"], self, params);
+          }
+          return JS.object("type", schemaOf(self).typeName);
+        })
+      )
+    );
+  }), false);
+  installLazy(ZodType["prototype"], "toJSONSchema", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue _args) => {
+      return JS.object("type", schemaOf(self).typeName);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "format", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["format"])) return null;
+    return bag["format"];
+  }), true);
+  installLazy(ZodString["prototype"], "minLength", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["minimum"])) return null;
+    return bag["minimum"];
+  }), true);
+  installLazy(ZodString["prototype"], "maxLength", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["maximum"])) return null;
+    return bag["maximum"];
+  }), true);
+}
+
+void installStringMethods() {
+  installLazy(ZodString["prototype"], "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "min_length", JS.object("minimum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "max_length", JS.object("maximum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "length", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "length_equals", JS.object("length", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "nonempty", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "min_length", JS.object("minimum", 1), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "includes", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue fields = JS.object("includes", args[0]);
+      if (isObj(args[1]) && isNum(args[1]["position"])) fields["position"] = args[1]["position"];
+      return checked(self, "includes", fields, args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "startsWith", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "starts_with", JS.object("prefix", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "endsWith", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "ends_with", JS.object("suffix", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "regex", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "string_format", JS.object("format", "regex", "pattern", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "email", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "email", regexJs(emailRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "url", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue fields = JS.object("format", "url");
+      if (isObj(args[0]) && !isUndef(args[0]["hostname"])) fields["hostname"] = args[0]["hostname"];
+      if (isObj(args[0]) && !isUndef(args[0]["protocol"])) fields["protocol"] = args[0]["protocol"];
+      if (isObj(args[0]) && !isUndef(args[0]["normalize"])) fields["normalize"] = args[0]["normalize"];
+      return checked(self, "string_format", fields, args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "uuid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "uuid", regexJs(uuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "uuidv4", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "uuid", regexJs(uuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "uuidv6", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "uuid", regexJs(uuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "uuidv7", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "uuid", regexJs(uuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "guid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "guid", regexJs(guidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "cuid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "cuid", regexJs(cuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "cuid2", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "cuid2", regexJs(cuid2Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "ulid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "ulid", regexJs(ulidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "nanoid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "nanoid", regexJs(nanoidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "base64", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "base64", construct1(gGlobal()["RegExp"], "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "base64url", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "base64url", regexJs(base64urlRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "ipv4", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "ipv4", regexJs(ipv4Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "ipv6", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "ipv6", regexJs(ipv6Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "cidrv4", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "cidrv4", regexJs(cidrv4Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "cidrv6", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "cidrv6", regexJs(cidrv6Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "jwt", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue fields = JS.object("format", "jwt");
+      if (isObj(args[0]) && isStr(args[0]["alg"])) fields["alg"] = args[0]["alg"];
+      return checked(self, "string_format", fields, args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "emoji", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "emoji", regexJs(emojiRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "e164", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "e164", regexJs(e164Re), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "mac", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      string d = ":";
+      if (isObj(args[0]) && isStr(args[0]["delimiter"])) d = toStr(args[0]["delimiter"]);
+      return addFormat(self, "mac", newRegex("^(?:[0-9A-F]{2}" + d + "){5}[0-9A-F]{2}$|^(?:[0-9a-f]{2}" + d + "){5}[0-9a-f]{2}$", ""), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "creditCard", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "credit_card", regexJs(creditCardRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "xid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "xid", regexJs(xidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "ksuid", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "ksuid", regexJs(ksuidRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "datetime", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "datetime", datetimeRegex(args[0]), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "date", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "date", dateRegex(), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "time", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "time", timeRegex(args[0]), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "duration", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return addFormat(self, "duration", regexJs(durationRe), args[0]);
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "trim", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+        return invoke0(v, "trim");
+      }))));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "toLowerCase", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+        return invoke0(v, "toLowerCase");
+      }))));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "toUpperCase", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+        return invoke0(v, "toUpperCase");
+      }))));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "lowercase", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("lowercase", JS.object()));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "uppercase", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("uppercase", JS.object()));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "normalize", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue form = "NFC";
+      if (isStr(args[0])) form = args[0];
+      return withCheck(self, createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+        return invoke1(v, "normalize", form);
+      }))));
+    });
+  }), true);
+  installLazy(ZodString["prototype"], "slugify", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+        JsValue lower = invoke0(invoke0(v, "toLowerCase"), "trim");
+        JsValue stripped = invoke2(lower, "replace", newRegex("[^\\w\\s-]", "g"), "");
+        JsValue dashed = invoke2(stripped, "replace", newRegex("[\\s_-]+", "g"), "-");
+        return invoke2(dashed, "replace", newRegex("^-+|-+$", "g"), "");
+      }))));
+    });
+  }), true);
+}
+
+void installNumberMethods() {
+  installLazy(ZodNumber["prototype"], "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "greater_than", JS.object("value", args[0], "inclusive", true, "origin", "number"), args[1]);
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "less_than", JS.object("value", args[0], "inclusive", true, "origin", "number"), args[1]);
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "gt", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "greater_than", JS.object("value", args[0], "inclusive", false, "origin", "number"), args[1]);
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "gte", JS.method1((JsValue _p, JsValue self) => {
+    return self["min"];
+  }), true);
+  installLazy(ZodNumber["prototype"], "lt", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "less_than", JS.object("value", args[0], "inclusive", false, "origin", "number"), args[1]);
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "lte", JS.method1((JsValue _p, JsValue self) => {
+    return self["max"];
+  }), true);
+  installLazy(ZodNumber["prototype"], "int", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("number_format", JS.object("format", "int")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "positive", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", 0, "inclusive", false, "origin", "number")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "negative", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", 0, "inclusive", false, "origin", "number")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "nonnegative", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", 0, "inclusive", true, "origin", "number")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "nonpositive", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", 0, "inclusive", true, "origin", "number")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "multipleOf", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "multiple_of", JS.object("value", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "step", JS.method1((JsValue _p, JsValue self) => {
+    return self["multipleOf"];
+  }), true);
+  installLazy(ZodNumber["prototype"], "finite", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue _args) => {
+      return self;
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "safe", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("number_format", JS.object("format", "safeint")));
+    });
+  }), true);
+  installLazy(ZodNumber["prototype"], "format", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["format"])) return null;
+    return bag["format"];
+  }), true);
+  installLazy(ZodNumber["prototype"], "minValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    JsValue Math = gGlobal()["Math"];
+    JsValue ninf = gNumber()["NEGATIVE_INFINITY"];
+    JsValue min = bag["minimum"];
+    if (isUndef(min)) min = ninf;
+    JsValue emin = bag["exclusiveMinimum"];
+    if (isUndef(emin)) emin = ninf;
+    return JS.invoke(Math, "max", min, emin);
+  }), true);
+  installLazy(ZodNumber["prototype"], "maxValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    JsValue Math = gGlobal()["Math"];
+    JsValue pinf = gNumber()["POSITIVE_INFINITY"];
+    JsValue max = bag["maximum"];
+    if (isUndef(max)) max = pinf;
+    JsValue emax = bag["exclusiveMaximum"];
+    if (isUndef(emax)) emax = pinf;
+    return JS.invoke(Math, "min", max, emax);
+  }), true);
+  installLazy(ZodNumber["prototype"], "isInt", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    string fmt = "";
+    if (isStr(bag["format"])) fmt = toStr(bag["format"]);
+    bool intish = fmt.includes("int");
+    if (!intish) {
+      JsValue probe = bag["multipleOf"];
+      if (isUndef(probe)) probe = 0.5;
+      if (isSafeInteger(probe)) intish = true;
+    }
+    return intish;
+  }), true);
+  installLazy(ZodNumber["prototype"], "isFinite", JS.method1((JsValue _p, JsValue self) => {
+    return true;
+  }), true);
+}
+
+void installBigintMethods() {
+  installLazy(ZodBigInt["prototype"], "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", args[0], "inclusive", true, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", args[0], "inclusive", true, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "gt", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", args[0], "inclusive", false, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "gte", JS.method1((JsValue _p, JsValue self) => {
+    return self["min"];
+  }), true);
+  installLazy(ZodBigInt["prototype"], "lt", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", args[0], "inclusive", false, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "lte", JS.method1((JsValue _p, JsValue self) => {
+    return self["max"];
+  }), true);
+  installLazy(ZodBigInt["prototype"], "positive", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", toBigInt(0), "inclusive", false, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "negative", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", toBigInt(0), "inclusive", false, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "nonnegative", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", toBigInt(0), "inclusive", true, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "nonpositive", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", toBigInt(0), "inclusive", true, "origin", "bigint")));
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "multipleOf", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "multiple_of", JS.object("value", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodBigInt["prototype"], "format", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["format"])) return null;
+    return bag["format"];
+  }), true);
+  installLazy(ZodBigInt["prototype"], "minValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["minimum"])) return null;
+    return bag["minimum"];
+  }), true);
+  installLazy(ZodBigInt["prototype"], "maxValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    if (isUndef(bag["maximum"])) return null;
+    return bag["maximum"];
+  }), true);
+}
+
+void installDateMethods() {
+  installLazy(ZodDate["prototype"], "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("greater_than", JS.object("value", args[0], "inclusive", true, "origin", "date")));
+    });
+  }), true);
+  installLazy(ZodDate["prototype"], "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("less_than", JS.object("value", args[0], "inclusive", true, "origin", "date")));
+    });
+  }), true);
+  installLazy(ZodDate["prototype"], "minValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    JsValue Math = gGlobal()["Math"];
+    JsValue ninf = gNumber()["NEGATIVE_INFINITY"];
+    JsValue min = bag["minimum"];
+    if (isUndef(min)) min = ninf;
+    JsValue emin = bag["exclusiveMinimum"];
+    if (isUndef(emin)) emin = ninf;
+    return JS.invoke(Math, "max", min, emin);
+  }), true);
+  installLazy(ZodDate["prototype"], "maxValue", JS.method1((JsValue _p, JsValue self) => {
+    JsValue bag = self["_zod"]["bag"];
+    JsValue Math = gGlobal()["Math"];
+    JsValue pinf = gNumber()["POSITIVE_INFINITY"];
+    JsValue max = bag["maximum"];
+    if (isUndef(max)) max = pinf;
+    JsValue emax = bag["exclusiveMaximum"];
+    if (isUndef(emax)) emax = pinf;
+    return JS.invoke(Math, "min", max, emax);
+  }), true);
+  installLazy(ZodDate["prototype"], "minDate", JS.method1((JsValue _p, JsValue self) => {
+    JsValue min = self["minValue"];
+    if (JS.isNullish(min) || !isFiniteNum(min)) return null;
+    return construct1(gDate(), min);
+  }), true);
+  installLazy(ZodDate["prototype"], "maxDate", JS.method1((JsValue _p, JsValue self) => {
+    JsValue max = self["maxValue"];
+    if (JS.isNullish(max) || !isFiniteNum(max)) return null;
+    return construct1(gDate(), max);
+  }), true);
+}
+
+void installCollectionSizeMethods(JsValue proto) {
+  installLazy(proto, "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "min_size", JS.object("minimum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(proto, "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "max_size", JS.object("maximum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(proto, "size", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return withCheck(self, createCheck("size_equals", JS.object("size", args[0])));
+    });
+  }), true);
+  installLazy(proto, "nonempty", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return withCheck(self, createCheck("min_size", JS.object("minimum", 1)));
+    });
+  }), true);
+}
+
+void installFunctionMethods() {
+  installLazy(ZodFunction["prototype"], "implement", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue fn) => {
+      if (!isFn(fn)) throw newError("implement() must be called with a function");
+      Schema schema = schemaOf(self);
+      return implementFn(fn, schema.def["input"], schema.def["output"], false);
+    });
+  }), true);
+  installLazy(ZodFunction["prototype"], "implementAsync", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue fn) => {
+      if (!isFn(fn)) throw newError("implementAsync() must be called with a function");
+      Schema schema = schemaOf(self);
+      return implementFn(fn, schema.def["input"], schema.def["output"], true);
+    });
+  }), true);
+  installLazy(ZodFunction["prototype"], "input", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue next = args[0];
+      if (isArr(next)) next = schemaTuple(next, args[1], undef());
+      return cloneWithDef(self, JS.object("input", next));
+    });
+  }), true);
+  installLazy(ZodFunction["prototype"], "output", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue out) => {
+      return cloneWithDef(self, JS.object("output", out));
+    });
+  }), true);
+}
+
+void installArrayMethods() {
+  installLazy(ZodArray["prototype"], "min", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "min_length", JS.object("minimum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodArray["prototype"], "max", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "max_length", JS.object("maximum", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodArray["prototype"], "length", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "length_equals", JS.object("length", args[0]), args[1]);
+    });
+  }), true);
+  installLazy(ZodArray["prototype"], "nonempty", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return checked(self, "min_length", JS.object("minimum", 1), args[0]);
+    });
+  }), true);
+}
+
+void installObjectMethods() {
+  defineProperty(ZodObject["prototype"], "shape", JS.object(
+    "configurable", true,
+    "enumerable", false,
+    "get", JS.method0((JsValue self) => {
+      return self["_zod"]["def"]["shape"];
+    })
+  ));
+  installLazy(ZodObject["prototype"], "strict", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return cloneWithDef(self, JS.object("catchall", schemaNever()));
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "passthrough", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return cloneWithDef(self, JS.object("catchall", schemaUnknown()));
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "strip", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      JsValue def = objectAssign(JS.object(), schemaOf(self).def);
+      def["catchall"] = undef();
+      return construct1(ZodObject, def);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "loose", JS.method1((JsValue _p, JsValue self) => {
+    return self["passthrough"];
+  }), true);
+  installLazy(ZodObject["prototype"], "catchall", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue extra) => {
+      return cloneWithDef(self, JS.object("catchall", extra));
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "extend", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue incoming) => {
+      if (objectHasChecks(self)) {
+        JsValue existing = shapeOf(self);
+        JsValue keys = objectKeys(incoming);
+        int i = 0;
+        int n = JS.number(keys["length"]).toInt();
+        while (i < n) {
+          if (!isUndef(getDescriptor(existing, keys[i]))) {
+            throw newError("Cannot overwrite keys on object schemas containing refinements. Use `.safeExtend()` instead.");
+          }
+          i = i + 1;
+        }
+      }
+      return cloneWithDef(self, overlayShapeGetter(self, incoming));
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "safeExtend", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue incoming) => {
+      return cloneWithDef(self, overlayShapeGetter(self, incoming));
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "merge", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue other) => {
+      if (objectHasChecks(self)) {
+        throw newError(".merge() cannot be used on object schemas containing refinements. Use .safeExtend() instead.");
+      }
+      JsValue overlay = overlayShapeGetter(self, schemaOf(other).def["shape"]);
+      defineProperty(overlay, "catchall", JS.object(
+        "configurable", true,
+        "enumerable", true,
+        "get", JS.method0((JsValue _c) => {
+          return schemaOf(other).def["catchall"];
+        })
+      ));
+      JsValue otherChecks = schemaOf(other).def["checks"];
+      if (isArr(otherChecks)) overlay["checks"] = otherChecks;
+      else overlay["checks"] = newArray();
+      return cloneWithDef(self, overlay);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "pick", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue mask) => {
+      if (objectHasChecks(self)) throw newError(".pick() cannot be used on object schemas containing refinements");
+      JsValue src = shapeOf(self);
+      assertMaskKeys(src, mask);
+      JsValue shape = JS.object();
+      JsValue keys = ownKeys(mask);
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        JsValue key = keys[i];
+        if (isStr(key) && mask[key].truthy()) assignProp(shape, key, src[key]);
+        i = i + 1;
+      }
+      JsValue overlay = JS.object();
+      overlay["checks"] = newArray();
+      defineProperty(overlay, "shape", JS.object(
+        "configurable", true,
+        "enumerable", true,
+        "get", JS.method0((JsValue target) => {
+          defineProperty(target, "shape", JS.object("value", shape, "writable", true, "enumerable", true, "configurable", true));
+          return shape;
+        })
+      ));
+      return cloneWithDef(self, overlay);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "omit", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method1((JsValue _s, JsValue mask) => {
+      if (objectHasChecks(self)) throw newError(".omit() cannot be used on object schemas containing refinements");
+      JsValue src = shapeOf(self);
+      assertMaskKeys(src, mask);
+      JsValue shape = JS.object();
+      copyOwn(shape, src);
+      JsValue keys = ownKeys(mask);
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        if (isStr(keys[i]) && mask[keys[i]].truthy()) deleteProp(shape, keys[i]);
+        i = i + 1;
+      }
+      JsValue overlay = JS.object();
+      overlay["checks"] = newArray();
+      defineProperty(overlay, "shape", JS.object(
+        "configurable", true,
+        "enumerable", true,
+        "get", JS.method0((JsValue target) => {
+          defineProperty(target, "shape", JS.object("value", shape, "writable", true, "enumerable", true, "configurable", true));
+          return shape;
+        })
+      ));
+      return cloneWithDef(self, overlay);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "partial", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      if (objectHasChecks(self)) throw newError(".partial() cannot be used on object schemas containing refinements");
+      return remapObjectFields(self, args[0], true, false);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "exactPartial", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      if (objectHasChecks(self)) throw newError(".exactPartial() cannot be used on object schemas containing refinements");
+      return remapObjectFields(self, args[0], true, true);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "required", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      return remapObjectFields(self, args[0], false, false);
+    });
+  }), true);
+  installLazy(ZodObject["prototype"], "keyof", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaEnum(objectKeys(shapeOf(self)), undef());
+    });
+  }), true);
+}
+
+void installEnumMethods() {
+  installLazy(ZodEnum["prototype"], "extract", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      Schema src = schemaOf(self);
+      JsValue keys = args[0];
+      JsValue entries = src.def["entries"];
+      JsValue next = JS.object();
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        if (!hasOwn(entries, keys[i])) throw newError("Key " + toStr(keys[i]) + " not found in enum");
+        assignProp(next, keys[i], entries[keys[i]]);
+        i = i + 1;
+      }
+      JsValue def = copyDescriptors(JS.object(), src.def);
+      objectAssign(def, normalizeParams(args[1]));
+      def["entries"] = next;
+      def["checks"] = newArray();
+      return construct1(ZodEnum, def);
+    });
+  }), true);
+  installLazy(ZodEnum["prototype"], "exclude", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      Schema src = schemaOf(self);
+      JsValue keys = args[0];
+      JsValue entries = copyDescriptors(JS.object(), src.def["entries"]);
+      int i = 0;
+      int n = JS.number(keys["length"]).toInt();
+      while (i < n) {
+        if (!hasOwn(src.def["entries"], keys[i])) throw newError("Key " + toStr(keys[i]) + " not found in enum");
+        deleteProp(entries, keys[i]);
+        i = i + 1;
+      }
+      JsValue def = copyDescriptors(JS.object(), src.def);
+      objectAssign(def, normalizeParams(args[1]));
+      def["entries"] = entries;
+      def["checks"] = newArray();
+      return construct1(ZodEnum, def);
+    });
+  }), true);
+}
+
+void installWrapperMethods() {
+  installLazy(ZodOptional["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodNullable["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodExactOptional["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodNonOptional["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodArray["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["element"];
+    });
+  }), true);
+  installLazy(ZodDefault["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodCatch["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodPrefault["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+  installLazy(ZodLazy["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return call0(schemaOf(self).def["getter"], undef());
+    });
+  }), true);
+  installLazy(ZodPromise["prototype"], "unwrap", JS.method1((JsValue _p, JsValue self) => {
+    return JS.method0((JsValue _s) => {
+      return schemaOf(self).def["innerType"];
+    });
+  }), true);
+}
+
+export JsValue formatFactory(JsValue ctor, string format, JsValue regex) {
+  return JS.staticRest((JsValue args) => {
+    return schemaFormat(ctor, format, regex, args[0]);
+  });
+}
+
+export void boot() {
+  ensureLocale();
+  initErrorProto();
+  installTypeMethods();
+  installStringMethods();
+  installNumberMethods();
+  installBigintMethods();
+  installDateMethods();
+  installCollectionSizeMethods(ZodMap["prototype"]);
+  installCollectionSizeMethods(ZodSet["prototype"]);
+  installCollectionSizeMethods(ZodFile["prototype"]);
+  installLazy(ZodFile["prototype"], "mime", JS.method1((JsValue _p, JsValue self) => {
+    return JS.methodRest((JsValue _s, JsValue args) => {
+      JsValue types = args[0];
+      if (!isArr(types)) {
+        JsValue list = newArray();
+        push(list, types);
+        types = list;
+      }
+      return checked(self, "mime_type", JS.object("mime", types), args[1]);
+    });
+  }), true);
+  installArrayMethods();
+  installObjectMethods();
+  installEnumMethods();
+  installWrapperMethods();
+  installFunctionMethods();
+  installCtorAccessors(ZodArray, "ZodArray");
+  installCtorAccessors(ZodRecord, "ZodRecord");
+  installCtorAccessors(ZodMap, "ZodMap");
+  installCtorAccessors(ZodSet, "ZodSet");
+  installCtorAccessors(ZodUnion, "ZodUnion");
+  installCtorAccessors(ZodDiscriminatedUnion, "ZodDiscriminatedUnion");
+  installCtorAccessors(ZodXor, "ZodXor");
+  installCtorAccessors(ZodPipe, "ZodPipe");
+  installCtorAccessors(ZodCodec, "ZodCodec");
+  installCtorAccessors(ZodPreprocess, "ZodPreprocess");
+  installCtorAccessors(ZodEnum, "ZodEnum");
+  installCtorAccessors(ZodLiteral, "ZodLiteral");
+}
+
+export JsValue localesEn() {
+  return JS.object("localeError", defaultLocale());
+}
+
+export JsValue configApi(JsValue next) {
+  return setConfig(next);
+}
+
+export JsValue parseApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseWithCallee(schema, data, ctx, parseApi);
+}
+
+export JsValue safeParseApi(JsValue schema, JsValue data, JsValue ctx) {
+  return safeParseInst(schema, data, ctx);
+}
+
+export JsValue parseAsyncApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseAsyncWithCallee(schema, data, ctx, parseAsyncApi);
+}
+
+JsValue dirCtx(JsValue ctx, string direction) {
+  JsValue next = ctx;
+  if (isUndef(ctx) || JS.isNullish(ctx)) next = JS.object();
+  else next = objectAssign(JS.object(), ctx);
+  next["direction"] = direction;
+  return next;
+}
+
+export JsValue encodeApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseWithCallee(schema, data, dirCtx(ctx, "backward"), encodeApi);
+}
+
+export JsValue decodeApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseWithCallee(schema, data, dirCtx(ctx, "forward"), decodeApi);
+}
+
+export JsValue encodeAsyncApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseAsyncWithCallee(schema, data, dirCtx(ctx, "backward"), encodeAsyncApi);
+}
+
+export JsValue decodeAsyncApi(JsValue schema, JsValue data, JsValue ctx) {
+  return parseAsyncWithCallee(schema, data, dirCtx(ctx, "forward"), decodeAsyncApi);
+}
+
+export JsValue safeParseAsyncApi(JsValue schema, JsValue data, JsValue ctx) {
+  return safeParseAsyncInst(schema, data, ctx);
+}
+
+export JsValue treeifyApi = treeifyError;
+export JsValue prettifyApi = prettifyError;
+export JsValue formatApi = formatError;
+export JsValue flattenApi = flattenError;
+export JsValue registryApi = makeRegistry;
+export JsValue globalRegistryApi = globalRegistry();
+export JsValue versionApi = version();
+export JsValue ZodErrorApi = ZodError;
+export JsValue ZodRealErrorApi = ZodRealError;
+export JsValue toDotPathApi = toDotPath;
+export JsValue getDiscriminatedOptionApi = getDiscriminatedOption;
+export JsValue getConfigApi = getConfig;
+
+export JsValue schemaProperties(JsValue shape) {
+  JsValue out = newArray();
+  if (!isObj(shape) || JS.isNullish(shape)) return out;
+  JsValue keys = objectKeys(shape);
+  int i = 0;
+  int n = JS.number(keys["length"]).toInt();
+  while (i < n) {
+    push(out, createCheck("property", JS.object("property", keys[i], "schema", shape[keys[i]])));
+    i = i + 1;
+  }
+  return out;
+}
+
+export JsValue schemaExactOptional(JsValue inner) {
+  return construct1(ZodExactOptional, JS.object("type", "optional", "innerType", inner, "exact", true));
+}
+
+export JsValue schemaSlugifyCheck() {
+  return createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+    JsValue lower = invoke0(invoke0(v, "toLowerCase"), "trim");
+    JsValue stripped = invoke2(lower, "replace", newRegex("[^\\w\\s-]", "g"), "");
+    JsValue dashed = invoke2(stripped, "replace", newRegex("[\\s_-]+", "g"), "-");
+    return invoke2(dashed, "replace", newRegex("^-+|-+$", "g"), "");
+  })));
+}
+
+export JsValue schemaTrimCheck() {
+  return createCheck("overwrite", JS.object("transform", JS.method1((JsValue _x, JsValue v) => {
+    return invoke0(v, "trim");
+  })));
+}
+
+export JsValue schemaMaxLengthCheck(JsValue maximum, JsValue params) {
+  JsValue fields = JS.object("maximum", maximum);
+  if (isObj(params) && !isNullish(params)) objectAssign(fields, normalizeParams(params));
+  return createCheck("max_length", fields);
+}
+
+export JsValue schemaMinLengthCheck(JsValue minimum, JsValue params) {
+  JsValue fields = JS.object("minimum", minimum);
+  if (isObj(params) && !isNullish(params)) objectAssign(fields, normalizeParams(params));
+  return createCheck("min_length", fields);
+}
+
+export JsValue visitSchema(JsValue schema, JsValue fnOrHandlers) {
+  return schema;
+}
+
+export JsValue schemaFromJSON(JsValue json, JsValue params) {
+  return schemaUnknown();
+}

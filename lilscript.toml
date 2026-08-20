@@ -1,0 +1,35 @@
+[package]
+name = "zodlil"
+version = "4.4.3"
+abi = 1
+entry = "src/entry.lil"
+
+[optimization]
+preset = "maximum"
+call_site_specialization = true
+identical_function_folding = true
+
+[javascript]
+priority = "size-first"
+optimization_level = 15
+cost_model = "brotli"
+public_aggregate_abi = "named"
+assume_pristine_builtins = true
+strip_console = true
+pool_numeric_literals = true
+candidate_search = "production"
+candidate_limit = 1536
+candidate_byte_budget = 1048576
+candidate_beam_width = 12
+local_name_reserve = 48
+stable_local_names = true
+function_spelling = "arrow"
+
+[mangle]
+identifiers = true
+properties = true
+exports = false
+pool_strings = true
+
+[bundle]
+mode = "single"

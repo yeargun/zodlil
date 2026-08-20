@@ -1,0 +1,102 @@
+{
+  "pin": "zod@4.4.3",
+  "package": "@itslil/zod",
+  "codec": "lilscript-codec gzip-9 / brotli-11",
+  "generatedAt": "2026-08-20T23:31:42.929Z",
+  "tests": {
+    "passed": 1353,
+    "total": 1353,
+    "match": true
+  },
+  "size": [
+    {
+      "id": "official",
+      "name": "zod@4.4.3 ESM bundle",
+      "note": "esbuild bundle of official zod/v4",
+      "baseline": false,
+      "primary": false,
+      "raw": 545560,
+      "gzip9": 79536,
+      "brotli11": 64105
+    },
+    {
+      "id": "official-oxc-mangle",
+      "name": "Official · Oxc closer-world",
+      "note": "Vite 8 Oxc of official v4, mangle on",
+      "baseline": true,
+      "primary": false,
+      "raw": 309045,
+      "gzip9": 66383,
+      "brotli11": 54791
+    },
+    {
+      "id": "official-oxc-nomangle",
+      "name": "Official · Oxc normal",
+      "note": "Oxc, mangle off",
+      "baseline": false,
+      "primary": false,
+      "raw": 395062,
+      "gzip9": 72680,
+      "brotli11": 59496
+    },
+    {
+      "id": "official-terser-mangle",
+      "name": "Official · Terser closer-world",
+      "note": "Terser, mangle on",
+      "baseline": false,
+      "primary": false,
+      "raw": 280301,
+      "gzip9": 63734,
+      "brotli11": 52561
+    },
+    {
+      "id": "official-terser-nomangle",
+      "name": "Official · Terser normal",
+      "note": "Terser, mangle off",
+      "baseline": false,
+      "primary": false,
+      "raw": 367526,
+      "gzip9": 70452,
+      "brotli11": 57503
+    },
+    {
+      "id": "itslil-closer",
+      "name": "@itslil/zod · closer-world",
+      "note": "LilScript mangle on, public ABI named, internals collapsed",
+      "baseline": false,
+      "primary": true,
+      "raw": 112019,
+      "gzip9": 34542,
+      "brotli11": 29978
+    },
+    {
+      "id": "itslil-normal",
+      "name": "@itslil/zod · normal",
+      "note": "LilScript mangle off (lilscript.nomangle.toml)",
+      "baseline": false,
+      "primary": false,
+      "raw": 185214,
+      "gzip9": 50535,
+      "brotli11": 41558
+    }
+  ],
+  "throughput": [
+    {
+      "id": "official",
+      "name": "zod@4.4.3",
+      "ms": 0.00021354166169961294
+    },
+    {
+      "id": "itslil-closer",
+      "name": "@itslil/zod · closer-world",
+      "ms": 0.0009114583333333333,
+      "ratio": 4.2682927822088095
+    },
+    {
+      "id": "itslil-normal",
+      "name": "@itslil/zod · normal",
+      "ms": 0.000916666661699613,
+      "ratio": 4.292683003418225
+    }
+  ]
+}

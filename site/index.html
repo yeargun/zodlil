@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="@itslil/zod is Zod 4.4.3 reimplemented in LilScript. Official classic tests, size, and Playwright parse speed versus zod@4.4.3."
+      content="@itslil/zod is Zod 4.4.3 reimplemented in LilScript. Official classic tests, size, and Node plus Chromium parse speed versus zod@4.4.3."
     />
     <meta name="theme-color" content="#3068f4" />
     <title>itslil/zod — Zod 4.4.3 through LilScript</title>
@@ -21,7 +21,7 @@
       </a>
       <nav aria-label="Main navigation">
         <a href="#performance">performance</a>
-        <a href="#lab">lab</a>
+        <a href="#lab">playground</a>
         <a href="#evidence">size</a>
         <a href="https://github.com/yeargun/zodlil">GitHub ↗</a>
       </nav>
@@ -33,17 +33,17 @@
           <p class="eyebrow"><span class="live-dot"></span> Zod 4.4.3 · LilScript port · @itslil/zod</p>
           <h1>Zod,<br /><em>compiled.</em></h1>
           <p class="lede">
-            The <code>zod@4.4.3</code> classic API, rewritten in LilScript with native
-            <code>class</code>/<code>struct</code> schemas and official types. Internals can be
-            mangled via config; only the public API stays named. The DX stays
-            <code>z.string().parse(value)</code>.
+            The <code>zod@4.4.3</code> classic API, rewritten in LilScript. Internals can be
+            mangled via config; only the public API stays named. Every size row is the same
+            official <code>v4</code> bundle, then Oxc or Terser, mangling on and off. LilScript
+            rows compare closer-world (mangle on) and normal (mangle off).
           </p>
           <div class="install-row">
             <code>npm install @itslil/zod</code>
             <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
           </div>
           <div class="hero-actions">
-            <a class="button primary" href="#performance">Playwright</a>
+            <a class="button primary" href="#performance">Playwright + Node</a>
             <a class="button secondary" href="https://www.npmjs.com/package/@itslil/zod">npm ↗</a>
           </div>
         </div>
@@ -57,12 +57,13 @@
             <div><strong id="hero-tests">—</strong><span>classic tests passing</span></div>
             <div><strong id="hero-gzip">—</strong><span>gzip-9 vs Oxc</span></div>
             <div><strong id="hero-raw">—</strong><span>raw vs Oxc</span></div>
-            <div><strong id="hero-speed">—</strong><span>Chromium parse</span></div>
+            <div><strong id="hero-speed">—</strong><span>Chromium parse vs official</span></div>
           </div>
           <p class="score-note">
             Official rows are an esbuild bundle of <code>zod@4.4.3</code> <code>v4</code>, then Oxc
             or Terser. LilScript rows compare closer-world (mangle on) and normal (mangle off).
-            Sizes are <code>lilscript-codec</code> raw / gzip-9 / Brotli-11.
+            Sizes are <code>lilscript-codec</code> raw / gzip-9 / Brotli-11. Ratios are lane / Oxc
+            closer-world (lower is smaller).
           </p>
         </div>
       </section>
@@ -75,32 +76,179 @@
         </div>
       </section>
 
-      <section id="performance" class="performance shell">
-        <h2>Playwright</h2>
-        <p class="lede">Time to parse one object schema in Chromium, @itslil/zod versus official.</p>
+      <section class="performance shell" id="performance">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Measured in Chromium and Node</p>
+            <h2>Parse,<br />not inferred.</h2>
+          </div>
+          <p>
+            Same 48-object batch, 400 rounds per sample. Quiet median after discarding the first 3.
+            Output must match official <code>zod@4.4.3</code>. Ratio is lane / official (lower is faster).
+          </p>
+        </div>
         <div class="perf-cards" id="perf-cards"></div>
+        <div class="table-wrap light">
+          <table>
+            <thead>
+              <tr>
+                <th>Lane</th>
+                <th>Chromium</th>
+                <th>vs official</th>
+                <th>Node</th>
+                <th>vs official</th>
+              </tr>
+            </thead>
+            <tbody id="perf-body"></tbody>
+          </table>
+        </div>
+        <p class="perf-note" id="perf-note"></p>
       </section>
 
-      <section id="lab" class="lab shell">
-        <h2>Parse lab</h2>
-        <p class="lede">Same input, both libraries. Output must match.</p>
-        <pre id="lab-out" class="lab-out">loading…</pre>
+      <section class="lab shell" id="lab">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The compiled runtime, in the browser</p>
+            <h2>Live<br />parse.</h2>
+          </div>
+          <p>
+            Left is JSON. Right is <code>.parse()</code> from <code>@itslil/zod</code> or official
+            <code>zod@4.4.3</code>. Both must produce the same object.
+          </p>
+        </div>
+        <div class="playground">
+          <div class="play-toolbar">
+            <label>
+              <input type="radio" name="engine" value="lil" checked />
+              @itslil/zod
+            </label>
+            <label>
+              <input type="radio" name="engine" value="official" />
+              zod@4.4.3
+            </label>
+            <button type="button" id="race">race 400×</button>
+            <span id="race-out"></span>
+          </div>
+          <div class="play-grid">
+            <textarea id="source" spellcheck="false" aria-label="JSON input"></textarea>
+            <pre id="preview" class="lab-out"></pre>
+          </div>
+        </div>
       </section>
 
-      <section id="evidence" class="evidence shell">
-        <h2>Size</h2>
-        <table class="size-table">
-          <thead>
-            <tr>
-              <th>Lane</th>
-              <th>raw</th>
-              <th>gzip-9</th>
-              <th>brotli-11</th>
-            </tr>
-          </thead>
-          <tbody id="size-body"></tbody>
-        </table>
+      <section class="evidence" id="evidence">
+        <div class="shell">
+          <div class="section-heading inverse">
+            <div>
+              <p class="eyebrow">The receipts</p>
+              <h2>Raw, gzip,<br />and Brotli.</h2>
+            </div>
+            <p>
+              Official 4.4.3 <code>v4</code>, then Oxc and Terser with mangling on and off.
+              LilScript is not post-minified. Closer-world mangles internals; normal does not.
+              The public API stays named in both. Ratios are lane / official Oxc closer-world.
+            </p>
+          </div>
+
+          <div class="codec-block">
+            <h3>Brotli-11</h3>
+            <p class="codec-lead">The wire number. LilScript closer-world is the published core.</p>
+            <div class="total-bar" id="bar-brotli"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lane</th>
+                    <th>Brotli-11</th>
+                    <th>vs Oxc</th>
+                  </tr>
+                </thead>
+                <tbody id="body-brotli"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="codec-block">
+            <h3>gzip-9</h3>
+            <p class="codec-lead">Same artifacts, gzip-9.</p>
+            <div class="total-bar" id="bar-gzip"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lane</th>
+                    <th>gzip-9</th>
+                    <th>vs Oxc</th>
+                  </tr>
+                </thead>
+                <tbody id="body-gzip"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="codec-block">
+            <h3>Raw</h3>
+            <p class="codec-lead">Uncompressed bytes.</p>
+            <div class="total-bar" id="bar-raw"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lane</th>
+                    <th>Raw</th>
+                    <th>vs Oxc</th>
+                  </tr>
+                </thead>
+                <tbody id="body-raw"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="codec-block">
+            <h3>All three</h3>
+            <p class="codec-lead">One row per lane, every codec, with the Brotli ratio against Oxc.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lane</th>
+                    <th>Raw</th>
+                    <th>gzip-9</th>
+                    <th>Brotli-11</th>
+                    <th>vs Oxc raw / gzip / Brotli</th>
+                  </tr>
+                </thead>
+                <tbody id="body-matched"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="method-note">
+            <p>
+              <strong>Why two LilScript lanes.</strong> Closer-world turns mangling on
+              (<code>lilscript.dev.toml</code>). Normal turns it off
+              (<code>lilscript.nomangle.toml</code>). <code>public_aggregate_abi = "named"</code>
+              in both, so <code>z.string().parse</code> stays the developer API.
+            </p>
+            <a href="https://github.com/yeargun/zodlil#mangle-on--off">README ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing shell">
+        <p class="eyebrow">Zero runtime dependencies</p>
+        <h2>Install the<br />current port.</h2>
+        <div class="install-row large">
+          <code>npm install @itslil/zod</code>
+          <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
+        </div>
       </section>
     </main>
+
+    <footer class="shell">
+      <span>@itslil/zod · MIT</span>
+      <span>Zod 4.4.3 rewritten in LilScript — not affiliated with Colin McDonnell</span>
+      <a href="https://github.com/yeargun/zodlil">source ↗</a>
+    </footer>
   </body>
 </html>

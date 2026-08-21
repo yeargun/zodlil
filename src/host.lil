@@ -438,6 +438,10 @@ export bool weakHas(JsValue map, JsValue key) {
   return JS.invoke(map, "has", key).truthy();
 }
 
+export JsValue jsFn(string args, string body) {
+  return construct2(gGlobal()["Function"], JS.string(args), JS.string(body));
+}
+
 export JsValue makeAsync2(JsValue impl) {
   JsValue factory = construct2(gGlobal()["Function"], "impl", "return async function(data,params){return await impl(data,params)}");
   return call1(factory, undef(), impl);

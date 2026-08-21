@@ -90,6 +90,16 @@ import {
   weakSet,
   yes
 } from "./host.lil";
+import {
+  arrayParseFor,
+  attachJsCheck,
+  bindRun,
+  booleanParseFact,
+  collectJsChecks,
+  numberParseFact,
+  objectParseFor,
+  stringParseFact
+} from "./fastpass.lil";
 
 export int KString = 0;
 export int KNumber = 1;
@@ -158,6 +168,7 @@ export class Schema {
   JsValue values;
   int optin;
   int optout;
+  bool hasChecks;
 
   init(JsValue def) {
     string t = toStr(def["type"]);
@@ -176,6 +187,7 @@ export class Schema {
     this.values = undef();
     this.optin = 0;
     this.optout = 0;
+    this.hasChecks = false;
     bag.push(this);
     this.derive();
   }
@@ -376,6 +388,12 @@ export class Schema {
         if (anyOut) this.optout = 1;
       }
     }
+    this.hasChecks = false;
+    if (isStr(this.def["check"])) this.hasChecks = true;
+    else {
+      JsValue chs = this.def["checks"];
+      if (isArr(chs) && JS.number(chs["length"]).toInt() > 0) this.hasChecks = true;
+    }
   }
 
   JsValue minBound() {
@@ -432,6 +450,11 @@ export class Schema {
   }
 
   void applyObjField(JsValue payload, JsValue out, string key, bool present, int optin, int optout, JsValue inner) {
+    if (present && JS.number(inner["issues"]["length"]).toInt() == 0) {
+      if (isUndef(inner["value"])) out[key] = undef();
+      else out[key] = inner["value"];
+      return;
+    }
     bool optionalOut = optout == 1;
     bool optionalIn = optin != 0;
     bool skip = false;
@@ -1442,6 +1465,7 @@ void stampIssueSchema(JsValue raw) {
 }
 
 export JsValue finalizeIssue(JsValue raw, Schema? schema, JsValue ctx) {
+  if (isUndef(raw["inst"]) && schema != null) raw["inst"] = schema.handle;
   stampIssueSchema(raw);
   string message = finalizeMessage(raw, schema, ctx);
   JsValue issue = JS.object();
@@ -2135,6 +2159,7 @@ export JsValue createCheck(string name, JsValue fields) {
   defineProperty(ctor, "name", hiddenConst(ctorName));
   inst["constructor"] = ctor;
   defineProperty(inst, "_zod", hiddenValue(intern));
+  attachJsCheck(inst);
   return inst;
 }
 
@@ -2832,19 +2857,18 @@ JsValue finishAfterParse(Schema schema, JsValue payload, JsValue ctx) {
   JsValue waited = settleWaits(payload);
   if (isPromise(waited)) {
     return invoke1(waited, "then", JS.method1((JsValue _s, JsValue next) => {
-      schema.memoLeave(next);
+      if (schema.isContainer()) schema.memoLeave(next);
+      if (!schema.hasChecks) return next;
       return finishPayload(schema, next, ctx);
     }));
   }
-  schema.memoLeave(payload);
+  if (schema.isContainer()) schema.memoLeave(payload);
+  if (!schema.hasChecks) return payload;
   return finishPayload(schema, payload, ctx);
 }
 
 bool schemaHasChecks(Schema schema) {
-  if (isStr(schema.def["check"])) return true;
-  JsValue checks = schema.def["checks"];
-  if (isArr(checks) && JS.number(checks["length"]).toInt() > 0) return true;
-  return false;
+  return schema.hasChecks;
 }
 
 JsValue parseOnly(Schema schema, JsValue payload, JsValue ctx) {
@@ -3295,6 +3319,33 @@ void prefixAll(JsValue issues, JsValue into, JsValue part) {
   }
 }
 
+bool fieldNeedsFullRun(Schema field) {
+  int k = field.kind;
+  if (k == KPipe) return true;
+  if (k == KTransform) return true;
+  if (k == KPromise) return true;
+  if (k == KLazy) return true;
+  if (k == KDefault) return true;
+  if (k == KPrefault) return true;
+  if (k == KCatch) return true;
+  return false;
+}
+
+JsValue parseFieldSync(Schema field, JsValue value, JsValue ctx, JsValue scratch) {
+  if (isBackward(ctx) && field.hasChecks) return parsePayload(field, value, ctx);
+  if (fieldNeedsFullRun(field)) return parsePayload(field, value, ctx);
+  scratch["value"] = value;
+  scratch["issues"]["length"] = 0;
+  if (!isUndef(scratch["aborted"])) scratch["aborted"] = false;
+  parseKind(field, scratch, ctx);
+  JsValue pending = takePending(scratch);
+  if (isPromise(pending)) return parsePayload(field, value, ctx);
+  if (!field.hasChecks) return scratch;
+  JsValue checked = runChecks(field, scratch, ctx);
+  if (isPromise(checked)) return checked;
+  return scratch;
+}
+
 void parseArray(Schema schema, JsValue payload, JsValue ctx) {
   JsValue value = payload["value"];
   if (!isArr(value)) {
@@ -3303,16 +3354,21 @@ void parseArray(Schema schema, JsValue payload, JsValue ctx) {
   }
   Schema? el = childOf(schema, "element");
   JsValue out = schema.memoAlloc(payload, newArray());
+  JsValue scratch = JS.object("value", undef(), "issues", newArray());
   int i = 0;
   int n = JS.number(value["length"]).toInt();
   while (i < n) {
     if (el != null) {
-      JsValue idx = JS.number(0.0 + i);
-      JsValue inner = parseOpt(el, value[i], ctx);
-      queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
-        schema.applyIndexedField(payload, out, idx, parsed);
-        return undef();
-      }));
+      JsValue inner = parseFieldSync(el, value[i], ctx, scratch);
+      if (isPromise(inner)) {
+        JsValue idx = JS.number(0.0 + i);
+        queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
+          schema.applyIndexedField(payload, out, idx, parsed);
+          return undef();
+        }));
+      } else {
+        schema.applyIndexedField(payload, out, JS.number(0.0 + i), inner);
+      }
     } else {
       push(out, value[i]);
     }
@@ -3417,31 +3473,53 @@ void parseObject(Schema schema, JsValue payload, JsValue ctx) {
   JsValue draft = undef();
   JsValue shape = schema.def["shape"];
   if (isUndef(shape) || JS.isNullish(shape)) shape = JS.object();
-  JsValue shapeKeys = objectKeys(shape);
+  JsValue shapeKeys = schema.def["~keys"];
+  JsValue fieldIds = schema.def["~fids"];
+  if (!isArr(shapeKeys) || !isArr(fieldIds)) {
+    shapeKeys = objectKeys(shape);
+    fieldIds = newArray();
+    int ci = 0;
+    int cn = JS.number(shapeKeys["length"]).toInt();
+    while (ci < cn) {
+      Schema? cached = trySchema(getProp(shape, toStr(shapeKeys[ci])));
+      if (cached != null) {
+        Schema cachedField = cached;
+        push(fieldIds, JS.number(0.0 + cachedField.id));
+      } else {
+        push(fieldIds, JS.number(-1.0));
+      }
+      ci = ci + 1;
+    }
+    schema.def["~keys"] = shapeKeys;
+    schema.def["~fids"] = fieldIds;
+  }
   JsValue out = schema.memoAlloc(payload, JS.object());
+  JsValue scratch = JS.object("value", undef(), "issues", newArray());
   int i = 0;
   int kn = JS.number(shapeKeys["length"]).toInt();
   while (i < kn) {
     string key = toStr(shapeKeys[i]);
-    if (key == "__proto__") {
+    int fid = JS.number(fieldIds[i]).toInt();
+    if (key == "__proto__" || fid < 0) {
       i = i + 1;
       continue;
     }
-    Schema? maybeField = trySchema(getProp(shape, key));
-    if (maybeField != null) {
-      Schema field = maybeField;
-      bool present = inOp(key, value);
-      JsValue fieldVal = undef();
-      if (present) fieldVal = value[key];
-      JsValue inner = parsePayload(field, fieldVal, ctx);
+    Schema field = bag[fid];
+    bool present = inOp(key, value);
+    JsValue fieldVal = undef();
+    if (present) fieldVal = value[key];
+    JsValue inner = parseFieldSync(field, fieldVal, ctx, scratch);
+    if (isPromise(inner)) {
       string k = key;
       bool present2 = present;
-      int optin = field.internOptin();
-      int optout = field.internOptout();
+      int optin = field.optin;
+      int optout = field.optout;
       queueWait(payload, inner, JS.method1((JsValue _s, JsValue parsed) => {
         schema.applyObjField(payload, out, k, present2, optin, optout, parsed);
         return undef();
       }));
+    } else {
+      schema.applyObjField(payload, out, key, present, field.optin, field.optout, inner);
     }
     i = i + 1;
   }
@@ -4397,31 +4475,51 @@ JsValue toSafe(JsValue parsed) {
   return JS.object("success", true, "data", parsed["value"]);
 }
 
-export JsValue runParse(JsValue inst, JsValue data, JsValue ctx) {
+JsValue finishRun(Schema schema, JsValue payload, JsValue ctx) {
+  if (JS.number(payload["issues"]["length"]).toInt() == 0) return payload;
   ensureLocale();
+  return finalizeParsed(payload, schema, ctx);
+}
+
+JsValue runInst(JsValue inst, JsValue data, JsValue ctx) {
+  return call2(inst["_zod"]["run"], inst["_zod"], JS.object("value", data, "issues", newArray()), ctx);
+}
+
+export JsValue runParse(JsValue inst, JsValue data, JsValue ctx) {
   Schema schema = schemaOf(inst);
-  JsValue payload = parsePayload(schema, data, ctx);
+  JsValue payload = runInst(inst, data, ctx);
   if (isPromise(payload)) {
     return invoke1(payload, "then", JS.method1((JsValue _s, JsValue next) => {
-      return finalizeParsed(next, schema, ctx);
+      return finishRun(schema, next, ctx);
     }));
   }
-  return finalizeParsed(payload, schema, ctx);
+  return finishRun(schema, payload, ctx);
 }
 
 export JsValue safeParseInst(JsValue inst, JsValue data, JsValue ctx) {
   JsValue parseCtx = ctx;
   if (isUndef(ctx)) parseCtx = JS.object("async", false);
-  JsValue result = runParse(inst, data, parseCtx);
-  if (isPromise(result)) {
+  JsValue payload = runInst(inst, data, parseCtx);
+  if (isPromise(payload)) {
     throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
   }
-  return toSafe(result);
+  if (JS.number(payload["issues"]["length"]).toInt() == 0) {
+    return JS.object("success", true, "data", payload["value"]);
+  }
+  ensureLocale();
+  return toSafe(finalizeParsed(payload, schemaOf(inst), parseCtx));
 }
 
 export JsValue parseWithCallee(JsValue inst, JsValue data, JsValue ctx, JsValue callee) {
-  JsValue result = safeParseInst(inst, data, ctx);
-  if (result["success"].truthy()) return result["data"];
+  JsValue parseCtx = ctx;
+  if (isUndef(ctx) || JS.isNullish(ctx)) parseCtx = JS.object("async", false);
+  JsValue payload = runInst(inst, data, parseCtx);
+  if (isPromise(payload)) {
+    throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+  }
+  if (JS.number(payload["issues"]["length"]).toInt() == 0) return payload["value"];
+  ensureLocale();
+  JsValue result = toSafe(finalizeParsed(payload, schemaOf(inst), parseCtx));
   JsValue skip = callee;
   if (isUndef(skip) || JS.isNullish(skip)) skip = parseWithCallee;
   captureStackTrace(result["error"], skip);
@@ -4564,31 +4662,31 @@ void wrapObjectShape(JsValue def) {
   ));
 }
 
-void installFieldGetter(JsValue proto, string key, string defKey) {
-  defineProperty(proto, key, JS.object(
-    "configurable", true,
-    "enumerable", true,
-    "get", JS.method0((JsValue self) => {
-      return self["_zod"]["def"][defKey];
-    })
-  ));
-}
-
 export void installCtorAccessors(JsValue ctor, string name) {
   JsValue proto = ctor["prototype"];
-  if (name == "ZodArray") installFieldGetter(proto, "element", "element");
+  JsValue addField = JS.method2((JsValue _s, JsValue key, JsValue defKey) => {
+    defineProperty(proto, key, JS.object(
+      "configurable", true,
+      "enumerable", true,
+      "get", JS.method0((JsValue self) => {
+        return self["_zod"]["def"][defKey];
+      })
+    ));
+    return undef();
+  });
+  if (name == "ZodArray") call2(addField, undef(), "element", "element");
   if (name == "ZodRecord" || name == "ZodMap") {
-    installFieldGetter(proto, "keyType", "keyType");
-    installFieldGetter(proto, "valueType", "valueType");
+    call2(addField, undef(), "keyType", "keyType");
+    call2(addField, undef(), "valueType", "valueType");
   }
-  if (name == "ZodSet") installFieldGetter(proto, "valueType", "valueType");
+  if (name == "ZodSet") call2(addField, undef(), "valueType", "valueType");
   if (name == "ZodUnion" || name == "ZodDiscriminatedUnion" || name == "ZodXor") {
-    installFieldGetter(proto, "options", "options");
-    installFieldGetter(proto, "discriminator", "discriminator");
+    call2(addField, undef(), "options", "options");
+    call2(addField, undef(), "discriminator", "discriminator");
   }
   if (name == "ZodPipe" || name == "ZodCodec" || name == "ZodPreprocess") {
-    installFieldGetter(proto, "in", "in");
-    installFieldGetter(proto, "out", "out");
+    call2(addField, undef(), "in", "in");
+    call2(addField, undef(), "out", "out");
   }
   if (name == "ZodEnum") {
     defineProperty(proto, "enum", JS.object(
@@ -4841,10 +4939,11 @@ export void attachInternals(JsValue inst, Schema schema, JsValue traits) {
   intern["version"] = versionObj;
   intern["traits"] = traits;
   intern["constr"] = schema.ctor;
-  intern["run"] = JS.method2((JsValue _s, JsValue payload, JsValue ctx) => {
+  JsValue fallback = JS.method2((JsValue _s, JsValue payload, JsValue ctx) => {
     return runOnPayload(schema, payload, ctx);
   });
-  intern["parse"] = intern["run"];
+  intern["run"] = fallback;
+  intern["parse"] = fallback;
   if (schema.isContainer()) {
     intern["memoizer"] = JS.object(
       "recursive", undef(),
@@ -4862,6 +4961,22 @@ export void attachInternals(JsValue inst, Schema schema, JsValue traits) {
     })
   ));
   defineProperty(inst, "_zod", hiddenValue(intern));
+  specializeInst(inst, schema, intern, fallback);
+}
+
+void specializeInst(JsValue inst, Schema schema, JsValue intern, JsValue fallback) {
+  if (schema.def["coerce"].truthy()) return;
+  attachJsCheck(inst);
+  JsValue parseFn = undef();
+  int kind = schema.kind;
+  if (kind == KString) parseFn = call1(stringParseFact, undef(), inst);
+  else if (kind == KNumber) parseFn = call1(numberParseFact, undef(), inst);
+  else if (kind == KBoolean) parseFn = call1(booleanParseFact, undef(), inst);
+  else if (kind == KObject) parseFn = objectParseFor(fallback, inst);
+  else if (kind == KArray) parseFn = arrayParseFor(fallback, inst);
+  else return;
+  intern["parse"] = parseFn;
+  intern["run"] = bindRun(parseFn, collectJsChecks(inst), fallback, intern, inst);
 }
 
 export JsValue paramMessage(JsValue params) {

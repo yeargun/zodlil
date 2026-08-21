@@ -2,7 +2,7 @@
   "pin": "zod@4.4.3",
   "package": "@itslil/zod",
   "codec": "lilscript-codec gzip-9 / brotli-11",
-  "generatedAt": "2026-08-20T23:31:42.929Z",
+  "generatedAt": "2026-08-21T00:52:34.786Z",
   "tests": {
     "passed": 1353,
     "total": 1353,
@@ -65,9 +65,9 @@
       "note": "LilScript mangle on, public ABI named, internals collapsed",
       "baseline": false,
       "primary": true,
-      "raw": 112019,
-      "gzip9": 34542,
-      "brotli11": 29978
+      "raw": 124505,
+      "gzip9": 37253,
+      "brotli11": 32426
     },
     {
       "id": "itslil-normal",
@@ -75,28 +75,52 @@
       "note": "LilScript mangle off (lilscript.nomangle.toml)",
       "baseline": false,
       "primary": false,
-      "raw": 185214,
-      "gzip9": 50535,
-      "brotli11": 41558
+      "raw": 197579,
+      "gzip9": 53968,
+      "brotli11": 44208
     }
   ],
-  "throughput": [
-    {
-      "id": "official",
-      "name": "zod@4.4.3",
-      "ms": 0.00021354166169961294
-    },
-    {
-      "id": "itslil-closer",
-      "name": "@itslil/zod · closer-world",
-      "ms": 0.0009114583333333333,
-      "ratio": 4.2682927822088095
-    },
-    {
-      "id": "itslil-normal",
-      "name": "@itslil/zod · normal",
-      "ms": 0.000916666661699613,
-      "ratio": 4.292683003418225
-    }
-  ]
+  "throughput": {
+    "chromium": [
+      {
+        "id": "official",
+        "name": "zod@4.4.3",
+        "ms": 0.00021875000248352687
+      },
+      {
+        "id": "itslil-closer",
+        "name": "@itslil/zod · closer-world",
+        "ms": 0.000234375,
+        "ratio": 1.0714285592643582
+      },
+      {
+        "id": "itslil-normal",
+        "name": "@itslil/zod · normal",
+        "ms": 0.00025520833830038704,
+        "ratio": 1.1666666761277211
+      }
+    ],
+    "node": [
+      {
+        "id": "official",
+        "name": "zod@4.4.3",
+        "ms": 0.00026552734374999905
+      },
+      {
+        "id": "itslil-closer",
+        "name": "@itslil/zod · closer-world",
+        "ms": 0.00029579427083334056,
+        "ratio": 1.1139879857791166
+      },
+      {
+        "id": "itslil-normal",
+        "name": "@itslil/zod · normal",
+        "ms": 0.00029123916666667546,
+        "ratio": 1.096833051366961
+      }
+    ]
+  },
+  "browser": "Playwright Chromium",
+  "runtime": "v24.11.1",
+  "warmupDiscard": 3
 }

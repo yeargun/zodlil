@@ -20,6 +20,9 @@ describe("github pages artifact", () => {
     assert.match(html, /closer-world/)
     assert.match(html, /mangle off/)
     assert.match(html, /Brotli-11/)
+    assert.match(html, /vs Oxc/)
+    assert.match(html, /vs Oxc raw \/ gzip \/ Brotli/)
+    assert.match(html, /Node/)
     const results = JSON.parse(readFileSync(resolve(site, "results.json"), "utf8"))
     const closer = results.size.find((lane) => lane.id === "itslil-closer")
     const normal = results.size.find((lane) => lane.id === "itslil-normal")
@@ -31,5 +34,11 @@ describe("github pages artifact", () => {
     assert.ok(closer.brotli11 < normal.brotli11)
     assert.equal(results.tests.passed, 1353)
     assert.equal(results.tests.total, 1353)
+    const chromium = results.throughput.chromium ?? results.throughput
+    const node = results.throughput.node
+    assert.ok(chromium.find((row) => row.id === "itslil-closer"))
+    assert.ok(chromium.find((row) => row.id === "itslil-normal"))
+    assert.ok(node.find((row) => row.id === "itslil-closer"))
+    assert.ok(node.find((row) => row.id === "itslil-normal"))
   })
 })

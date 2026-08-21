@@ -1,0 +1,157 @@
+import {
+  apply,
+  call1,
+  call2,
+  isFn,
+  isStr,
+  isUndef,
+  jsFn,
+  newArray,
+  push,
+  toStr,
+  undef
+} from "./host.lil";
+
+export JsValue stringParseFact = jsFn(
+  "inst",
+  "return function(payload){if(typeof payload.value==='string')return payload;payload.issues.push({expected:'string',code:'invalid_type',input:payload.value,inst:inst});return payload;}"
+);
+
+export JsValue numberParseFact = jsFn(
+  "inst",
+  "return function(payload){var v=payload.value;if(typeof v==='number'&&Number.isFinite(v))return payload;var iss={expected:'number',code:'invalid_type',input:v,inst:inst};if(typeof v==='number'){if(Number.isNaN(v))iss.received='NaN';else if(!Number.isFinite(v))iss.received=String(v);}payload.issues.push(iss);return payload;}"
+);
+
+export JsValue booleanParseFact = jsFn(
+  "inst",
+  "return function(payload){if(typeof payload.value==='boolean')return payload;payload.issues.push({expected:'boolean',code:'invalid_type',input:payload.value,inst:inst});return payload;}"
+);
+
+export JsValue makeRunFn = jsFn(
+  "parse,checks,fallback,self,owner",
+  "return function(payload,ctx){if(ctx){if(ctx.direction==='backward')return fallback.call(self,payload,ctx);if(ctx.skipChecks)return parse.call(self,payload,ctx);}var result=parse.call(self,payload,ctx);if(result instanceof Promise)return result.then(function(next){return applyChecks(next,ctx);});return applyChecks(result,ctx);function applyChecks(payload,ctx){for(var i=0;i<checks.length;i++){var ch=checks[i];var intern=ch&&ch._zod;var cdef=intern&&intern.def;if(cdef&&typeof cdef.when==='function'&&!cdef.when(payload))continue;var fn=intern&&intern.check;if(typeof fn!=='function')return fallback.call(self,payload,ctx);fn.call(ch,payload);}var iss=payload.issues;for(var j=0;j<iss.length;j++){if(iss[j].schema===void 0)iss[j].schema=owner;}return payload;}}"
+);
+
+export JsValue makeArrayParseFn = jsFn(
+  "fallback,inst",
+  "return function(payload,ctx){var input=payload.value;if(!Array.isArray(input)){payload.issues.push({expected:'array',code:'invalid_type',input:input,inst:inst});return payload;}var el=this.def.element;if(!el||!el._zod||typeof el._zod.run!=='function')return fallback.call(this,payload,ctx);var out=new Array(input.length);var issues=payload.issues;var proms=[];for(var i=0;i<input.length;i++){var r=el._zod.run({value:input[i],issues:[]},ctx);if(r instanceof Promise){if(ctx&&ctx.async===false)throw new Error('Encountered Promise during synchronous parse. Use .parseAsync() instead.');proms.push(r.then((function(idx){return function(next){put(next,idx);};})(i)));}else put(r,i);}payload.value=out;if(proms.length)return Promise.all(proms).then(function(){return payload;});return payload;function put(r,i){var iss=r.issues;if(iss&&iss.length){for(var j=0;j<iss.length;j++){var it=iss[j];it.path=it.path?[i].concat(it.path):[i];issues.push(it);}}out[i]=r.value;}}"
+);
+
+export JsValue compileObjectFastpassFn = jsFn(
+  "shape",
+  "var keys=Object.keys(shape);var parts=['var input=payload.value,nr={},r,iss,j,it,present;'];for(var i=0;i<keys.length;i++){var key=keys[i];if(key==='__proto__')continue;var k=JSON.stringify(key);var z=shape[key]&&shape[key]._zod;var optIn=z&&(z.optin==='optional'||z.optin==='defaulted');var optOut=z&&z.optout==='optional';parts.push('r=shape['+k+']._zod.run({value:input['+k+'],issues:[]},ctx);');parts.push('if(r instanceof Promise)throw new Error(\"Encountered Promise during synchronous parse. Use .parseAsync() instead.\");');parts.push('present='+k+' in input;');if(optIn&&optOut){parts.push('if(r.issues.length){if(present){iss=r.issues;for(j=0;j<iss.length;j++){it=iss[j];it.path=it.path?['+k+'].concat(it.path):['+k+'];payload.issues.push(it);}}}');parts.push('if(!(r.issues.length&&!present)){if(r.value===void 0){if(present)nr['+k+']=void 0;}else nr['+k+']=r.value;}');}else if(!optIn){parts.push('if(r.issues.length){iss=r.issues;for(j=0;j<iss.length;j++){it=iss[j];it.path=it.path?['+k+'].concat(it.path):['+k+'];payload.issues.push(it);}}');parts.push('if(!present&&!r.issues.length)payload.issues.push({code:\"invalid_type\",expected:\"nonoptional\",input:void 0,path:['+k+']});');parts.push('if(present){if(r.value===void 0)nr['+k+']=void 0;else nr['+k+']=r.value;}');}else{parts.push('if(r.issues.length){iss=r.issues;for(j=0;j<iss.length;j++){it=iss[j];it.path=it.path?['+k+'].concat(it.path):['+k+'];payload.issues.push(it);}}');parts.push('if(r.value===void 0){if(present)nr['+k+']=void 0;}else nr['+k+']=r.value;');}}parts.push('payload.value=nr;return payload;');return new Function('shape','payload','ctx','fallback',parts.join(''));"
+);
+
+export JsValue makeObjectParseFn = jsFn(
+  "fallback,compileFastpass,inst",
+  "return function(payload,ctx){var input=payload.value;if(input===null||typeof input!=='object'||Array.isArray(input)){payload.issues.push({expected:'object',code:'invalid_type',input:input,inst:inst});return payload;}var def=this.def;if(def.catchall!=null)return fallback.call(this,payload,ctx);if(ctx&&(ctx.async===true||ctx.jitless===true||ctx.direction==='backward'))return fallback.call(this,payload,ctx);if(globalThis.__zod_globalConfig&&globalThis.__zod_globalConfig.jitless)return fallback.call(this,payload,ctx);var shape=def.shape;if(!shape)shape={};var fp=this['~fp'];if(!fp){try{fp=compileFastpass(shape);this['~fp']=fp;}catch(e){return fallback.call(this,payload,ctx);}}return fp(shape,payload,ctx,fallback);}"
+);
+
+JsValue numberFormatCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var input=payload.value;var fmt=def.format;if(fmt==='int'||fmt==='int32'||fmt==='safeint'){if(typeof input!=='number'||!Number.isInteger(input)){payload.issues.push({expected:'int',code:'invalid_type',input:input,inst:inst,continue:false});return;}}if(fmt==='safeint'&&!Number.isSafeInteger(input)){if(input>0)payload.issues.push({code:'too_big',maximum:9007199254740991,inclusive:true,origin:'number',input:input,continue:!def.abort});else payload.issues.push({code:'too_small',minimum:-9007199254740991,inclusive:true,origin:'number',input:input,continue:!def.abort});}};"
+);
+
+JsValue stringFormatCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var p=def.pattern;if(!p)return;p.lastIndex=0;if(p.test(payload.value))return;var extra={origin:'string',code:'invalid_format',format:def.format,input:payload.value,inst:inst,continue:!def.abort};extra.pattern=p.toString();payload.issues.push(extra);};"
+);
+
+JsValue minLengthCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var v=payload.value;if(v==null||v.length==null)return;var n=typeof v==='string'?Array.from(v).length:v.length;if(n<def.minimum)payload.issues.push({origin:Array.isArray(v)?'array':'string',code:'too_small',minimum:def.minimum,inclusive:true,input:v,inst:inst,continue:true});};"
+);
+
+JsValue maxLengthCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var v=payload.value;if(v==null||v.length==null)return;var n=typeof v==='string'?Array.from(v).length:v.length;if(n>def.maximum)payload.issues.push({origin:Array.isArray(v)?'array':'string',code:'too_big',maximum:def.maximum,inclusive:true,input:v,inst:inst,continue:true});};"
+);
+
+JsValue greaterThanCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var v=payload.value;var bound=def.value;var inclusive=def.inclusive!==false;var ok=inclusive?v>=bound:v>bound;if(ok)return;var origin=def.origin;if(!origin)origin=typeof v==='number'?'number':'date';payload.issues.push({origin:origin,code:'too_small',minimum:bound,inclusive:inclusive,input:v,inst:inst,continue:true});};"
+);
+
+JsValue lessThanCheckFact = jsFn(
+  "def,inst",
+  "return function(payload){var v=payload.value;var bound=def.value;var inclusive=def.inclusive!==false;var ok=inclusive?v<=bound:v<bound;if(ok)return;var origin=def.origin;if(!origin)origin=typeof v==='number'?'number':'date';payload.issues.push({origin:origin,code:'too_big',maximum:bound,inclusive:inclusive,input:v,inst:inst,continue:true});};"
+);
+
+export JsValue jsCheckFor(string name, JsValue def, JsValue inst) {
+  if (name == "number_format") return call2(numberFormatCheckFact, undef(), def, inst);
+  if (name == "min_length") return call2(minLengthCheckFact, undef(), def, inst);
+  if (name == "max_length") return call2(maxLengthCheckFact, undef(), def, inst);
+  if (name == "greater_than") return call2(greaterThanCheckFact, undef(), def, inst);
+  if (name == "less_than") return call2(lessThanCheckFact, undef(), def, inst);
+  if (name == "string_format") {
+    if (isUndef(def["pattern"]) || !isStr(def["format"])) return undef();
+    if (toStr(def["format"]) != "email") return undef();
+    return call2(stringFormatCheckFact, undef(), def, inst);
+  }
+  return undef();
+}
+
+export void attachJsCheck(JsValue inst) {
+  if (!isUndef(inst) && !isUndef(inst["_zod"])) {
+    JsValue intern = inst["_zod"];
+    if (!isFn(intern["check"])) {
+      JsValue def = intern["def"];
+      if (isStr(def["check"])) {
+        JsValue fn = jsCheckFor(toStr(def["check"]), def, inst);
+        if (!isUndef(fn)) intern["check"] = fn;
+      }
+    }
+  }
+}
+
+export JsValue collectJsChecks(JsValue inst) {
+  JsValue list = newArray();
+  JsValue def = inst["_zod"]["def"];
+  if (isStr(def["check"])) push(list, inst);
+  JsValue chs = def["checks"];
+  if (!isUndef(chs) && JS.isArray(chs)) {
+    int i = 0;
+    int n = JS.number(chs["length"]).toInt();
+    while (i < n) {
+      attachJsCheck(chs[i]);
+      push(list, chs[i]);
+      i = i + 1;
+    }
+  }
+  return list;
+}
+
+export bool checksAreJs(JsValue checks) {
+  int i = 0;
+  int n = JS.number(checks["length"]).toInt();
+  while (i < n) {
+    JsValue ch = checks[i];
+    if (isUndef(ch["_zod"]) || !isFn(ch["_zod"]["check"])) return false;
+    i = i + 1;
+  }
+  return true;
+}
+
+export JsValue objectParseFor(JsValue fallback, JsValue inst) {
+  JsValue args = newArray();
+  push(args, fallback);
+  push(args, compileObjectFastpassFn);
+  push(args, inst);
+  return apply(makeObjectParseFn, undef(), args);
+}
+
+export JsValue arrayParseFor(JsValue fallback, JsValue inst) {
+  return call2(makeArrayParseFn, undef(), fallback, inst);
+}
+
+export JsValue bindRun(JsValue parseFn, JsValue checks, JsValue fallback, JsValue intern, JsValue owner) {
+  if (JS.number(checks["length"]).toInt() == 0) return parseFn;
+  if (!checksAreJs(checks)) return fallback;
+  JsValue args = newArray();
+  push(args, parseFn);
+  push(args, checks);
+  push(args, fallback);
+  push(args, intern);
+  push(args, owner);
+  return apply(makeRunFn, undef(), args);
+}

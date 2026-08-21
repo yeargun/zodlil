@@ -41,6 +41,7 @@ const pageHtml = `<!doctype html>
         window.__ready = true
         throw error
       }
+      window.__workload = await import("/bench-workload.mjs")
       window.__ready = true
     </script>
   </body>
@@ -56,6 +57,7 @@ const files = {
   "/visit.js": join(root, "dist", "visit.js"),
   "/official-json-schema.js": join(root, "dist", "official-json-schema.js"),
   "/regexes.js": join(root, "dist", "regexes.js"),
+  "/bench-workload.mjs": join(root, "scripts", "bench-workload.mjs"),
 }
 
 const server = createServer((req, res) => {
@@ -91,75 +93,53 @@ if (bootError) {
 }
 
 const result = await page.evaluate(async () => {
-  const inputs = Array.from({ length: 48 }, (_, i) => ({
-    id: i,
-    email: `user${i}@example.com`,
-    tags: ["a", "b", "c", `t${i}`],
-    nested: { ok: i % 2 === 0, count: i },
-  }))
-  function make(z) {
-    return z.object({
-      id: z.number().int(),
-      email: z.string().email(),
-      tags: z.array(z.string()).min(1),
-      nested: z.object({ ok: z.boolean(), count: z.number() }),
-    })
-  }
-  const officialSchema = make(window.__official)
-  const closerSchema = make(window.__closer)
-  const normalSchema = make(window.__normal)
-  function time(schema) {
-    const start = performance.now()
-    for (let round = 0; round < 400; round++) {
-      for (const input of inputs) schema.parse(input)
-    }
-    return (performance.now() - start) / (400 * inputs.length)
-  }
-  function median(values) {
-    const sorted = values.slice().sort((a, b) => a - b)
-    return sorted[Math.floor(sorted.length / 2)]
-  }
-  const officialSamples = []
-  const closerSamples = []
-  const normalSamples = []
-  for (let sample = 0; sample < 12; sample++) {
-    officialSamples.push(time(officialSchema))
-    closerSamples.push(time(closerSchema))
-    normalSamples.push(time(normalSchema))
-  }
-  const officialMs = median(officialSamples.slice(3))
-  const closerMs = median(closerSamples.slice(3))
-  const normalMs = median(normalSamples.slice(3))
-  const officialOut = officialSchema.parse(inputs[7])
-  const closerOut = closerSchema.parse(inputs[7])
-  const normalOut = normalSchema.parse(inputs[7])
+  const { makeSchema, sampleParse, outputsMatch } = window.__workload
+  const officialSchema = makeSchema(window.__official)
+  const closerSchema = makeSchema(window.__closer)
+  const normalSchema = makeSchema(window.__normal)
+  const checked = outputsMatch(officialSchema, closerSchema, normalSchema)
   return {
-    officialMs,
-    closerMs,
-    normalMs,
-    match:
-      JSON.stringify(officialOut) === JSON.stringify(closerOut) &&
-      JSON.stringify(officialOut) === JSON.stringify(normalOut),
-    officialOut,
-    closerOut,
-    normalOut,
+    officialMs: sampleParse(officialSchema),
+    closerMs: sampleParse(closerSchema),
+    normalMs: sampleParse(normalSchema),
+    match: checked.match,
+    officialOut: checked.officialOut,
+    closerOut: checked.closerOut,
+    normalOut: checked.normalOut,
   }
 })
+
+const { nodeBench } = await import("../scripts/bench-node.mjs")
 
 mkdirSync(join(root, "e2e-out"), { recursive: true })
 const sizes = JSON.parse(readFileSync(sizesPath, "utf8"))
 const report = {
   ...sizes,
-  throughput: [
-    { id: "official", name: "zod@4.4.3", ms: result.officialMs },
-    { id: "itslil-closer", name: "@itslil/zod · closer-world", ms: result.closerMs, ratio: result.closerMs / result.officialMs },
-    { id: "itslil-normal", name: "@itslil/zod · normal", ms: result.normalMs, ratio: result.normalMs / result.officialMs },
-  ],
-  tests: { ...(sizes.tests ?? {}), match: result.match, passed: 1353, total: 1353 },
+  browser: "Playwright Chromium",
+  runtime: process.version,
+  warmupDiscard: 3,
+  throughput: {
+    chromium: [
+      { id: "official", name: "zod@4.4.3", ms: result.officialMs },
+      { id: "itslil-closer", name: "@itslil/zod · closer-world", ms: result.closerMs, ratio: result.closerMs / result.officialMs },
+      { id: "itslil-normal", name: "@itslil/zod · normal", ms: result.normalMs, ratio: result.normalMs / result.officialMs },
+    ],
+    node: [
+      { id: "official", name: "zod@4.4.3", ms: nodeBench.officialMs },
+      { id: "itslil-closer", name: "@itslil/zod · closer-world", ms: nodeBench.closerMs, ratio: nodeBench.closerMs / nodeBench.officialMs },
+      { id: "itslil-normal", name: "@itslil/zod · normal", ms: nodeBench.normalMs, ratio: nodeBench.normalMs / nodeBench.officialMs },
+    ],
+  },
+  tests: {
+    ...(sizes.tests ?? {}),
+    match: result.match && nodeBench.match,
+    passed: 1353,
+    total: 1353,
+  },
 }
 writeFileSync(join(root, "e2e-out", "report.json"), `${JSON.stringify(report, null, 2)}\n`)
 writeFileSync(join(root, "site", "results.json"), `${JSON.stringify(report, null, 2)}\n`)
 console.log(JSON.stringify(report.throughput, null, 2))
 await browser.close()
 await new Promise((done) => server.close(done))
-if (!result.match) process.exit(1)
+if (!result.match || !nodeBench.match) process.exit(1)

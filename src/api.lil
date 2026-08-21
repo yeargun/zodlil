@@ -142,12 +142,14 @@ import {
   paramErrorMap,
   paramMessage,
   parseAsyncWithCallee,
+  failSafeParsed,
   parseWithCallee,
   shapePhase,
   prettifyError,
   safeParseAsyncInst,
   regexJs,
   safeParseInst,
+  throwParsed,
   schemaOf,
   setConfig,
   toDotPath,
@@ -161,6 +163,10 @@ import {
   version,
   xidRe
 } from "./engine.lil";
+import {
+  makeBoundParseFn,
+  makeBoundSafeParseFn
+} from "./fastpass.lil";
 
 export JsValue ZodType = makeCtor("ZodType", undef());
 export JsValue ZodString = makeCtor("ZodString", ZodType);
@@ -967,15 +973,15 @@ void installTypeMethods() {
   ));
   installLazy(ZodType["prototype"], "parse", JS.method1((JsValue _p, JsValue self) => {
     JsValue fn = undef();
-    fn = JS.methodRest((JsValue _s, JsValue args) => {
-      return parseWithCallee(self, args[0], args[1], fn);
-    });
+    fn = call2(makeBoundParseFn, undef(), self["_zod"], JS.method2((JsValue _s, JsValue payload, JsValue ctx) => {
+      return throwParsed(self, payload, ctx, fn);
+    }));
     return fn;
   }), true);
   installLazy(ZodType["prototype"], "safeParse", JS.method1((JsValue _p, JsValue self) => {
-    return JS.methodRest((JsValue _s, JsValue args) => {
-      return safeParseInst(self, args[0], args[1]);
-    });
+    return call2(makeBoundSafeParseFn, undef(), self["_zod"], JS.method2((JsValue _s, JsValue payload, JsValue ctx) => {
+      return failSafeParsed(self, payload, ctx);
+    }));
   }), true);
   installLazy(ZodType["prototype"], "parseAsync", JS.method1((JsValue _p, JsValue self) => {
     JsValue fn = undef();

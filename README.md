@@ -44,10 +44,10 @@ The published file is closer-world. Benchmarks always measure both lanes against
 | Official · Oxc normal | 395,062 | 72,680 | 59,496 | 1.278× / 1.095× / 1.086× |
 | Official · Terser closer-world | 280,301 | 63,734 | 52,561 | 0.907× / 0.960× / 0.959× |
 | Official · Terser normal | 367,526 | 70,452 | 57,503 | 1.189× / 1.061× / 1.049× |
-| **@itslil/zod · closer-world** | **124,505** | **37,253** | **32,426** | **0.403× / 0.561× / 0.592×** |
+| **@itslil/zod · closer-world** | **132,595** | **39,649** | **34,152** | **0.429× / 0.597× / 0.623×** |
 | @itslil/zod · normal | 197,579 | 53,968 | 44,208 | 0.639× / 0.813× / 0.807× |
 
-Closer-world is **0.403× / 0.561× / 0.592×** the official Oxc closer-world row. Normal (mangle off) stays larger than closer-world, as expected.
+Closer-world is **0.429× / 0.597× / 0.623×** the official Oxc closer-world row. Normal (mangle off) stays larger than closer-world, as expected.
 
 ## Performance
 
@@ -55,9 +55,9 @@ Same 48-object batch, 400 rounds per sample. Quiet median after discarding the f
 
 | Lane | Chromium µs | vs official | Node µs | vs official |
 | --- | ---: | ---: | ---: | ---: |
-| zod@4.4.3 | 0.219 | 1.00× | 0.266 | 1.00× |
-| **@itslil/zod · closer-world** | **0.234** | **1.07×** | **0.296** | **1.11×** |
-| @itslil/zod · normal | 0.255 | 1.17× | 0.291 | 1.10× |
+| zod@4.4.3 | 0.219 | 1.00× | 0.260 | 1.00× |
+| **@itslil/zod · closer-world** | **0.286** | **1.31×** | **0.477** | **1.83×** |
+| @itslil/zod · normal | 0.255 | 1.17× | 0.291 | 1.12× |
 
 ```sh
 PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm test

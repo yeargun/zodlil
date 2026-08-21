@@ -2,7 +2,7 @@
   "pin": "zod@4.4.3",
   "package": "@itslil/zod",
   "codec": "lilscript-codec gzip-9 / brotli-11",
-  "generatedAt": "2026-08-21T00:52:34.786Z",
+  "generatedAt": "2026-08-21T12:00:00.000Z",
   "tests": {
     "passed": 1353,
     "total": 1353,
@@ -65,9 +65,9 @@
       "note": "LilScript mangle on, public ABI named, internals collapsed",
       "baseline": false,
       "primary": true,
-      "raw": 124505,
-      "gzip9": 37253,
-      "brotli11": 32426
+      "raw": 132595,
+      "gzip9": 39649,
+      "brotli11": 34152
     },
     {
       "id": "itslil-normal",
@@ -90,8 +90,8 @@
       {
         "id": "itslil-closer",
         "name": "@itslil/zod · closer-world",
-        "ms": 0.000234375,
-        "ratio": 1.0714285592643582
+        "ms": 0.00028645833333333333,
+        "ratio": 1.309523794656438
       },
       {
         "id": "itslil-normal",
@@ -104,19 +104,19 @@
       {
         "id": "official",
         "name": "zod@4.4.3",
-        "ms": 0.00026552734374999905
+        "ms": 0.00026048395833333293
       },
       {
         "id": "itslil-closer",
         "name": "@itslil/zod · closer-world",
-        "ms": 0.00029579427083334056,
-        "ratio": 1.1139879857791166
+        "ms": 0.00047670354166666614,
+        "ratio": 1.8300687102452735
       },
       {
         "id": "itslil-normal",
         "name": "@itslil/zod · normal",
         "ms": 0.00029123916666667546,
-        "ratio": 1.096833051366961
+        "ratio": 1.118069
       }
     ]
   },

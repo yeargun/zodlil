@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { z as officialZ } from "zod"
-import { makeSchema, outputsMatch, sampleParse } from "./bench-workload.mjs"
+import { makeSchema, outputsMatch, sampleParseReport } from "./bench-workload.mjs"
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const closerMod = await import(pathToFileURL(join(root, "dist", "zod.core.js")).href)
@@ -21,10 +21,37 @@ if (!checked.match) {
   process.exit(1)
 }
 
+function summarize(name, report, officialMedian) {
+  return {
+    name,
+    coldMs: report.coldMs,
+    warmMedianMs: report.warmMedianMs,
+    warmMeanMs: report.warmMeanMs,
+    warmStdevMs: report.warmStdevMs,
+    warmMinMs: report.warmMinMs,
+    warmMaxMs: report.warmMaxMs,
+    ratio: officialMedian == null ? 1 : report.warmMedianMs / officialMedian,
+  }
+}
+
+const officialReport = sampleParseReport(officialSchema)
+const closerReport = sampleParseReport(closerSchema)
+const normalReport = normalZ ? sampleParseReport(normalSchema) : null
 const result = {
-  officialMs: sampleParse(officialSchema),
-  closerMs: sampleParse(closerSchema),
-  normalMs: normalZ ? sampleParse(normalSchema) : null,
+  protocol: {
+    samples: officialReport.samples,
+    discard: officialReport.discard,
+    rounds: officialReport.rounds,
+    batch: officialReport.batch,
+    parsesPerSample: officialReport.parses,
+    note: "cold = first sample; published number is quiet median of remaining warm samples",
+  },
+  officialMs: officialReport.warmMedianMs,
+  closerMs: closerReport.warmMedianMs,
+  normalMs: normalReport ? normalReport.warmMedianMs : null,
+  official: summarize("zod@4.4.3", officialReport, officialReport.warmMedianMs),
+  closer: summarize("@itslil/zod · closer-world", closerReport, officialReport.warmMedianMs),
+  normal: normalReport ? summarize("@itslil/zod · normal", normalReport, officialReport.warmMedianMs) : null,
   match: checked.match,
 }
 

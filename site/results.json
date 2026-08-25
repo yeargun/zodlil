@@ -21,7 +21,7 @@
     },
     {
       "id": "official-oxc-mangle",
-      "name": "Official · Oxc closer-world",
+      "name": "Official \u00b7 Oxc closer-world",
       "note": "Vite 8 Oxc of official v4, mangle on",
       "baseline": true,
       "primary": false,
@@ -31,7 +31,7 @@
     },
     {
       "id": "official-oxc-nomangle",
-      "name": "Official · Oxc normal",
+      "name": "Official \u00b7 Oxc normal",
       "note": "Oxc, mangle off",
       "baseline": false,
       "primary": false,
@@ -41,7 +41,7 @@
     },
     {
       "id": "official-terser-mangle",
-      "name": "Official · Terser closer-world",
+      "name": "Official \u00b7 Terser closer-world",
       "note": "Terser, mangle on",
       "baseline": false,
       "primary": false,
@@ -51,7 +51,7 @@
     },
     {
       "id": "official-terser-nomangle",
-      "name": "Official · Terser normal",
+      "name": "Official \u00b7 Terser normal",
       "note": "Terser, mangle off",
       "baseline": false,
       "primary": false,
@@ -61,23 +61,23 @@
     },
     {
       "id": "itslil-closer",
-      "name": "@itslil/zod · closer-world",
+      "name": "@itslil/zod \u00b7 closer-world",
       "note": "LilScript mangle on, public ABI named, internals collapsed",
       "baseline": false,
       "primary": true,
-      "raw": 132595,
-      "gzip9": 39649,
-      "brotli11": 34152
+      "raw": 128994,
+      "gzip9": 37055,
+      "brotli11": 31772
     },
     {
       "id": "itslil-normal",
-      "name": "@itslil/zod · normal",
+      "name": "@itslil/zod \u00b7 normal",
       "note": "LilScript mangle off (lilscript.nomangle.toml)",
       "baseline": false,
       "primary": false,
-      "raw": 197579,
-      "gzip9": 53968,
-      "brotli11": 44208
+      "raw": 212940,
+      "gzip9": 59319,
+      "brotli11": 47485
     }
   ],
   "throughput": {
@@ -89,13 +89,13 @@
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod · closer-world",
+        "name": "@itslil/zod \u00b7 closer-world",
         "ms": 0.00028645833333333333,
         "ratio": 1.309523794656438
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod · normal",
+        "name": "@itslil/zod \u00b7 normal",
         "ms": 0.00025520833830038704,
         "ratio": 1.1666666761277211
       }
@@ -108,13 +108,13 @@
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod · closer-world",
+        "name": "@itslil/zod \u00b7 closer-world",
         "ms": 0.00047670354166666614,
         "ratio": 1.8300687102452735
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod · normal",
+        "name": "@itslil/zod \u00b7 normal",
         "ms": 0.00029123916666667546,
         "ratio": 1.118069
       }

@@ -1,6 +1,6 @@
 {
   "name": "@itslil/zod",
-  "version": "4.4.3",
+  "version": "4.4.4",
   "description": "Zod 4.4.3 reimplemented in LilScript. Drop-in ESM/CJS runtime with official types.",
   "keywords": [
     "zod",

@@ -2,7 +2,7 @@
   "pin": "zod@4.4.3",
   "package": "@itslil/zod",
   "codec": "lilscript-codec gzip-9 / brotli-11",
-  "generatedAt": "2026-08-21T12:00:00.000Z",
+  "generatedAt": "2026-09-02T14:46:01.257Z",
   "tests": {
     "passed": 1353,
     "total": 1353,
@@ -65,9 +65,9 @@
       "note": "LilScript mangle on, public ABI named, internals collapsed",
       "baseline": false,
       "primary": true,
-      "raw": 135752,
-      "gzip9": 37418,
-      "brotli11": 32261
+      "raw": 133639,
+      "gzip9": 37748,
+      "brotli11": 32458
     },
     {
       "id": "itslil-normal",
@@ -75,9 +75,9 @@
       "note": "LilScript mangle off (lilscript.nomangle.toml)",
       "baseline": false,
       "primary": false,
-      "raw": 212940,
-      "gzip9": 59319,
-      "brotli11": 47485
+      "raw": 217896,
+      "gzip9": 58496,
+      "brotli11": 46841
     }
   ],
   "throughput": {
@@ -85,42 +85,42 @@
       {
         "id": "official",
         "name": "zod@4.4.3",
-        "ms": 0.00021875000248352687
+        "ms": 0.0025833333330228924
       },
       {
         "id": "itslil-closer",
         "name": "@itslil/zod · closer-world",
-        "ms": 0.00028645833333333333,
-        "ratio": 1.309523794656438
+        "ms": 0.0032083333330228925,
+        "ratio": 1.2419354839000414
       },
       {
         "id": "itslil-normal",
         "name": "@itslil/zod · normal",
-        "ms": 0.00025520833830038704,
-        "ratio": 1.1666666761277211
+        "ms": 0.0019895833327124514,
+        "ratio": 0.7701612901747901
       }
     ],
     "node": [
       {
         "id": "official",
         "name": "zod@4.4.3",
-        "ms": 0.00026048395833333293
+        "ms": 0.0020260041145832965
       },
       {
         "id": "itslil-closer",
         "name": "@itslil/zod · closer-world",
-        "ms": 0.00047670354166666614,
-        "ratio": 1.8300687102452735
+        "ms": 0.003189273854166667,
+        "ratio": 1.5741694852493568
       },
       {
         "id": "itslil-normal",
         "name": "@itslil/zod · normal",
-        "ms": 0.00029123916666667546,
-        "ratio": 1.118069
+        "ms": 0.0031164128645833483,
+        "ratio": 1.5382065821837307
       }
     ]
   },
   "browser": "Playwright Chromium",
-  "runtime": "v24.11.1",
+  "runtime": "v20.19.0",
   "warmupDiscard": 3
 }

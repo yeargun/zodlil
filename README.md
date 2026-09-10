@@ -1,5 +1,9 @@
 # @itslil/zod
 
+<!-- current-build-audit -->
+**Build audit, 2026-09-10:** [blocked; compiler, machine, build times, version gaps and behavior checks](https://yeargun.github.io/zodlil/#build-audit). The [JSON receipt](site/build-audit.json) records the current comparison; older benchmark prose retains its original scope.
+
+
 Zod 4.4.3 reimplemented in LilScript. Same classic API and official types. Internals can be mangled; only the public API stays named.
 
 Official classic suite: **1353 / 1353**.

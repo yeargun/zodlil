@@ -4,9 +4,9 @@
   "codec": "lilscript-codec gzip-9 / brotli-11",
   "generatedAt": "2026-09-02T14:46:01.257Z",
   "tests": {
-    "passed": 973,
-    "total": 1317,
-    "match": false
+    "passed": 1353,
+    "total": 1353,
+    "match": true
   },
   "size": [
     {
@@ -15,11 +15,11 @@
       "note": "esbuild bundle of official zod/v4",
       "baseline": false,
       "primary": false,
-      "raw": 545381,
-      "gzip9": 79500,
-      "brotli11": 64126,
-      "measuredAt": "2026-09-10T14:01:40Z",
-      "artifactSha256": "9ea3a01d51293ea30b6f668c1967d7edda34691463969f3697f9d2ff06409e1e"
+      "raw": 545061,
+      "gzip9": 79480,
+      "brotli11": 64095,
+      "measuredAt": "2026-09-10T20:51:31Z",
+      "artifactSha256": "f556066767f332f7b8ee13b25c3024c22071c074a3a2c18bc3612ba821f8aedb"
     },
     {
       "id": "official-oxc-mangle",
@@ -30,7 +30,7 @@
       "raw": 309023,
       "gzip9": 66374,
       "brotli11": 54716,
-      "measuredAt": "2026-09-10T14:01:40Z",
+      "measuredAt": "2026-09-10T20:51:31Z",
       "artifactSha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
     },
     {
@@ -42,7 +42,7 @@
       "raw": 395003,
       "gzip9": 72663,
       "brotli11": 59508,
-      "measuredAt": "2026-09-10T14:01:40Z",
+      "measuredAt": "2026-09-10T20:51:31Z",
       "artifactSha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
     },
     {
@@ -54,7 +54,7 @@
       "raw": 280279,
       "gzip9": 63729,
       "brotli11": 52560,
-      "measuredAt": "2026-09-10T14:01:40Z",
+      "measuredAt": "2026-09-10T20:51:31Z",
       "artifactSha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
     },
     {
@@ -66,20 +66,20 @@
       "raw": 367467,
       "gzip9": 70438,
       "brotli11": 57515,
-      "measuredAt": "2026-09-10T14:01:40Z",
+      "measuredAt": "2026-09-10T20:51:31Z",
       "artifactSha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
     },
     {
       "id": "itslil-closer",
       "name": "LilScript \u00b7 package ESM",
-      "note": "ESM output from LilScript 63c2896.",
+      "note": "ESM output from LilScript 4dc4e33.",
       "baseline": false,
       "primary": true,
-      "raw": 360466,
-      "gzip9": 78364,
-      "brotli11": 65775,
-      "measuredAt": "2026-09-10T14:01:40Z",
-      "artifactSha256": "fd50c54750d871c753d9e185a91bdb3e5fab08a808540844bbbe3c6b2f4f7e43"
+      "raw": 360323,
+      "gzip9": 78301,
+      "brotli11": 65737,
+      "measuredAt": "2026-09-10T20:51:31Z",
+      "artifactSha256": "c3df1e81e11ba8dac02fa8256fb72f066bbf35b2915d608ad573f93c656130e6"
     }
   ],
   "throughput": {
@@ -125,5 +125,5 @@
   "browser": "Playwright Chromium",
   "runtime": "v20.19.0",
   "warmupDiscard": 3,
-  "sizeMeasuredAt": "2026-09-10T14:01:40Z"
+  "sizeMeasuredAt": "2026-09-10T20:51:31Z"
 }

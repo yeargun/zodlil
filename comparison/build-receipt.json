@@ -340,12 +340,38 @@
   "publicationSourceFingerprint": "a64d46688ef33674c469226ca0ac669e53ac641d3dbed7a4bfeac2211dd409b8",
   "comparisonArtifacts": [
     {
-      "path": "site/esm-comparison/lilscript.js",
-      "sha256": "fd50c54750d871c753d9e185a91bdb3e5fab08a808540844bbbe3c6b2f4f7e43"
-    },
-    {
       "path": "site/esm-comparison/original.js",
       "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+    },
+    {
+      "path": "site/esm-comparison/lilscript.js",
+      "sha256": "c3df1e81e11ba8dac02fa8256fb72f066bbf35b2915d608ad573f93c656130e6"
+    },
+    {
+      "path": "site/source-build.json",
+      "sha256": "3065eaccf0d653209330ed82e85e09ae60034206ba17a3bb920260dc7e5a9be9"
+    },
+    {
+      "path": "site/comparison.json",
+      "sha256": "6c46d09b8167c845e76186066ee8aa0e9ddfa09a2825acd62a01f0bf625df703"
     }
-  ]
+  ],
+  "sourceBuildReceipt": "comparison/source-build/result.json",
+  "currentMeasurement": {
+    "compiler": {
+      "commit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
+      "sha256": "0616048498eb9eb2e4bd75b39e8e6a083733ada647e16108edfee30ad183beeb"
+    },
+    "source": {
+      "commit": "69a48e040b289334b0b9fef731027d61edfc5413"
+    },
+    "upstream": {
+      "repository": "https://github.com/colinhacks/zod.git",
+      "commit": "f3c9ec03ba7a28ae72d25cc295f38674bee0f559",
+      "package": "zod",
+      "version": "4.4.3",
+      "directory": "packages/zod"
+    },
+    "compatibility": "Repository checks completed successfully."
+  }
 }

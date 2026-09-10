@@ -1,0 +1,158 @@
+{
+  "source": {
+    "repository": "https://github.com/colinhacks/zod.git",
+    "commit": "f3c9ec03ba7a28ae72d25cc295f38674bee0f559",
+    "package": "zod",
+    "version": "4.4.3",
+    "directory": "packages/zod"
+  },
+  "entry": "packages/zod/v4/index.js",
+  "scope": "zod@4.4.3 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+  "external": [],
+  "samples": [
+    {
+      "bundleSeconds": 0.024380280999999997,
+      "wallSeconds": 0.923078461
+    },
+    {
+      "bundleSeconds": 0.01659245999999996,
+      "wallSeconds": 0.7884918929999999
+    },
+    {
+      "bundleSeconds": 0.020524359000000002,
+      "wallSeconds": 0.7642617230000001
+    }
+  ],
+  "medianSeconds": 0.7884918929999999,
+  "toolchain": {
+    "esbuild": "0.28.1",
+    "terser": "5.51.2"
+  },
+  "artifacts": [
+    {
+      "path": "original.esm.js",
+      "raw": 280279,
+      "gzip9": 63729,
+      "brotli11": 52560,
+      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+    },
+    {
+      "path": "original.unminified.js",
+      "raw": 545061,
+      "gzip9": 79480,
+      "brotli11": 64095,
+      "sha256": "f556066767f332f7b8ee13b25c3024c22071c074a3a2c18bc3612ba821f8aedb"
+    },
+    {
+      "path": "original.terser-nomangle.js",
+      "raw": 367467,
+      "gzip9": 70438,
+      "brotli11": 57515,
+      "sha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
+    },
+    {
+      "path": "original.esbuild.js",
+      "raw": 332323,
+      "gzip9": 65960,
+      "brotli11": 55117,
+      "sha256": "47f1f2d019cc5323368a7e96486e031ad4d4c8b7499d60a932f5b02b055cfdee"
+    },
+    {
+      "path": "original.oxc-mangle.js",
+      "raw": 309023,
+      "gzip9": 66374,
+      "brotli11": 54716,
+      "sha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
+    },
+    {
+      "path": "original.oxc-nomangle.js",
+      "raw": 395003,
+      "gzip9": 72663,
+      "brotli11": 59508,
+      "sha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
+    }
+  ],
+  "inputs": [
+    "packages/zod/v4/core/core.js",
+    "packages/zod/v4/core/util.js",
+    "packages/zod/v4/core/errors.js",
+    "packages/zod/v4/core/parse.js",
+    "packages/zod/v4/core/regexes.js",
+    "packages/zod/v4/core/checks.js",
+    "packages/zod/v4/core/doc.js",
+    "packages/zod/v4/core/versions.js",
+    "packages/zod/v4/core/schemas.js",
+    "packages/zod/v4/locales/ar.js",
+    "packages/zod/v4/locales/az.js",
+    "packages/zod/v4/locales/be.js",
+    "packages/zod/v4/locales/bg.js",
+    "packages/zod/v4/locales/ca.js",
+    "packages/zod/v4/locales/cs.js",
+    "packages/zod/v4/locales/da.js",
+    "packages/zod/v4/locales/de.js",
+    "packages/zod/v4/locales/el.js",
+    "packages/zod/v4/locales/en.js",
+    "packages/zod/v4/locales/eo.js",
+    "packages/zod/v4/locales/es.js",
+    "packages/zod/v4/locales/fa.js",
+    "packages/zod/v4/locales/fi.js",
+    "packages/zod/v4/locales/fr.js",
+    "packages/zod/v4/locales/fr-CA.js",
+    "packages/zod/v4/locales/he.js",
+    "packages/zod/v4/locales/hr.js",
+    "packages/zod/v4/locales/hu.js",
+    "packages/zod/v4/locales/hy.js",
+    "packages/zod/v4/locales/id.js",
+    "packages/zod/v4/locales/is.js",
+    "packages/zod/v4/locales/it.js",
+    "packages/zod/v4/locales/ja.js",
+    "packages/zod/v4/locales/ka.js",
+    "packages/zod/v4/locales/km.js",
+    "packages/zod/v4/locales/kh.js",
+    "packages/zod/v4/locales/ko.js",
+    "packages/zod/v4/locales/lt.js",
+    "packages/zod/v4/locales/mk.js",
+    "packages/zod/v4/locales/ms.js",
+    "packages/zod/v4/locales/nl.js",
+    "packages/zod/v4/locales/no.js",
+    "packages/zod/v4/locales/ota.js",
+    "packages/zod/v4/locales/ps.js",
+    "packages/zod/v4/locales/pl.js",
+    "packages/zod/v4/locales/pt.js",
+    "packages/zod/v4/locales/ro.js",
+    "packages/zod/v4/locales/ru.js",
+    "packages/zod/v4/locales/sl.js",
+    "packages/zod/v4/locales/sv.js",
+    "packages/zod/v4/locales/ta.js",
+    "packages/zod/v4/locales/th.js",
+    "packages/zod/v4/locales/tr.js",
+    "packages/zod/v4/locales/uk.js",
+    "packages/zod/v4/locales/ua.js",
+    "packages/zod/v4/locales/ur.js",
+    "packages/zod/v4/locales/uz.js",
+    "packages/zod/v4/locales/vi.js",
+    "packages/zod/v4/locales/zh-CN.js",
+    "packages/zod/v4/locales/zh-TW.js",
+    "packages/zod/v4/locales/yo.js",
+    "packages/zod/v4/locales/index.js",
+    "packages/zod/v4/core/registries.js",
+    "packages/zod/v4/core/api.js",
+    "packages/zod/v4/core/to-json-schema.js",
+    "packages/zod/v4/core/json-schema-processors.js",
+    "packages/zod/v4/core/json-schema-generator.js",
+    "packages/zod/v4/core/json-schema.js",
+    "packages/zod/v4/core/index.js",
+    "packages/zod/v4/classic/checks.js",
+    "packages/zod/v4/classic/iso.js",
+    "packages/zod/v4/classic/errors.js",
+    "packages/zod/v4/classic/parse.js",
+    "packages/zod/v4/classic/schemas.js",
+    "packages/zod/v4/classic/compat.js",
+    "packages/zod/v4/classic/from-json-schema.js",
+    "packages/zod/v4/classic/coerce.js",
+    "packages/zod/v4/classic/external.js",
+    "packages/zod/v4/classic/index.js",
+    "packages/zod/v4/index.js",
+    "public-esm-entry.mjs"
+  ]
+}

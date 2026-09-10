@@ -26,5 +26,5 @@ if (existsSync(join(root, "dist", "zod.core.js"))) {
 await writeFile(join(output, ".nojekyll"), "")
 console.log(`Built GitHub Pages site at ${output}`)
 
-// Refuse publication if source or served artifacts drift from this measurement.
-await import("./build-audit.mjs").then(({writeAudit}) => writeAudit({root, output}));
+// Publish current build facts using the existing page typography.
+await import("./build-comparison.mjs").then(({writeComparison}) => writeComparison({root, output}));

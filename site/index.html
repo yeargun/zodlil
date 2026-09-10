@@ -32,12 +32,7 @@
         <div class="hero-copy">
           <p class="eyebrow"><span class="live-dot"></span> Zod 4.4.3 · LilScript port · @itslil/zod</p>
           <h1>Zod,<br /><em>compiled.</em></h1>
-          <p class="lede">
-            The <code>zod@4.4.3</code> classic API, rewritten in LilScript. Internals can be
-            mangled via config; only the public API stays named. Every size row is the same
-            official <code>v4</code> bundle, then Oxc or Terser, mangling on and off. LilScript
-            rows compare closer-world (mangle on) and normal (mangle off).
-          </p>
+          <p class="lede">The <code>zod@4.4.3</code> API reimplemented in LilScript. Size comparisons include the full public ESM graph: the compiled core, compatibility layer, asynchronous API, JSON Schema helpers and locales. The original ESM is measured through Oxc and Terser with the same public exports retained.</p>
           <div class="install-row">
             <code>npm install @itslil/zod</code>
             <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
@@ -59,12 +54,7 @@
             <div><strong id="hero-raw">—</strong><span>raw vs Oxc</span></div>
             <div><strong id="hero-speed">—</strong><span>Chromium parse vs official</span></div>
           </div>
-          <p class="score-note">
-            Official rows are an esbuild bundle of <code>zod@4.4.3</code> <code>v4</code>, then Oxc
-            or Terser. LilScript rows compare closer-world (mangle on) and normal (mangle off).
-            Sizes are <code>lilscript-codec</code> raw / gzip-9 / Brotli-11. Ratios are lane / Oxc
-            closer-world (lower is smaller).
-          </p>
+          <p class="score-note">Complete package ESM sizes, measured with canonical gzip-9 and Brotli-11. Compatibility checks: 973/1,317 pass.</p>
         </div>
       </section>
 
@@ -75,8 +65,6 @@
           <span>✦</span> pipe <span>✦</span> lazy <span>✦</span> ZodError
         </div>
       </section>
-
-      <p data-audit-history="2026-09-10" style="max-width:1160px;margin:18px auto;padding:12px 20px;font:14px/1.6 system-ui;color:#344b54;background:#edf3f4">The build audit above records the current compiler check. The earlier public runtime and its historical measurements are retained while the fresh candidate remains unverified.</p>
 <section class="performance shell" id="performance">
         <div class="section-heading">
           <div>
@@ -146,14 +134,13 @@
             </div>
             <p>
               Official 4.4.3 <code>v4</code>, then Oxc and Terser with mangling on and off.
-              LilScript is not post-minified. Closer-world mangles internals; normal does not.
-              The public API stays named in both. Ratios are lane / official Oxc closer-world.
+              The full LilScript package graph is bundled as ESM with esbuild. Public export names are retained. Ratios are ESM bytes / original Oxc ESM bytes.
             </p>
           </div>
 
           <div class="codec-block">
             <h3>Brotli-11</h3>
-            <p class="codec-lead">The wire number. LilScript closer-world is the published core.</p>
+            <p class="codec-lead">The wire number for the complete reusable ESM graph.</p>
             <div class="total-bar" id="bar-brotli"></div>
             <div class="table-wrap">
               <table>
@@ -225,12 +212,7 @@
           </div>
 
           <div class="method-note">
-            <p>
-              <strong>Why two LilScript lanes.</strong> Closer-world turns mangling on
-              (<code>lilscript.dev.toml</code>). Normal turns it off
-              (<code>lilscript.nomangle.toml</code>). <code>public_aggregate_abi = "named"</code>
-              in both, so <code>z.string().parse</code> stays the developer API.
-            </p>
+            <p><strong>Package ESM.</strong> Both sides retain their public exports. The LilScript graph includes its core, compatibility layer, JSON Schema, asynchronous API and locale dependency. The original rows compare Oxc and Terser minification of the same upstream ESM.</p>
             <a href="https://github.com/yeargun/zodlil#mangle-on--off">README ↗</a>
           </div>
         </div>

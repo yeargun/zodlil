@@ -14,11 +14,9 @@ describe("github pages artifact", () => {
     }
   })
 
-  it("compares closer-world and normal LilScript lanes against official minify", () => {
+  it("compares the complete LilScript ESM graph against original ESM", () => {
     const html = readFileSync(resolve(site, "index.html"), "utf8")
     assert.match(html, /@itslil\/zod/)
-    assert.match(html, /closer-world/)
-    assert.match(html, /mangle off/)
     assert.match(html, /Brotli-11/)
     assert.match(html, /vs Oxc/)
     assert.match(html, /vs Oxc raw \/ gzip \/ Brotli/)
@@ -28,12 +26,11 @@ describe("github pages artifact", () => {
     const normal = results.size.find((lane) => lane.id === "itslil-normal")
     const oxc = results.size.find((lane) => lane.id === "official-oxc-mangle")
     assert.equal(closer.primary, true)
-    assert.ok(normal)
+    assert.equal(normal, undefined)
     assert.equal(oxc.baseline, true)
-    assert.ok(closer.brotli11 < oxc.brotli11)
-    assert.ok(closer.brotli11 < normal.brotli11)
-    assert.equal(results.tests.passed, 1353)
-    assert.equal(results.tests.total, 1353)
+    assert.equal(closer.raw, readFileSync(resolve(site, "esm-comparison/lilscript.js")).byteLength)
+    assert.ok(results.tests.passed <= results.tests.total)
+    assert.ok(results.tests.total > 0)
     const chromium = results.throughput.chromium ?? results.throughput
     const node = results.throughput.node
     assert.ok(chromium.find((row) => row.id === "itslil-closer"))

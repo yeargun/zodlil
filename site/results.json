@@ -4,9 +4,9 @@
   "codec": "lilscript-codec gzip-9 / brotli-11",
   "generatedAt": "2026-09-02T14:46:01.257Z",
   "tests": {
-    "passed": 1353,
-    "total": 1353,
-    "match": true
+    "passed": 973,
+    "total": 1317,
+    "match": false
   },
   "size": [
     {
@@ -15,69 +15,71 @@
       "note": "esbuild bundle of official zod/v4",
       "baseline": false,
       "primary": false,
-      "raw": 545560,
-      "gzip9": 79536,
-      "brotli11": 64105
+      "raw": 545381,
+      "gzip9": 79500,
+      "brotli11": 64126,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "9ea3a01d51293ea30b6f668c1967d7edda34691463969f3697f9d2ff06409e1e"
     },
     {
       "id": "official-oxc-mangle",
-      "name": "Official · Oxc closer-world",
+      "name": "Official \u00b7 Oxc closer-world",
       "note": "Vite 8 Oxc of official v4, mangle on",
       "baseline": true,
       "primary": false,
-      "raw": 309045,
-      "gzip9": 66383,
-      "brotli11": 54791
+      "raw": 309023,
+      "gzip9": 66374,
+      "brotli11": 54716,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
     },
     {
       "id": "official-oxc-nomangle",
-      "name": "Official · Oxc normal",
+      "name": "Official \u00b7 Oxc normal",
       "note": "Oxc, mangle off",
       "baseline": false,
       "primary": false,
-      "raw": 395062,
-      "gzip9": 72680,
-      "brotli11": 59496
+      "raw": 395003,
+      "gzip9": 72663,
+      "brotli11": 59508,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
     },
     {
       "id": "official-terser-mangle",
-      "name": "Official · Terser closer-world",
+      "name": "Official \u00b7 Terser closer-world",
       "note": "Terser, mangle on",
       "baseline": false,
       "primary": false,
-      "raw": 280301,
-      "gzip9": 63734,
-      "brotli11": 52561
+      "raw": 280279,
+      "gzip9": 63729,
+      "brotli11": 52560,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
     },
     {
       "id": "official-terser-nomangle",
-      "name": "Official · Terser normal",
+      "name": "Official \u00b7 Terser normal",
       "note": "Terser, mangle off",
       "baseline": false,
       "primary": false,
-      "raw": 367526,
-      "gzip9": 70452,
-      "brotli11": 57503
+      "raw": 367467,
+      "gzip9": 70438,
+      "brotli11": 57515,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
     },
     {
       "id": "itslil-closer",
-      "name": "@itslil/zod · closer-world",
-      "note": "LilScript mangle on, public ABI named, internals collapsed",
+      "name": "LilScript \u00b7 package ESM",
+      "note": "ESM output from LilScript 63c2896.",
       "baseline": false,
       "primary": true,
-      "raw": 133639,
-      "gzip9": 37748,
-      "brotli11": 32458
-    },
-    {
-      "id": "itslil-normal",
-      "name": "@itslil/zod · normal",
-      "note": "LilScript mangle off (lilscript.nomangle.toml)",
-      "baseline": false,
-      "primary": false,
-      "raw": 217896,
-      "gzip9": 58496,
-      "brotli11": 46841
+      "raw": 360466,
+      "gzip9": 78364,
+      "brotli11": 65775,
+      "measuredAt": "2026-09-10T14:01:40Z",
+      "artifactSha256": "fd50c54750d871c753d9e185a91bdb3e5fab08a808540844bbbe3c6b2f4f7e43"
     }
   ],
   "throughput": {
@@ -89,13 +91,13 @@
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod · closer-world",
+        "name": "@itslil/zod \u00b7 closer-world",
         "ms": 0.0032083333330228925,
         "ratio": 1.2419354839000414
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod · normal",
+        "name": "@itslil/zod \u00b7 normal",
         "ms": 0.0019895833327124514,
         "ratio": 0.7701612901747901
       }
@@ -108,13 +110,13 @@
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod · closer-world",
+        "name": "@itslil/zod \u00b7 closer-world",
         "ms": 0.003189273854166667,
         "ratio": 1.5741694852493568
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod · normal",
+        "name": "@itslil/zod \u00b7 normal",
         "ms": 0.0031164128645833483,
         "ratio": 1.5382065821837307
       }
@@ -122,5 +124,6 @@
   },
   "browser": "Playwright Chromium",
   "runtime": "v20.19.0",
-  "warmupDiscard": 3
+  "warmupDiscard": 3,
+  "sizeMeasuredAt": "2026-09-10T14:01:40Z"
 }

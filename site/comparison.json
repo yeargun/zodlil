@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-09-10T14:01:40Z",
+  "name": "zodlil",
+  "compiler": {
+    "commit": "63c2896a71e60cbcca7870fe979f9d6ecaff3452",
+    "sha256": "2319462ef7d858c8e2a5a767260aa4f80d325e0045afa0cc86cc122d1299b059",
+    "profile": "release",
+    "dirty": false
+  },
+  "upstream": {
+    "package": "zod",
+    "version": "4.4.3"
+  },
+  "scope": "Complete public zod/v4 ESM graphs, including the LilScript compatibility, asynchronous API and JSON Schema modules.",
+  "compatibility": "Compatibility checks: 973/1,317 pass.",
+  "tests": {
+    "pass": 973,
+    "total": 1317
+  },
+  "buildComplete": true,
+  "machine": {
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 16,
+    "memoryBytes": 33648435200,
+    "os": "Ubuntu 24.04.4 LTS",
+    "node": "v22.23.2",
+    "rayonThreads": 16,
+    "provider": "Azure",
+    "instanceClass": "Standard_D16als_v7"
+  },
+  "build": {
+    "compilerSeconds": 160.4378182888031,
+    "packageSeconds": 160.6229412360001,
+    "originalSeconds": 0.8342834029999999,
+    "packageScope": "node scripts/build.mjs --compile --force --prod; 1 successful compiler invocations plus package generation.",
+    "originalScope": "zod@4.4.3 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
+    "protocol": "Same shared worker for both lanes; one fresh LilScript package build; median of three sequential upstream ESM builds (PlayCanvas records one native reference build). Outside compiler jobs were observed in the pool, so contention is not excluded. Dependencies, tests and compression measurement are outside these build times."
+  },
+  "esm": {
+    "lilscript": {
+      "raw": 360466,
+      "gzip9": 78364,
+      "brotli11": 65775,
+      "sha256": "fd50c54750d871c753d9e185a91bdb3e5fab08a808540844bbbe3c6b2f4f7e43",
+      "file": "./esm-comparison/lilscript.js"
+    },
+    "original": {
+      "raw": 280279,
+      "gzip9": 63729,
+      "brotli11": 52560,
+      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7",
+      "file": "./esm-comparison/original.js"
+    }
+  },
+  "assembly": "esbuild 0.28.1 bundle/minify of dist/index.js, with the single createRequire locale import resolved to the pinned zod/v4/locales ESM module; all locale dependencies included."
+}

@@ -79,7 +79,11 @@ function copyDts() {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])
 const args = process.argv.slice(2)
 const compileRequested = args.includes("--compile") || args.length === 0
-const config = args.includes("--prod") ? "lilscript.toml" : "lilscript.dev.toml"
+// The release path is `npm run build` -> `--compile`, which passed neither
+// flag and so shipped `lilscript.dev.toml`: optimization_level 8 with
+// candidate_search off, measured against a production Terser baseline.
+// Production is the default now and the dev config is opt-in.
+const config = args.includes("--dev") ? "lilscript.dev.toml" : "lilscript.toml"
 
 if (isMain && compileRequested) {
   compile(config, "dist/zod.core.js")

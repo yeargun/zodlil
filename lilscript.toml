@@ -10,6 +10,13 @@ call_site_specialization = true
 identical_function_folding = true
 
 [javascript]
+# 8.89: `assume_pure_property_reads` is UNSOUND for this port and must stay off.
+# zod exposes `minLength`, `maxLength` and `format` as getters on its schema
+# objects; assuming a property read is pure lets those reads be elided, and the
+# getters then never run -- `expected undefined to deeply equal 5n`. Three of the
+# 1,353 upstream tests catch it. `rematerialize_member_reads` is inert without
+# it on a JsValue-typed port (8.79), so it is off too rather than misleading.
+assume_pure_property_reads = false
 priority = "size-first"
 optimization_level = 15
 cost_model = "brotli"

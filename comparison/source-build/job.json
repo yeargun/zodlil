@@ -7,9 +7,9 @@
     "directory": "packages/zod"
   },
   "portSource": {
-    "commit": "69a48e040b289334b0b9fef731027d61edfc5413"
+    "commit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3"
   },
-  "compilerCommit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
+  "compilerCommit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
   "install": [
     "corepack",
     "pnpm",
@@ -29,7 +29,7 @@
   "entry": "packages/zod/v4/index.js",
   "defaultExport": false,
   "external": [],
-  "esmScope": "zod@4.4.3 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
-  "lilscriptBuild": "node scripts/build.mjs --compile --force --prod",
+  "esmScope": "zod@4.4.3 z restricted to the 181 members the port shares (the port's scripts/official-entry.mjs), English locale only, from the pinned Git source build; dependency installation excluded; a comparison bundle build, not the upstream release pipeline",
+  "lilscriptBuild": "node scripts/build.mjs --compile",
   "test": "node scripts/test.mjs"
 }

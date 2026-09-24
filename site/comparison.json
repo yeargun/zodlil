@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
-  "measuredAt": "2026-09-10T20:51:31Z",
+  "measuredAt": "2026-09-24T04:39:20Z",
   "name": "zodlil",
   "compiler": {
-    "commit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
-    "sha256": "0616048498eb9eb2e4bd75b39e8e6a083733ada647e16108edfee30ad183beeb"
+    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
+    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
   },
   "upstream": {
     "package": "zod",
@@ -12,69 +12,119 @@
     "repository": "https://github.com/colinhacks/zod.git",
     "commit": "f3c9ec03ba7a28ae72d25cc295f38674bee0f559"
   },
-  "scope": "Complete public zod/v4 ESM graphs, including the LilScript compatibility, asynchronous API and JSON Schema modules.. Original ESM assembled from the pinned Git source build.",
-  "compatibility": "Repository checks completed successfully.",
-  "tests": null,
+  "scope": "zod@4.4.3's z restricted to the 181 members the port shares, English locale only, against the @itslil/zod package's ESM as it loads (zod.core.js, compat.js, index.js). Original ESM assembled from the pinned Git source build.",
+  "compatibility": "Official classic tests: 1353/1353 pass.",
+  "tests": {
+    "pass": 1353,
+    "total": 1353
+  },
   "buildComplete": true,
   "machine": {
     "provider": "Azure",
-    "instanceClass": "Standard_D16als_v7",
-    "cpu": "AMD EPYC 9V45 96-Core Processor",
-    "logicalCpus": 16,
-    "memoryBytes": 33648427008,
-    "os": "Ubuntu 24.04.4 LTS",
-    "kernel": "6.17.0-1022-azure",
+    "instanceClass": "Standard_B8als_v2",
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpus": 8,
+    "memoryBytes": 16706420736,
+    "os": "Ubuntu 24.04.3 LTS",
+    "kernel": "7.0.0-1014-azure",
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      2.0615234375,
-      2.0693359375,
-      1.880859375
+      5.029296875,
+      3.49658203125,
+      3.14599609375
     ],
     "loadAtEnd": [
-      1.16796875,
-      2.361328125,
-      2.365234375
+      11.8671875,
+      6.4287109375,
+      4.251953125
     ]
   },
   "build": {
-    "compilerSeconds": null,
-    "packageSeconds": 157.0678532130005,
-    "originalSeconds": 5.424319278999974,
-    "originalEsmSeconds": 0.7884918929999999,
-    "packageScope": "node scripts/build.mjs --compile --force --prod",
+    "compilerSeconds": 0.8280580043792725,
+    "compilerInvocations": 1,
+    "compilerScope": "Wall time of the compiler invocation in one package build (scripts/zod.lil with lilscript.toml), median of three clean builds.",
+    "primaryCompilerSeconds": 0.8280580043792725,
+    "primaryCompilerRange": [
+      0.8131608963012695,
+      1.4723644256591797
+    ],
+    "primaryCompilerScope": "The lilscript.toml invocation that writes the published dist/zod.core.js, median of three clean builds.",
+    "packageSeconds": 1.1185471779972431,
+    "originalSeconds": 20.062524620996555,
+    "originalEsmSeconds": 2.110181867,
+    "packageScope": "node scripts/build.mjs --compile",
     "originalScope": "corepack pnpm --filter zod build",
     "protocol": {
       "repetitions": 3,
       "cleanOutputs": true,
       "dependencyInstallationTimedSeparately": true,
       "sourceArchives": "Pinned Git checkouts; original repository package build commands, followed by production ESM assembly.",
-      "workerUse": "Both implementations use the same machine and Node version. This shared build pool also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
+      "workerUse": "Both implementations use the same machine and Node version. The machine is a burstable Azure VM that also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
     }
   },
   "esm": {
     "lilscript": {
-      "raw": 360323,
-      "gzip9": 78301,
-      "brotli11": 65737,
-      "sha256": "c3df1e81e11ba8dac02fa8256fb72f066bbf35b2915d608ad573f93c656130e6",
-      "file": "./esm-comparison/lilscript.js"
+      "raw": 95332,
+      "gzip9": 31749,
+      "brotli11": 28192,
+      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c",
+      "file": "./esm-comparison/lilscript.js",
+      "files": [
+        {
+          "path": "dist/zod.core.js",
+          "raw": 90567,
+          "gzip9": 30358,
+          "brotli11": 27008,
+          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+        },
+        {
+          "path": "dist/compat.js",
+          "raw": 769,
+          "gzip9": 398,
+          "brotli11": 314,
+          "sha256": "6d2fa816d36e9549f7d6edbaea2322f29e9992694096ddaabb015da6f13426f9"
+        },
+        {
+          "path": "dist/index.js",
+          "raw": 3996,
+          "gzip9": 993,
+          "brotli11": 870,
+          "sha256": "84667fc4d4d9e29d9271a37d2b0fb315a51e09f3bb39acb47d9bab9f674df6c1"
+        }
+      ],
+      "note": "The package's ESM as shipped, not bundled or minified: the sum of zod.core.js (compiler-written; the file linked here), compat.js and index.js, each compressed on its own."
     },
     "original": {
-      "raw": 280279,
-      "gzip9": 63729,
-      "brotli11": 52560,
-      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7",
-      "file": "./esm-comparison/original.js"
+      "raw": 130453,
+      "gzip9": 34545,
+      "brotli11": 29667,
+      "sha256": "848344158b6de91e8f990e34ee03ae0b81e76054b5e10b9a739b24299dcfaa62",
+      "file": "./esm-comparison/original.js",
+      "note": "Terser, 3 passes, mangle on"
+    },
+    "originalOxc": {
+      "raw": 127716,
+      "gzip9": 34127,
+      "brotli11": 29433,
+      "sha256": "ab26f7346dccb578a2f42ad14eaf52ff77cde3ecda4ec9e94f1738eb4d9f2e55",
+      "note": "Vite 8 Oxc, mangle on"
+    },
+    "originalEsbuild": {
+      "raw": 130491,
+      "gzip9": 35240,
+      "brotli11": 30367,
+      "sha256": "e60bd2ca1119b59537b6bbfc2ba5973d2791f8a0a4762ec2295372daecb45d44",
+      "note": "esbuild --minify"
     }
   },
-  "assembly": "Complete public dist/index.js graph, including compatibility, async, JSON Schema and all original locale modules. esbuild 0.28.1 bundle/minify. The Node createRequire locale import is expressed as the equivalent ESM namespace import from the pinned source-built upstream locale graph.",
+  "assembly": "Original: the pinned Git source build of zod 4.4.3, bundled from the port's scripts/official-entry.mjs (the 181 z members the port shares) with zod's locales/index.js resolved to English only, by esbuild 0.28.1, then minified by Terser (3 passes, mangle), Oxc and esbuild. LilScript: dist/zod.core.js, dist/compat.js and dist/index.js exactly as the clean source build wrote them; nothing bundles or minifies them.",
   "sourceBuild": {
     "original": {
       "complete": true,
-      "medianSeconds": 5.424319278999974,
-      "minimumSeconds": 5.4242742460000954,
-      "maximumSeconds": 5.424535367999852,
+      "medianSeconds": 20.062524620996555,
+      "minimumSeconds": 12.048650106000423,
+      "maximumSeconds": 23.554424695998023,
       "samples": [
         {
           "command": [
@@ -84,12 +134,12 @@
             "zod",
             "build"
           ],
-          "wallSeconds": 5.424535367999852,
-          "cpuSeconds": 11.207275,
+          "wallSeconds": 12.048650106000423,
+          "cpuSeconds": 24.506240000000005,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-1.log",
-          "logSha256": "01769c9d507913fbd4f4fd6af3915eb36349905478bc36679d9405ff3eb9d031"
+          "logSha256": "0517838db18d07c544219cd6fe2a36419c385ad9a74fbabebc365ee66272da3c"
         },
         {
           "command": [
@@ -99,12 +149,12 @@
             "zod",
             "build"
           ],
-          "wallSeconds": 5.4242742460000954,
-          "cpuSeconds": 11.209674999999983,
+          "wallSeconds": 20.062524620996555,
+          "cpuSeconds": 30.023986,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-2.log",
-          "logSha256": "24ef60c870190e79b925fb190f757bd7eb6ebf9590a15b723935bd31dffe0669"
+          "logSha256": "128700950bcc082a2928c594f6558179838ef8858e9d9f08d4d0aa35413e1cd8"
         },
         {
           "command": [
@@ -114,29 +164,29 @@
             "zod",
             "build"
           ],
-          "wallSeconds": 5.424319278999974,
-          "cpuSeconds": 11.261115999999992,
+          "wallSeconds": 23.554424695998023,
+          "cpuSeconds": 32.336611,
           "exitCode": 0,
           "timedOut": false,
           "log": "original-build-3.log",
-          "logSha256": "be6c2e1508ee537f463bae15b2d34a4c088d6e6d1378664863450ba9411e2fb5"
+          "logSha256": "8632659fed726025acc9ab59efc6216ea205967b4fa851b34b189e94181374d7"
         }
       ]
     },
     "lilscript": {
       "complete": true,
-      "medianSeconds": 157.0678532130005,
-      "minimumSeconds": 152.32388345899926,
-      "maximumSeconds": 172.5937863930003,
+      "medianSeconds": 1.1185471779972431,
+      "minimumSeconds": 1.116535806999309,
+      "maximumSeconds": 1.8799639260032563,
       "samples": [
         {
           "command": [
             "bash",
             "-c",
-            "node scripts/build.mjs --compile --force --prod"
+            "node scripts/build.mjs --compile"
           ],
-          "wallSeconds": 172.5937863930003,
-          "cpuSeconds": 226.298068,
+          "wallSeconds": 1.1185471779972431,
+          "cpuSeconds": 1.047900999999996,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-1.log",
@@ -146,10 +196,10 @@
           "command": [
             "bash",
             "-c",
-            "node scripts/build.mjs --compile --force --prod"
+            "node scripts/build.mjs --compile"
           ],
-          "wallSeconds": 157.0678532130005,
-          "cpuSeconds": 209.51391499999997,
+          "wallSeconds": 1.116535806999309,
+          "cpuSeconds": 1.0544980000000006,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-2.log",
@@ -159,10 +209,10 @@
           "command": [
             "bash",
             "-c",
-            "node scripts/build.mjs --compile --force --prod"
+            "node scripts/build.mjs --compile"
           ],
-          "wallSeconds": 152.32388345899926,
-          "cpuSeconds": 200.05748100000005,
+          "wallSeconds": 1.8799639260032563,
+          "cpuSeconds": 1.581089999999989,
           "exitCode": 0,
           "timedOut": false,
           "log": "lilscript-build-3.log",
@@ -170,7 +220,7 @@
         }
       ]
     },
-    "scopeNote": "Both timings cover each repository\u2019s package build command; their output formats and build checks can differ.",
+    "scopeNote": "Both timings cover each repository’s package build command; their output formats and build checks can differ.",
     "cleanOutputs": true,
     "installationExcluded": true
   }

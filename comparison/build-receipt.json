@@ -1,42 +1,39 @@
 {
   "schemaVersion": 1,
   "name": "zodlil",
-  "measuredAt": "2026-09-10T14:01:40Z",
-  "status": "blocked",
+  "measuredAt": "2026-09-24T04:39:20Z",
+  "status": "verified",
   "buildPassed": true,
-  "summary": "The newly measured artifact remains diagnostic until its behavior gate is satisfied; the previously published runtime is retained.",
-  "sourceCommit": "69a48e040b289334b0b9fef731027d61edfc5413",
-  "previousPublicCommit": "69a48e040b289334b0b9fef731027d61edfc5413",
+  "summary": "A clean build of sourceCommit reproduced the published dist/ byte for byte and passed the repository test command.",
+  "sourceCommit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3",
+  "previousPublicCommit": "b5c4d10a14314bffa01db5c874e6a6e553f592e8",
   "compiler": {
-    "commit": "63c2896a71e60cbcca7870fe979f9d6ecaff3452",
-    "sha256": "2319462ef7d858c8e2a5a767260aa4f80d325e0045afa0cc86cc122d1299b059",
+    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
+    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9",
     "profile": "release",
     "dirty": false
   },
   "machine": {
-    "cpu": "AMD EPYC 9V45 96-Core Processor",
-    "logicalCpus": 16,
-    "affinityCpus": 16,
-    "memoryBytes": 33648435200,
-    "os": "Ubuntu 24.04.4 LTS",
-    "kernel": "6.17.0-1022-azure",
-    "architecture": "x86_64",
-    "node": "v22.23.2",
-    "rayonThreads": 16,
     "provider": "Azure",
-    "instanceClass": "Standard_D16als_v7",
-    "parallelPortBuildsOnMachine": 1,
+    "instanceClass": "Standard_B8als_v2",
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpus": 8,
+    "memoryBytes": 16706420736,
+    "os": "Ubuntu 24.04.3 LTS",
+    "kernel": "7.0.0-1014-azure",
+    "node": "v24.11.1",
+    "rayonThreads": 8,
     "loadAtStart": [
-      3.74560546875,
-      6.22509765625,
-      3.58349609375
+      5.029296875,
+      3.49658203125,
+      3.14599609375
     ],
     "loadAtEnd": [
-      1.361328125,
-      3.69677734375,
-      3.1591796875
+      11.8671875,
+      6.4287109375,
+      4.251953125
     ],
-    "concurrencyNote": "The audit scheduled one port per worker, but this is a shared pool. Outside compiler jobs were observed during the run; timings are contextual wall times, not controlled speedup benchmarks."
+    "concurrencyNote": "One port at a time on this host, which also runs unrelated jobs; timings are contextual wall times, not controlled speedup benchmarks."
   },
   "upstream": {
     "name": "zodlil",
@@ -45,126 +42,109 @@
     "latest": "4.6.1",
     "source": "https://www.npmjs.com/package/zod"
   },
-  "comparisonScope": "zod@4.4.3 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline External on both sides: node:module. Sizes use canonical zlib 1.3.1 gzip-9 and Google Brotli 1.1.0 quality 11.",
+  "comparisonScope": "zod@4.4.3's z restricted to the 181 members the port shares, English locale only, against the @itslil/zod package's ESM as it loads (zod.core.js, compat.js, index.js). Original ESM assembled from the pinned Git source build.",
   "sizes": {
     "previous": {
-      "id": "itslil-closer",
-      "name": "@itslil/zod \u00b7 closer-world",
-      "note": "LilScript mangle on, public ABI named, internals collapsed",
-      "baseline": false,
-      "primary": true,
+      "path": "dist/zod.core.js",
       "raw": 133639,
       "gzip9": 37748,
-      "brotli11": 32458
+      "brotli11": 32458,
+      "sha256": "a0e66fd121d1973f21e4b3f367b4e01fbe6be9f2f510139a9003f1b4df9d9abd"
+    },
+    "previousPackage": {
+      "note": "dist/zod.core.js + compat.js + visit.js + async-api.js + official-json-schema.js + regexes.js + index.js, each compressed on its own",
+      "raw": 205244,
+      "gzip9": 55109,
+      "brotli11": 47921
     },
     "current": {
-      "path": "dist/zod.core.js",
-      "raw": 124259,
-      "gzip9": 34749,
-      "brotli11": 29629,
-      "sha256": "2ac2d2e34ca8ec8a5707995330d3e9695c551cf10fd0ca3e1678e50f079d22a9"
+      "path": "dist/zod.core.js + dist/compat.js + dist/index.js",
+      "raw": 95332,
+      "gzip9": 31749,
+      "brotli11": 28192,
+      "files": [
+        {
+          "path": "dist/zod.core.js",
+          "raw": 90567,
+          "gzip9": 30358,
+          "brotli11": 27008,
+          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+        },
+        {
+          "path": "dist/compat.js",
+          "raw": 769,
+          "gzip9": 398,
+          "brotli11": 314,
+          "sha256": "6d2fa816d36e9549f7d6edbaea2322f29e9992694096ddaabb015da6f13426f9"
+        },
+        {
+          "path": "dist/index.js",
+          "raw": 3996,
+          "gzip9": 993,
+          "brotli11": 870,
+          "sha256": "84667fc4d4d9e29d9271a37d2b0fb315a51e09f3bb39acb47d9bab9f674df6c1"
+        }
+      ]
     },
     "upstream": {
-      "path": ".page-audit/upstream/official.esm.js",
-      "raw": 280279,
-      "gzip9": 63729,
-      "brotli11": 52560,
-      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+      "path": "site/esm-comparison/original.js",
+      "raw": 130453,
+      "gzip9": 34545,
+      "brotli11": 29667,
+      "sha256": "848344158b6de91e8f990e34ee03ae0b81e76054b5e10b9a739b24299dcfaa62"
     }
   },
   "officialArtifacts": [
     {
-      "path": ".page-audit/upstream/official.terser-nomangle.js",
-      "raw": 367467,
-      "gzip9": 70438,
-      "brotli11": 57515,
-      "sha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
+      "path": "official.esm.js",
+      "raw": 130453,
+      "gzip9": 34545,
+      "brotli11": 29667,
+      "sha256": "848344158b6de91e8f990e34ee03ae0b81e76054b5e10b9a739b24299dcfaa62"
     },
     {
-      "path": ".page-audit/upstream/official.oxc-nomangle.js",
-      "raw": 395003,
-      "gzip9": 72663,
-      "brotli11": 59508,
-      "sha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
+      "path": "official.unminified.js",
+      "raw": 260823,
+      "gzip9": 47006,
+      "brotli11": 38587,
+      "sha256": "7aea12cd1324d6cadcf13ef685790f4bc4def4e9f46feaae2919b00a81b87990"
     },
     {
-      "path": ".page-audit/upstream/official.esm.js",
-      "raw": 280279,
-      "gzip9": 63729,
-      "brotli11": 52560,
-      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+      "path": "official.terser-nomangle.js",
+      "raw": 191277,
+      "gzip9": 40948,
+      "brotli11": 34626,
+      "sha256": "21299a63ac98621ad404cd71a966bdf336325a1d9d255932a37e6ff301a759dc"
     },
     {
-      "path": ".page-audit/upstream/official.unminified.js",
-      "raw": 545381,
-      "gzip9": 79500,
-      "brotli11": 64126,
-      "sha256": "9ea3a01d51293ea30b6f668c1967d7edda34691463969f3697f9d2ff06409e1e"
+      "path": "official.esbuild.js",
+      "raw": 130491,
+      "gzip9": 35240,
+      "brotli11": 30367,
+      "sha256": "e60bd2ca1119b59537b6bbfc2ba5973d2791f8a0a4762ec2295372daecb45d44"
     },
     {
-      "path": ".page-audit/upstream/official.esbuild.js",
-      "raw": 332323,
-      "gzip9": 65960,
-      "brotli11": 55117,
-      "sha256": "47f1f2d019cc5323368a7e96486e031ad4d4c8b7499d60a932f5b02b055cfdee"
+      "path": "official.oxc-mangle.js",
+      "raw": 127716,
+      "gzip9": 34127,
+      "brotli11": 29433,
+      "sha256": "ab26f7346dccb578a2f42ad14eaf52ff77cde3ecda4ec9e94f1738eb4d9f2e55"
     },
     {
-      "path": ".page-audit/upstream/official.oxc-mangle.js",
-      "raw": 309023,
-      "gzip9": 66374,
-      "brotli11": 54716,
-      "sha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
+      "path": "official.oxc-nomangle.js",
+      "raw": 186143,
+      "gzip9": 40096,
+      "brotli11": 34061,
+      "sha256": "4494f3793c479f608af001e3a0a487d6a2c1e768f4475ac40274f5081d06c22e"
     }
   ],
   "candidateArtifacts": [
     {
-      "path": "dist/index.cjs",
-      "raw": 262214,
-      "gzip9": 58809,
-      "brotli11": 49302,
-      "sha256": "0a52247a38c1caac264ce18698283b85e3159d47007e59b68ba180d6c883502d"
-    },
-    {
-      "path": "dist/compat.js",
-      "raw": 13706,
-      "gzip9": 3789,
-      "brotli11": 3400,
-      "sha256": "0419cc663e9a138c7420c2e9bd20c93fb6b27e2246ab00a105d27d3761027016"
-    },
-    {
-      "path": "dist/index.js",
-      "raw": 7811,
-      "gzip9": 1856,
-      "brotli11": 1647,
-      "sha256": "413f870a16b72ed9ea08398a95afd4b3306fc42aaefa0641b106e18479de7678"
-    },
-    {
-      "path": "dist/zod.core.js",
-      "raw": 124259,
-      "gzip9": 34749,
-      "brotli11": 29629,
-      "sha256": "2ac2d2e34ca8ec8a5707995330d3e9695c551cf10fd0ca3e1678e50f079d22a9"
-    },
-    {
-      "path": "dist/regexes.js",
-      "raw": 7156,
-      "gzip9": 2157,
-      "brotli11": 1945,
-      "sha256": "34d7d609a80c9abffde146ed4fb59dcf2c6f918905f7970aaa2e62b5924de02d"
-    },
-    {
-      "path": "dist/official-json-schema.js",
-      "raw": 34378,
-      "gzip9": 7390,
-      "brotli11": 6568,
-      "sha256": "e39a9879bea27656d112beabe07fb87aaad703f57ad6f13eddcc7f8450d1de65"
-    },
-    {
-      "path": "dist/visit.js",
-      "raw": 4550,
-      "gzip9": 1284,
-      "brotli11": 1133,
-      "sha256": "01447938d1f252ba0649626edb038888f887325d3d762603cd0f7b9dae5aa6b8"
+      "path": "dist/core.js",
+      "raw": 584,
+      "gzip9": 283,
+      "brotli11": 229,
+      "sha256": "e7e7ac74ba05b3fba5a77054843c36932360598c423b39afee708995927d29ae"
     },
     {
       "path": "dist/mini.js",
@@ -174,6 +154,27 @@
       "sha256": "7bd2c1c718cc77b5ffec305e09b545d74cd97460c7cfb2a5ce2af87d2f21460a"
     },
     {
+      "path": "dist/index.cjs",
+      "raw": 140326,
+      "gzip9": 38498,
+      "brotli11": 33206,
+      "sha256": "690b13dbe85ab2e7dc328deccc3d23c2947a468c12a33d14dc763635ab2f9654"
+    },
+    {
+      "path": "dist/index.js",
+      "raw": 3996,
+      "gzip9": 993,
+      "brotli11": 870,
+      "sha256": "84667fc4d4d9e29d9271a37d2b0fb315a51e09f3bb39acb47d9bab9f674df6c1"
+    },
+    {
+      "path": "dist/zod.core.js",
+      "raw": 90567,
+      "gzip9": 30358,
+      "brotli11": 27008,
+      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+    },
+    {
       "path": "dist/locales.js",
       "raw": 90,
       "gzip9": 91,
@@ -181,134 +182,62 @@
       "sha256": "070c3c2981625e3674672e53051be382a51eaf515bd78dc5f2142d89b45ed82d"
     },
     {
-      "path": "dist/async-api.js",
-      "raw": 4004,
-      "gzip9": 885,
-      "brotli11": 770,
-      "sha256": "284c993dcbd0f49e93e7b13f901a7aeaaf54a055f5bbafbabae0be5f16401f27"
-    },
-    {
-      "path": "dist/core.js",
-      "raw": 1043,
-      "gzip9": 329,
-      "brotli11": 272,
-      "sha256": "e80e0e8f27339960f222203d67434a1ce68d3556f8804d5cbd124e4e7e55d919"
-    },
-    {
-      "path": ".page-audit/upstream/official.esbuild.js",
-      "raw": 332323,
-      "gzip9": 65960,
-      "brotli11": 55117,
-      "sha256": "47f1f2d019cc5323368a7e96486e031ad4d4c8b7499d60a932f5b02b055cfdee"
-    },
-    {
-      "path": ".page-audit/upstream/official.terser-nomangle.js",
-      "raw": 367467,
-      "gzip9": 70438,
-      "brotli11": 57515,
-      "sha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
-    },
-    {
-      "path": ".page-audit/upstream/official.oxc-mangle.js",
-      "raw": 309023,
-      "gzip9": 66374,
-      "brotli11": 54716,
-      "sha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
-    },
-    {
-      "path": ".page-audit/upstream/official.unminified.js",
-      "raw": 545381,
-      "gzip9": 79500,
-      "brotli11": 64126,
-      "sha256": "9ea3a01d51293ea30b6f668c1967d7edda34691463969f3697f9d2ff06409e1e"
-    },
-    {
-      "path": ".page-audit/upstream/official.esm.js",
-      "raw": 280279,
-      "gzip9": 63729,
-      "brotli11": 52560,
-      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
-    },
-    {
-      "path": ".page-audit/upstream/official.oxc-nomangle.js",
-      "raw": 395003,
-      "gzip9": 72663,
-      "brotli11": 59508,
-      "sha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
+      "path": "dist/compat.js",
+      "raw": 769,
+      "gzip9": 398,
+      "brotli11": 314,
+      "sha256": "6d2fa816d36e9549f7d6edbaea2322f29e9992694096ddaabb015da6f13426f9"
     }
   ],
   "timing": {
-    "primaryCompilerSeconds": 160.4378182888031,
-    "primaryScope": "One real compiler process, including code generation and codec-guided search; excludes subsequent package wrapping.",
-    "packageSeconds": 160.6229412360001,
-    "packageScope": "node scripts/build.mjs --compile --force --prod; 1 successful compiler invocations plus package generation.",
-    "upstreamSeconds": 0.8342834029999999,
-    "upstreamScope": "zod@4.4.3 public ESM runtime graph; dependency installation excluded; this is a comparison bundle build, not the upstream vendor release pipeline",
-    "protocol": "Same shared worker for both lanes; one fresh LilScript package build; median of three sequential upstream ESM builds (PlayCanvas records one native reference build). Outside compiler jobs were observed in the pool, so contention is not excluded. Dependencies, tests and compression measurement are outside these build times.",
-    "upstreamSamples": [
-      {
-        "bundleSeconds": 0.017704109000000003,
-        "wallSeconds": 1.054365073
-      },
-      {
-        "bundleSeconds": 0.020535545000000183,
-        "wallSeconds": 0.8150076700000002
-      },
-      {
-        "bundleSeconds": 0.01633665799999994,
-        "wallSeconds": 0.8342834029999999
-      }
-    ]
+    "primaryCompilerSeconds": 0.8280580043792725,
+    "primaryScope": "The lilscript.toml invocation that writes the published dist/zod.core.js, median of three clean builds.",
+    "compilerSeconds": 0.8280580043792725,
+    "compilerScope": "Wall time of the compiler invocation in one package build (scripts/zod.lil with lilscript.toml), median of three clean builds.",
+    "packageSeconds": 1.1185471779972431,
+    "packageScope": "node scripts/build.mjs --compile; median of three clean builds.",
+    "upstreamSeconds": 20.062524620996555,
+    "upstreamScope": "corepack pnpm --filter zod build in the pinned zod 4.4.3 checkout; median of three clean builds."
   },
   "behavior": {
     "command": "node scripts/test.mjs",
-    "summary": "Repository test command failed (exit 1). Test Files  58 failed | 24 passed (82) \u00b7 Tests  344 failed | 973 passed (1317)",
-    "before": {
-      "exitCode": 0,
-      "failures": [],
-      "logSha256": "61fe6b44c6421b2513d03a3f7ea5fbb082b5d70070c235ae5093bc33df15465d"
-    },
+    "summary": "Repository test command passed (exit 0). Tests 1353 passed (1353)",
     "after": {
-      "exitCode": 1,
-      "failures": [],
-      "tail": "39m                                        ^\n    191|       [\n    192|         {\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[340/345]\u23af\n\n FAIL  vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts > number nonnegative\nError: Snapshot `number nonnegative 1` mismatched\n\n- Expected\n+ Received\n\n- [\n-   {\n-     \"code\": \"too_small\",\n-     \"inclusive\": true,\n-     \"message\": \"Too small: expected number to be >=0\",\n-     \"minimum\": 0,\n-     \"origin\": \"number\",\n-     \"path\": [],\n-   },\n- ]\n+ undefined\n\n \u276f vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts:210:40\n    208|   } catch (err) {\n    209|     // (\"Number must be greater than or equal to 0\");\n    210|     expect((err as z.ZodError).issues).toMatchInlineSnapshot(`\n       |                                        ^\n    211|       [\n    212|         {\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[341/345]\u23af\n\n FAIL  vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts > number nonpositive\nError: Snapshot `number nonpositive 1` mismatched\n\n- Expected\n+ Received\n\n- [\n-   {\n-     \"code\": \"too_big\",\n-     \"inclusive\": true,\n-     \"maximum\": 0,\n-     \"message\": \"Too big: expected number to be <=0\",\n-     \"origin\": \"number\",\n-     \"path\": [],\n-   },\n- ]\n+ undefined\n\n \u276f vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts:230:40\n    228|   } catch (err) {\n    229|     // (\"Number must be less than or equal to 0\");\n    230|     expect((err as z.ZodError).issues).toMatchInlineSnapshot(`\n       |                                        ^\n    231|       [\n    232|         {\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[342/345]\u23af\n\n FAIL  vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts > number negative\nError: Snapshot `number negative 1` mismatched\n\n- Expected\n+ Received\n\n- [\n-   {\n-     \"code\": \"too_big\",\n-     \"inclusive\": false,\n-     \"maximum\": 0,\n-     \"message\": \"Too big: expected number to be <0\",\n-     \"origin\": \"number\",\n-     \"path\": [],\n-   },\n- ]\n+ undefined\n\n \u276f vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts:250:40\n    248|   } catch (err) {\n    249|     // (\"Number must be less than 0\");\n    250|     expect((err as z.ZodError).issues).toMatchInlineSnapshot(`\n       |                                        ^\n    251|       [\n    252|         {\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[343/345]\u23af\n\n FAIL  vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts > number positive\nError: Snapshot `number positive 1` mismatched\n\n- Expected\n+ Received\n\n- [\n-   {\n-     \"code\": \"too_small\",\n-     \"inclusive\": false,\n-     \"message\": \"Too small: expected number to be >0\",\n-     \"minimum\": 0,\n-     \"origin\": \"number\",\n-     \"path\": [],\n-   },\n- ]\n+ undefined\n\n \u276f vendor/zod/packages/zod/src/v4/classic/tests/validations.test.ts:270:40\n    268|   } catch (err) {\n    269|     // (\"Number must be greater than 0\");\n    270|     expect((err as z.ZodError).issues).toMatchInlineSnapshot(`\n       |                                        ^\n    271|       [\n    272|         {\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[344/345]\u23af\n\n\n  Snapshots  18 failed\n Test Files  58 failed | 24 passed (82)\n      Tests  344 failed | 973 passed (1317)\n   Start at  14:05:38\n   Duration  4.75s (transform 6.97s, setup 0ms, import 16.45s, tests 8.49s, environment 6ms)\n\n",
-      "logSha256": "c468eb05dd4dcf534dc41c1cdaa339b74de4a211ebba841143280174c2636e70"
+      "exitCode": 0,
+      "tail": "\n RUN  v4.1.11 /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil\n\n\n Test Files  82 passed (82)\n      Tests  1353 passed (1353)\n   Start at  04:39:00\n   Duration  19.54s (transform 8.01s, setup 0ms, import 24.08s, tests 19.90s, environment 14ms)\n\n"
     }
   },
   "findings": [
-    "Published-to-fresh Brotli drift: -2,829 bytes (-8.72%). This includes port source/config changes and compiler changes.",
-    "The ordinary build command defaults to the development config. This audit explicitly uses --prod so production optimizations are exercised.",
-    "Upstream version gap: pinned 4.4.3; npm latest was 4.6.1 at the audit. No compatibility upgrade is implied.",
-    "Repository test command failed (exit 1). Test Files  58 failed | 24 passed (82) \u00b7 Tests  344 failed | 973 passed (1317)"
+    "The one LilScript compiler (aa2052f0) rebuilt the port from the integrated module rewrite; dist/zod.core.js is compiler output with no post-minifier. dist/index.cjs is esbuild's CommonJS bundle of dist/index.js (post-processed by esbuild, not compiler-written; plan M12.2).",
+    "Previous public package 47921 -> 28192 Brotli-11; dist/zod.core.js 32458 -> 27008 (the previous files were old-route compiles).",
+    "The 2026-09-10 audit's behavior gate failed (973/1317 with compiler 4dc4e33); this build passes all 1353 official classic tests.",
+    "Parse throughput is lower than the previous release: the rewrite removed JavaScript fast paths compiled with new Function.",
+    "Upstream version gap: pinned 4.4.3; no compatibility upgrade is implied."
   ],
   "primaryArtifact": "dist/zod.core.js",
   "beforePage": {
     "url": "https://yeargun.github.io/zodlil/",
     "status": 200,
-    "sha256": "d0d6fb197aadaf1a234af183fbfd75eb6c2eb88326578957d005d084d09042f8",
-    "lastModified": "Wed, 02 Sep 2026 16:51:37 GMT"
+    "sha256": "f38dfadf3afb2c413757468d21992b573f35a7460660484e3ff5295af7dffb08",
+    "lastModified": "Thu, 10 Sep 2026 21:14:07 GMT"
   },
-  "codecSha256": "9257fd055728895c11b9c4b0d882895d7d11bb3dd3495f560123879ca2bc3cd6",
+  "codecSha256": "125776830df72bbaf9704fee3c38bb0bf29bfc6bcceb5bc8707a0507a128d7b9",
   "publicationArtifacts": [
     {
-      "path": "dist/async-api.js",
-      "sha256": "284c993dcbd0f49e93e7b13f901a7aeaaf54a055f5bbafbabae0be5f16401f27"
-    },
-    {
       "path": "dist/compat.js",
-      "sha256": "0419cc663e9a138c7420c2e9bd20c93fb6b27e2246ab00a105d27d3761027016"
+      "sha256": "6d2fa816d36e9549f7d6edbaea2322f29e9992694096ddaabb015da6f13426f9"
     },
     {
       "path": "dist/core.js",
-      "sha256": "e80e0e8f27339960f222203d67434a1ce68d3556f8804d5cbd124e4e7e55d919"
+      "sha256": "e7e7ac74ba05b3fba5a77054843c36932360598c423b39afee708995927d29ae"
     },
     {
       "path": "dist/index.cjs",
-      "sha256": "c36be552905d62c343e32565ed8831606300ffe67c6cf5e561d2894a9524fdd4"
+      "sha256": "690b13dbe85ab2e7dc328deccc3d23c2947a468c12a33d14dc763635ab2f9654"
     },
     {
       "path": "dist/index.js",
-      "sha256": "413f870a16b72ed9ea08398a95afd4b3306fc42aaefa0641b106e18479de7678"
+      "sha256": "84667fc4d4d9e29d9271a37d2b0fb315a51e09f3bb39acb47d9bab9f674df6c1"
     },
     {
       "path": "dist/locales.js",
@@ -319,51 +248,39 @@
       "sha256": "7bd2c1c718cc77b5ffec305e09b545d74cd97460c7cfb2a5ce2af87d2f21460a"
     },
     {
-      "path": "dist/official-json-schema.js",
-      "sha256": "e39a9879bea27656d112beabe07fb87aaad703f57ad6f13eddcc7f8450d1de65"
-    },
-    {
-      "path": "dist/regexes.js",
-      "sha256": "34d7d609a80c9abffde146ed4fb59dcf2c6f918905f7970aaa2e62b5924de02d"
-    },
-    {
-      "path": "dist/visit.js",
-      "sha256": "01447938d1f252ba0649626edb038888f887325d3d762603cd0f7b9dae5aa6b8"
-    },
-    {
       "path": "dist/zod.core.js",
-      "sha256": "a0e66fd121d1973f21e4b3f367b4e01fbe6be9f2f510139a9003f1b4df9d9abd"
+      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
     }
   ],
-  "publicationPolicy": "Retain previous public distribution; publish the diagnostic audit",
-  "publicationBase": "69a48e040b289334b0b9fef731027d61edfc5413",
-  "publicationSourceFingerprint": "a64d46688ef33674c469226ca0ac669e53ac641d3dbed7a4bfeac2211dd409b8",
+  "publicationPolicy": "Promote freshly tested distribution",
+  "publicationBase": "b5c4d10a14314bffa01db5c874e6a6e553f592e8",
+  "publicationSourceFingerprint": "b1e2773e224becac40befb646bc6bfdf262ca0ed4de5fd702152bc54b31a9937",
   "comparisonArtifacts": [
     {
       "path": "site/esm-comparison/original.js",
-      "sha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+      "sha256": "848344158b6de91e8f990e34ee03ae0b81e76054b5e10b9a739b24299dcfaa62"
     },
     {
       "path": "site/esm-comparison/lilscript.js",
-      "sha256": "c3df1e81e11ba8dac02fa8256fb72f066bbf35b2915d608ad573f93c656130e6"
+      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
     },
     {
       "path": "site/source-build.json",
-      "sha256": "3065eaccf0d653209330ed82e85e09ae60034206ba17a3bb920260dc7e5a9be9"
+      "sha256": "dfa3dc33ac1ee9de804083ecf3c9fc216c488b2906c71ce96ffa1b6c9ac6780d"
     },
     {
       "path": "site/comparison.json",
-      "sha256": "6c46d09b8167c845e76186066ee8aa0e9ddfa09a2825acd62a01f0bf625df703"
+      "sha256": "066ce7772ab88be48c1c467540c139018882e86aa68daba5bc2ba27d5b19bba4"
     }
   ],
   "sourceBuildReceipt": "comparison/source-build/result.json",
   "currentMeasurement": {
     "compiler": {
-      "commit": "4dc4e3337d9ffd758d65e3852682d6e13d9331c1",
-      "sha256": "0616048498eb9eb2e4bd75b39e8e6a083733ada647e16108edfee30ad183beeb"
+      "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
+      "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
     },
     "source": {
-      "commit": "69a48e040b289334b0b9fef731027d61edfc5413"
+      "commit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3"
     },
     "upstream": {
       "repository": "https://github.com/colinhacks/zod.git",
@@ -372,6 +289,6 @@
       "version": "4.4.3",
       "directory": "packages/zod"
     },
-    "compatibility": "Repository checks completed successfully."
+    "compatibility": "Official classic tests: 1353/1353 pass."
   }
 }

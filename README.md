@@ -65,6 +65,8 @@ The previous release (2026-09-02, built by the old compiler, since deleted) load
 
 `npm run record:compiler` compiles the shipped file three times and records each wall time in `site/results.json`, with the compiler's revision and binary hash; every run must reproduce `dist/zod.core.js` byte for byte. This release: compiler `aa2052f0` (SHA-256 `13cb49a9…77cf18f9`), 1,181 / 1,141 / 884 ms on an 8-core AMD EPYC 7763 host.
 
+Three clean builds from source of the release commit, on the same host (`comparison/source-build/`, shown on the site): the package build takes 1.12 s median, of which the compiler takes 0.83 s; zod's own `pnpm --filter zod build` takes 20.06 s. The previous record (2026-09-10, the old compiler, a 16-core worker) was 157 s per package build.
+
 ## Performance
 
 Same 48-object batch, 400 rounds per sample. Quiet median after discarding the first 3. Chromium is Playwright; Node is v24. Both LilScript lanes match official output. Ratio is lane / official (lower is faster).

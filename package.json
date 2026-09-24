@@ -87,6 +87,7 @@
     "test": "node scripts/build.mjs --compile && node scripts/test.mjs",
     "test:e2e": "node e2e/run.mjs",
     "measure": "node scripts/measure.mjs",
+    "record:compiler": "node scripts/record-compiler-run.mjs",
     "bench": "node e2e/run.mjs",
     "check:site": "npm run build:site && node --test test/site.test.mjs",
     "check:pack": "node scripts/check-pack.mjs",

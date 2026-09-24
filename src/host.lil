@@ -26,7 +26,6 @@ extern JsValue undefined;
 JsValue objectCtor = Object;
 JsValue hasOwnFn = objectCtor["prototype"]["hasOwnProperty"];
 JsValue isPrototypeOfFn = objectCtor["prototype"]["isPrototypeOf"];
-JsValue arraySliceFn = Array["prototype"]["slice"];
 JsValue objectIsFn = objectCtor["is"];
 
 export JsValue undef() {
@@ -153,6 +152,10 @@ export JsValue newSet() {
   return JS.construct(Set);
 }
 
+export JsValue setOf(JsValue items) {
+  return JS.construct(Set, items);
+}
+
 export JsValue newArray() {
   return JS.array();
 }
@@ -178,19 +181,10 @@ export JsValue copyDescriptors(JsValue target, JsValue source) {
   return JS.invoke(objectCtor, "defineProperties", target, descs);
 }
 
+// Own keys (symbols and non-enumerable included) with their descriptors, like the old per-key loop.
 export JsValue copyOwn(JsValue target, JsValue source) {
-  if (isUndef(source) || JS.isNullish(source) || !isObj(source)) return target;
-  JsValue keys = JS.invoke(Reflect, "ownKeys", source);
-  int i = 0;
-  int n = JS.number(keys["length"]).toInt();
-  while (i < n) {
-    JsValue desc = JS.invoke(objectCtor, "getOwnPropertyDescriptor", source, keys[i]);
-    if (!isUndef(desc) && !JS.isNullish(desc)) {
-      JS.invoke(objectCtor, "defineProperty", target, keys[i], desc);
-    }
-    i = i + 1;
-  }
-  return target;
+  if (!isObj(source)) return target;
+  return copyDescriptors(target, source);
 }
 
 export JsValue getProp(JsValue target, JsValue key) {
@@ -246,7 +240,7 @@ export void captureStackTrace(JsValue err, JsValue ctor) {
 }
 
 export bool inOp(JsValue key, JsValue target) {
-  return yes(JS.in(key, target));
+  return JS.in(key, target);
 }
 
 export JsValue getDescriptor(JsValue target, JsValue key) {
@@ -426,40 +420,35 @@ export bool mapHas(JsValue map, JsValue key) {
   return JS.invoke(map, "has", key).truthy();
 }
 
-export JsValue weakGet(JsValue map, JsValue key) {
-  return JS.invoke(map, "get", key);
-}
-
-export JsValue weakSet(JsValue map, JsValue key, JsValue value) {
-  return JS.invoke(map, "set", key, value);
-}
-
-export bool weakHas(JsValue map, JsValue key) {
-  return JS.invoke(map, "has", key).truthy();
-}
 
 export JsValue jsFn(string args, string body) {
   return construct2(gGlobal()["Function"], JS.string(args), JS.string(body));
 }
 
+// `async (data, params) => impl(data, params)` without `new Function`: a synchronous throw becomes a rejection.
 export JsValue makeAsync2(JsValue impl) {
-  JsValue factory = construct2(gGlobal()["Function"], "impl", "return async function(data,params){return await impl(data,params)}");
-  return call1(factory, undef(), impl);
+  return (JsValue data, JsValue params) => {
+    try {
+      return promiseResolve(JS.call(impl, undef(), data, params));
+    } catch (JsValue err) {
+      return promiseReject(err);
+    }
+  };
 }
 
+// The async wrapper `implementAsync` returns, as a promise chain instead of `new Function` source.
 export JsValue asyncImplement(JsValue parseAsync, JsValue applyFn, JsValue input, JsValue output, JsValue implFn) {
-  JsValue factory = construct2(
-    gGlobal()["Function"],
-    "parseAsync,applyFn,input,output,implFn",
-    "return async function(){var a=Array.from(arguments);var p=input?await parseAsync(input,a):a;var r=await applyFn(implFn,this,p);return output?await parseAsync(output,r):r}"
-  );
-  JsValue args = newArray();
-  push(args, parseAsync);
-  push(args, applyFn);
-  push(args, input);
-  push(args, output);
-  push(args, implFn);
-  return apply(factory, undef(), args);
+  return JS.methodRest((JsValue self, JsValue args) => {
+    try {
+      JsValue parsed = JS.invoke(Array, "from", args);
+      if (input.truthy()) parsed = JS.call(parseAsync, undef(), input, parsed);
+      JsValue result = JS.invoke(promiseResolve(parsed), "then", (JsValue p) => JS.call(applyFn, undef(), implFn, self, p));
+      if (output.truthy()) result = JS.invoke(result, "then", (JsValue r) => JS.call(parseAsync, undef(), output, r));
+      return result;
+    } catch (JsValue err) {
+      return promiseReject(err);
+    }
+  });
 }
 
 export bool isInstance(JsValue ctor, JsValue value) {

@@ -1,4 +1,5 @@
 import { z as lilZ } from "./zod.js"
+import { renderCompilerRun } from "./compiler-run.js"
 
 const data = await fetch("./results.json").then((response) => {
   if (!response.ok) throw new Error(`Unable to load results: ${response.status}`)
@@ -28,23 +29,32 @@ function laneById(id) {
   return (data.size ?? []).find((lane) => lane.id === id)
 }
 
-function barClass(id) {
-  if (id === "itslil-closer") return "bar-lil"
-  if (id === "itslil-normal") return "bar-normal"
+// the bar per codec: the smallest minified official lane (results.json names it; recomputed if absent)
+function barFor(metric) {
+  const named = laneById(data.bars?.[metric])
+  if (named) return named
+  const official = (data.size ?? []).filter((lane) => lane.official && lane.id !== "official")
+  return official.reduce((best, lane) => (!best || lane[metric] < best[metric] ? lane : best), null)
+}
+
+function barClass(lane) {
+  if (lane.primary) return "bar-lil"
+  if (!lane.official) return "bar-normal"
   return "bar-official"
 }
 
-function sizeLanes() {
-  return [
-    "official-oxc-mangle",
-    "official-oxc-nomangle",
-    "official-terser-mangle",
-    "official-terser-nomangle",
-    "itslil-closer",
-    "itslil-normal",
-  ]
-    .map(laneById)
-    .filter(Boolean)
+function sizeLanes(metric) {
+  return (data.size ?? []).filter(
+    (lane) => (lane.official && lane.id !== "official") || (!lane.official && (!metric || lane.tables?.includes(metric))),
+  )
+}
+
+function laneName(lane, metric) {
+  return barFor(metric)?.id === lane.id ? `${lane.name} (bar)` : lane.name
+}
+
+function verdict(value, bar) {
+  return value < bar ? "win" : value === bar ? "even" : "loss"
 }
 
 function throughputLanes(runtime) {
@@ -54,40 +64,45 @@ function throughputLanes(runtime) {
 }
 
 function renderCodec(metric, barId, bodyId) {
-  const oxc = laneById("official-oxc-mangle")
-  const lanes = sizeLanes()
-  if (!oxc || lanes.length === 0) return
+  const bar = barFor(metric)
+  const lanes = sizeLanes(metric)
+  if (!bar || lanes.length === 0) return
   const max = Math.max(...lanes.map((lane) => lane[metric]))
   document.querySelector(barId).innerHTML = lanes
     .map((lane) => {
       const width = Math.max(18, (lane[metric] / max) * 100)
-      return `<div class="${barClass(lane.id)}" style="width:${width}%"><span>${lane.name}</span><strong>${formatter.format(lane[metric])} B</strong></div>`
+      return `<div class="${barClass(lane)}" style="width:${width}%"><span>${laneName(lane, metric)}</span><strong>${formatter.format(lane[metric])} B</strong></div>`
     })
     .join("")
   document.querySelector(bodyId).innerHTML = lanes
-    .map((lane) => {
-      const ratio = times(lane[metric], oxc[metric])
-      const win = lane[metric] < oxc[metric]
-      return `
+    .map(
+      (lane) => `
     <tr>
-      <th scope="row">${lane.name}</th>
+      <th scope="row">${laneName(lane, metric)}${lane.official ? "" : `<small>${lane.note}</small>`}</th>
       <td>${formatter.format(lane[metric])}</td>
-      <td class="verdict ${win ? "win" : lane[metric] === oxc[metric] ? "even" : "loss"}"><strong>${ratio}</strong></td>
-    </tr>`
-    })
+      <td class="verdict ${verdict(lane[metric], bar[metric])}"><strong>${times(lane[metric], bar[metric])}</strong></td>
+    </tr>`,
+    )
     .join("")
 }
 
+function compileSeconds() {
+  const samples = (data.compiler?.compileWallMs ?? []).filter(Number.isFinite).sort((a, b) => a - b)
+  return samples.length ? `${(samples[Math.floor(samples.length / 2)] / 1000).toFixed(2)} s` : "—"
+}
+
 function renderHero() {
-  const oxc = laneById("official-oxc-mangle")
-  const closer = laneById("itslil-closer")
-  if (!oxc || !closer) return
+  const bar = barFor("brotli11")
+  const shipped = (data.size ?? []).find((lane) => lane.primary)
+  if (!bar || !shipped) return
   document.querySelector("#hero-ratio").innerHTML =
-    `${times(closer.brotli11, oxc.brotli11)}<span>brotli vs Oxc</span>`
+    `${times(shipped.brotli11, bar.brotli11)}<span>Brotli vs ${bar.name}</span>`
   document.querySelector("#hero-bytes").textContent =
-    `${formatter.format(oxc.brotli11)} B → ${formatter.format(closer.brotli11)} B Brotli-11`
-  document.querySelector("#hero-gzip").textContent = times(closer.gzip9, oxc.gzip9)
-  document.querySelector("#hero-raw").textContent = times(closer.raw, oxc.raw)
+    `${formatter.format(bar.brotli11)} B → ${formatter.format(shipped.brotli11)} B Brotli-11`
+  const gzip = laneById("itslil-gzip") ?? shipped
+  const raw = laneById("itslil-raw") ?? shipped
+  document.querySelector("#hero-gzip").textContent = times(gzip.gzip9, barFor("gzip9").gzip9)
+  document.querySelector("#hero-raw").textContent = times(raw.raw, barFor("raw").raw)
   document.querySelector("#hero-tests").textContent = data.tests
     ? `${data.tests.passed}/${data.tests.total}`
     : "1353/1353"
@@ -96,27 +111,40 @@ function renderHero() {
   const lil = chromium.find((row) => row.id === "itslil-closer")
   document.querySelector("#hero-speed").textContent =
     official && lil ? times(lil.ms, official.ms) : "—"
+  document.querySelector("#hero-compile").textContent = compileSeconds()
+  const before = data.previousRelease?.package?.brotli11
+  document.querySelector("#hero-release").textContent = before ? times(shipped.brotli11, before) : "—"
 }
 
 function renderSize() {
-  const oxc = laneById("official-oxc-mangle")
-  if (!oxc) return
   renderCodec("brotli11", "#bar-brotli", "#body-brotli")
   renderCodec("gzip9", "#bar-gzip", "#body-gzip")
   renderCodec("raw", "#bar-raw", "#body-raw")
-  document.querySelector("#body-matched").innerHTML = sizeLanes()
+  const bars = { raw: barFor("raw"), gzip9: barFor("gzip9"), brotli11: barFor("brotli11") }
+  document.querySelector("#body-matched").innerHTML = sizeLanes(null)
     .map((lane) => {
-      const ratio = `${times(lane.raw, oxc.raw)} / ${times(lane.gzip9, oxc.gzip9)} / ${times(lane.brotli11, oxc.brotli11)}`
-      const win = lane.brotli11 < oxc.brotli11
+      const ratio = `${times(lane.raw, bars.raw.raw)} / ${times(lane.gzip9, bars.gzip9.gzip9)} / ${times(lane.brotli11, bars.brotli11.brotli11)}`
       return `
     <tr>
       <th scope="row">${lane.name}</th>
       <td>${formatter.format(lane.raw)}</td>
       <td>${formatter.format(lane.gzip9)}</td>
       <td>${formatter.format(lane.brotli11)}</td>
-      <td class="verdict ${win ? "win" : lane.brotli11 === oxc.brotli11 ? "even" : "loss"}"><strong>${ratio}</strong></td>
+      <td class="verdict ${verdict(lane.brotli11, bars.brotli11.brotli11)}"><strong>${ratio}</strong></td>
     </tr>`
     })
+    .join("")
+  document.querySelector("#body-delivered").innerHTML = (data.delivered ?? [])
+    .map(
+      (file) => `
+    <tr>
+      <th scope="row"><code>${file.path}</code><small>${file.note}</small></th>
+      <td class="written ${file.writtenBy === "compiler" ? "compiler" : "other"}">${file.writtenBy}</td>
+      <td>${formatter.format(file.raw)}</td>
+      <td>${formatter.format(file.gzip9)}</td>
+      <td>${formatter.format(file.brotli11)}</td>
+    </tr>`,
+    )
     .join("")
 }
 
@@ -173,9 +201,9 @@ function renderPerf() {
     <tr>
       <th scope="row">${name}</th>
       <td>${duration(c?.ms)}</td>
-      <td class="verdict ${cWin ? "win" : "even"}"><strong>${cRatio}</strong></td>
+      <td class="verdict ${id === "official" ? "even" : cWin ? "win" : "loss"}"><strong>${cRatio}</strong></td>
       <td>${duration(n?.ms)}</td>
-      <td class="verdict ${nWin ? "win" : "even"}"><strong>${nRatio}</strong></td>
+      <td class="verdict ${id === "official" ? "even" : nWin ? "win" : "loss"}"><strong>${nRatio}</strong></td>
     </tr>`
     })
     .join("")
@@ -272,6 +300,7 @@ function bindPlayground() {
 renderHero()
 renderPerf()
 renderSize()
+renderCompilerRun(data)
 bindCopy()
 bindProgress()
 bindPlayground()

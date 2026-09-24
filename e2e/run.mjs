@@ -53,10 +53,6 @@ const files = {
   "/lil-normal-core.js": join(root, ".tmp", "lanes", "itslil-normal.js"),
   "/zod.core.js": join(root, "dist", "zod.core.js"),
   "/compat.js": join(root, "dist", "compat.js"),
-  "/async-api.js": join(root, "dist", "async-api.js"),
-  "/visit.js": join(root, "dist", "visit.js"),
-  "/official-json-schema.js": join(root, "dist", "official-json-schema.js"),
-  "/regexes.js": join(root, "dist", "regexes.js"),
   "/bench-workload.mjs": join(root, "scripts", "bench-workload.mjs"),
 }
 
@@ -121,13 +117,13 @@ const report = {
   throughput: {
     chromium: [
       { id: "official", name: "zod@4.4.3", ms: result.officialMs },
-      { id: "itslil-closer", name: "@itslil/zod · closer-world", ms: result.closerMs, ratio: result.closerMs / result.officialMs },
-      { id: "itslil-normal", name: "@itslil/zod · normal", ms: result.normalMs, ratio: result.normalMs / result.officialMs },
+      { id: "itslil-closer", name: "@itslil/zod", ms: result.closerMs, ratio: result.closerMs / result.officialMs },
+      { id: "itslil-normal", name: "@itslil/zod · mangle off", ms: result.normalMs, ratio: result.normalMs / result.officialMs },
     ],
     node: [
       { id: "official", name: "zod@4.4.3", ms: nodeBench.officialMs },
-      { id: "itslil-closer", name: "@itslil/zod · closer-world", ms: nodeBench.closerMs, ratio: nodeBench.closerMs / nodeBench.officialMs },
-      { id: "itslil-normal", name: "@itslil/zod · normal", ms: nodeBench.normalMs, ratio: nodeBench.normalMs / nodeBench.officialMs },
+      { id: "itslil-closer", name: "@itslil/zod", ms: nodeBench.closerMs, ratio: nodeBench.closerMs / nodeBench.officialMs },
+      { id: "itslil-normal", name: "@itslil/zod · mangle off", ms: nodeBench.normalMs, ratio: nodeBench.normalMs / nodeBench.officialMs },
     ],
   },
   tests: {

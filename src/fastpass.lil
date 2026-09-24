@@ -1,13 +1,8 @@
 import {
-  apply,
-  call0,
-  call1,
-  call2,
   construct1,
   gArray,
   gError,
-  gGlobal,
-  inOp,
+  gNumber,
   invoke1,
   isArr,
   isFn,
@@ -16,594 +11,239 @@ import {
   isPromise,
   isStr,
   isUndef,
-  jsFn,
   len,
   newArray,
-  objectKeys,
-  promiseAll,
-  promiseResolve,
+  objectAssign,
   push,
+  toNum,
   toStr,
+  typeOf,
   undef,
   yes
 } from "./host.lil";
+import { typeIssue } from "./engine.lil";
 
-export JsValue stringParseFact = jsFn(
-  "inst",
-  "return function(payload){if(typeof payload.value==='string')return payload;payload.issues.push({expected:'string',code:'invalid_type',input:payload.value,inst:inst});return payload;}"
-);
+// The engine's parse/run pair covers every schema kind, jitless mode,
+// recursion and async; nothing here re-implements it or compiles source text
+// with `new Function` (which a CSP without 'unsafe-eval' forbids). What this
+// module adds is what upstream's own parsers and checks do that the engine's
+// leave out: the issue a schema raises about its own input carries `inst` (so
+// that schema's error map and registry metadata own it), and the common
+// checks run as upstream states them, with their `abort`.
 
-export JsValue numberParseFact = jsFn(
-  "inst",
-  "return function(payload){var v=payload.value;if(typeof v==='number'&&Number.isFinite(v))return payload;var iss={expected:'number',code:'invalid_type',input:v,inst:inst};if(typeof v==='number'){if(Number.isNaN(v))iss.received='NaN';else if(!Number.isFinite(v))iss.received=String(v);}payload.issues.push(iss);return payload;}"
-);
-
-export JsValue booleanParseFact = jsFn(
-  "inst",
-  "return function(payload){if(typeof payload.value==='boolean')return payload;payload.issues.push({expected:'boolean',code:'invalid_type',input:payload.value,inst:inst});return payload;}"
-);
-
-JsValue useLilFact = jsFn(
-  "",
-  "var recCache=new WeakMap();function isRecursive(node,stack){var cached=recCache.get(node);if(cached!==void 0)return cached;if(stack.has(node))return true;stack.add(node);var result=false;function check(child){if(!result&&child&&child._zod)result=isRecursive(child,stack);}var def=node._zod&&node._zod.def;if(!def){stack.delete(node);recCache.set(node,false);return false;}if(def.type==='lazy'){stack.delete(node);recCache.set(node,true);return true;}var shape=def.shape;if(shape)for(var key in shape)check(shape[key]);for(var k in def){var value=def[k];if(!value||typeof value!=='object')continue;if(value._zod)check(value);else if(Array.isArray(value))for(var i=0;i<value.length;i++)check(value[i]);}stack.delete(node);recCache.set(node,result);return result;}return function useLil(node){return isRecursive(node,new Set());};"
-);
-
-JsValue useLilFn = call0(useLilFact, undef());
-
-JsValue numberFormatCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var input=payload.value;var fmt=def.format;if(fmt==='int'||fmt==='int32'||fmt==='safeint'){if(typeof input!=='number'||!Number.isInteger(input)){payload.issues.push({expected:'int',code:'invalid_type',input:input,inst:inst,continue:false});return;}}if(fmt==='safeint'&&!Number.isSafeInteger(input)){if(input>0)payload.issues.push({code:'too_big',maximum:9007199254740991,inclusive:true,origin:'number',input:input,inst:inst,continue:!def.abort});else payload.issues.push({code:'too_small',minimum:-9007199254740991,inclusive:true,origin:'number',input:input,inst:inst,continue:!def.abort});}};"
-);
-
-JsValue stringFormatCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var p=def.pattern;if(!p)return;p.lastIndex=0;if(p.test(payload.value))return;var extra={origin:'string',code:'invalid_format',format:def.format,input:payload.value,inst:inst,continue:!def.abort};extra.pattern=p.toString();payload.issues.push(extra);};"
-);
-
-JsValue minLengthCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var v=payload.value;if(v==null||v.length==null)return;var n=typeof v==='string'?Array.from(v).length:v.length;if(n<def.minimum)payload.issues.push({origin:Array.isArray(v)?'array':'string',code:'too_small',minimum:def.minimum,inclusive:true,input:v,inst:inst,continue:!def.abort});};"
-);
-
-JsValue maxLengthCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var v=payload.value;if(v==null||v.length==null)return;var n=typeof v==='string'?Array.from(v).length:v.length;if(n>def.maximum)payload.issues.push({origin:Array.isArray(v)?'array':'string',code:'too_big',maximum:def.maximum,inclusive:true,input:v,inst:inst,continue:!def.abort});};"
-);
-
-JsValue greaterThanCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var v=payload.value;var bound=def.value;var inclusive=def.inclusive!==false;var ok=inclusive?v>=bound:v>bound;if(ok)return;var origin=typeof v==='number'?'number':typeof v==='bigint'?'bigint':typeof v==='object'?'date':def.origin;if(!origin)origin='number';payload.issues.push({origin:origin,code:'too_small',minimum:typeof bound==='object'&&bound&&typeof bound.getTime==='function'?bound.getTime():bound,inclusive:inclusive,input:v,inst:inst,continue:!def.abort});};"
-);
-
-JsValue lessThanCheckFact = jsFn(
-  "def,inst",
-  "return function(payload){var v=payload.value;var bound=def.value;var inclusive=def.inclusive!==false;var ok=inclusive?v<=bound:v<bound;if(ok)return;var origin=typeof v==='number'?'number':typeof v==='bigint'?'bigint':typeof v==='object'?'date':def.origin;if(!origin)origin='number';payload.issues.push({origin:origin,code:'too_big',maximum:typeof bound==='object'&&bound&&typeof bound.getTime==='function'?bound.getTime():bound,inclusive:inclusive,input:v,inst:inst,continue:!def.abort});};"
-);
-
-export JsValue jsCheckFor(string name, JsValue def, JsValue inst) {
-  if (name == "number_format") return call2(numberFormatCheckFact, undef(), def, inst);
-  if (name == "min_length") return call2(minLengthCheckFact, undef(), def, inst);
-  if (name == "max_length") return call2(maxLengthCheckFact, undef(), def, inst);
-  if (name == "greater_than") return call2(greaterThanCheckFact, undef(), def, inst);
-  if (name == "less_than") return call2(lessThanCheckFact, undef(), def, inst);
-  if (name == "string_format") {
-    if (isUndef(def["pattern"]) || isStr(def["format"]) == false) return undef();
-    if (toStr(def["format"]) != "email") return undef();
-    return call2(stringFormatCheckFact, undef(), def, inst);
-  }
-  return undef();
+// kind 0: string/number/boolean (the engine parses, coercion included, and
+// the one issue it can raise is the schema's own); 1: object; 2: array (the
+// shape is tested first, as upstream does, so a wrong input never reaches the
+// engine's recursion memo). Called as the schema's run it goes through the
+// engine's run; called under the checks below it only parses.
+JsValue gate(JsValue parse, JsValue run, JsValue inst, int kind) {
+  string expected = "object";
+  if (kind == 2) expected = "array";
+  JsValue self = undef();
+  self = (JsValue payload, JsValue ctx) => {
+    JsValue input = payload["value"];
+    JsValue issues = payload["issues"];
+    int n = len(issues);
+    if (kind == 0 || isArr(input) == (kind == 2) && (kind == 2 || isObj(input))) {
+      JsValue next = parse;
+      if (JS.strictEqual(inst["_zod"]["run"], self)) next = run;
+      JsValue result = JS.call(next, undef(), payload, ctx);
+      if (kind == 0 && len(issues) > n) issues[n]["inst"] = inst;
+      return result;
+    }
+    JsValue issue = typeIssue(expected, input);
+    issue["inst"] = inst;
+    push(issues, issue);
+    return payload;
+  };
+  return self;
 }
 
-export void attachJsCheck(JsValue inst) {
-  if (isUndef(inst)) return;
-  if (isUndef(inst["_zod"])) return;
-  JsValue intern = inst["_zod"];
-  if (!isFn(intern["check"])) {
-    JsValue def = intern["def"];
-    if (isStr(def["check"])) {
-      JsValue fn = jsCheckFor(toStr(def["check"]), def, inst);
-      if (!isUndef(fn)) intern["check"] = fn;
-    }
-  }
+export JsValue stringParseFact = (JsValue inst) => gate(inst["_zod"]["parse"], inst["_zod"]["run"], inst, 0);
+
+export JsValue objectParseFor(JsValue parseFallback, JsValue runFallback, JsValue inst) {
+  return gate(parseFallback, runFallback, inst, 1);
+}
+
+export JsValue arrayParseFor(JsValue parseFallback, JsValue runFallback, JsValue inst) {
+  return gate(parseFallback, runFallback, inst, 2);
+}
+
+// The checks stated below. A schema whose checks are all of these runs them
+// here, after its own parse, the way upstream's run does; any other check
+// sends the schema to the engine's run.
+bool ours(JsValue def) {
+  string name = toStr(def["check"]);
+  return name.endsWith("length") || name.endsWith("than") || name == "number_format" || name == "string_format" && toStr(def["format"]) == "email" && def["pattern"].truthy();
 }
 
 export JsValue collectJsChecks(JsValue inst) {
   JsValue list = newArray();
   JsValue def = inst["_zod"]["def"];
   if (isStr(def["check"])) push(list, inst);
-  JsValue chs = def["checks"];
-  if (!isUndef(chs) && JS.isArray(chs)) {
-    int i = 0;
-    int n = len(chs);
-    while (i < n) {
-      attachJsCheck(chs[i]);
-      push(list, chs[i]);
-      i = i + 1;
-    }
-  }
+  if (isArr(def["checks"])) list = invoke1(list, "concat", def["checks"]);
   return list;
 }
 
-export bool checksAreJs(JsValue checks) {
-  int i = 0;
-  int n = len(checks);
-  while (i < n) {
-    JsValue ch = checks[i];
-    if (isUndef(ch["_zod"]) || isFn(ch["_zod"]["check"]) == false) return false;
-    i = i + 1;
-  }
-  return true;
-}
-
-export JsValue objectParseFor(JsValue parseFallback, JsValue runFallback, JsValue inst) {
-  JsValue box = JS.object();
-  JsValue self = JS.method2((JsValue intern, JsValue payload, JsValue ctx) => {
-    JsValue input = payload["value"];
-    if (!isObj(input) || isArr(input)) {
-      push(payload["issues"], JS.object("expected", "object", "code", "invalid_type", "input", input, "inst", inst));
-      return payload;
+JsValue runChecks(JsValue checks, JsValue payload, JsValue owner) {
+  JsValue issues = payload["issues"];
+  invoke1(checks, "forEach", (JsValue ch) => {
+    JsValue when = ch["_zod"]["def"]["when"];
+    bool own = isFn(when);
+    bool run = !invoke1(issues, "some", (JsValue issue) => JS.strictEqual(issue["continue"], false) || !own && !JS.strictEqual(issue["continue"], true)).truthy();
+    if (run && own) run = JS.call(when, undef(), payload).truthy();
+    if (run) {
+      int start = len(issues);
+      JS.invoke(ch["_zod"], "check", payload);
+      invoke1(invoke1(issues, "slice", start), "forEach", (JsValue issue) => {
+        if (isUndef(issue["schema"])) issue["schema"] = owner;
+        return undef();
+      });
     }
-    JsValue def = intern["def"];
-    JsValue lil = intern["~lil"];
-    if (isUndef(lil)) {
-      lil = call1(useLilFn, undef(), inst);
-      intern["~lil"] = lil;
-    }
-    bool gated = yes(lil);
-    if (!isUndef(def["catchall"]) && isNullish(def["catchall"]) == false) gated = true;
-    if (!isUndef(ctx) && isNullish(ctx) == false) {
-      if (yes(ctx["async"])) gated = true;
-      if (yes(ctx["jitless"])) gated = true;
-      if (isStr(ctx["direction"]) && toStr(ctx["direction"]) == "backward") gated = true;
-    }
-    JsValue cfg = gGlobal()["__zod_globalConfig"];
-    if (!isUndef(cfg) && isNullish(cfg) == false && yes(cfg["jitless"])) gated = true;
-    if (gated) {
-      if (intern["run"] == box["fn"]) return call2(runFallback, intern, payload, ctx);
-      return call2(parseFallback, intern, payload, ctx);
-    }
-    JsValue shape = def["shape"];
-    if (isUndef(shape) || isNullish(shape)) shape = JS.object();
-    JsValue raw = intern["~skeys"];
-    if (isUndef(raw)) {
-      raw = objectKeys(shape);
-      intern["~skeys"] = raw;
-    }
-    JsValue nr = JS.object();
-    int n = len(raw);
-    if (n == 2) {
-      inline for (int i of [0, 1]) {
-        string key = toStr(raw[i]);
-        if (key != "__proto__") {
-          JsValue field = shape[key];
-          if (!isUndef(field) && isNullish(field) == false) {
-            JsValue z = field["_zod"];
-            if (!isUndef(z) && isNullish(z) == false && isFn(z["run"])) {
-              bool present = inOp(key, input);
-              JsValue fieldVal = undef();
-              if (present) fieldVal = input[key];
-              JsValue r = call2(z["run"], z, JS.object("value", fieldVal, "issues", newArray()), ctx);
-              if (isPromise(r)) {
-                throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
-              }
-              int optin = 0;
-              if (isStr(z["optin"])) {
-                string oi = toStr(z["optin"]);
-                if (oi == "optional") optin = 1;
-                else if (oi == "defaulted") optin = 2;
-              }
-              int optout = 0;
-              if (isStr(z["optout"]) && toStr(z["optout"]) == "optional") optout = 1;
-              int issueCount = len(r["issues"]);
-              bool wrote = false;
-              if (present && issueCount == 0) {
-                if (isUndef(r["value"])) nr[key] = undef();
-                else nr[key] = r["value"];
-                wrote = true;
-              }
-              if (!wrote) {
-                bool skip = false;
-                if (!present && optout == 1 && optin == 1) skip = true;
-                if (!skip && issueCount > 0) {
-                  if (optin != 0 && optout == 1 && !present) skip = true;
-                  else {
-                    int ii = 0;
-                    while (ii < issueCount) {
-                      JsValue it = r["issues"][ii];
-                      JsValue path = newArray();
-                      push(path, key);
-                      JsValue old = it["path"];
-                      if (isArr(old)) {
-                        int pi = 0;
-                        int pn = len(old);
-                        while (pi < pn) {
-                          push(path, old[pi]);
-                          pi = pi + 1;
-                        }
-                      }
-                      it["path"] = path;
-                      push(payload["issues"], it);
-                      ii = ii + 1;
-                    }
-                  }
-                }
-                if (!skip && !present && optin == 0) {
-                  if (issueCount == 0) {
-                    JsValue iss = JS.object("expected", "nonoptional", "code", "invalid_type", "input", undef());
-                    JsValue path = newArray();
-                    push(path, key);
-                    iss["path"] = path;
-                    push(payload["issues"], iss);
-                  }
-                  skip = true;
-                }
-                if (!skip) {
-                  if (isUndef(r["value"])) {
-                    if (present) nr[key] = undef();
-                  } else {
-                    nr[key] = r["value"];
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    } else if (n == 4) {
-      inline for (int i of [0, 1, 2, 3]) {
-        string key = toStr(raw[i]);
-        JsValue field = shape[key];
-        if (!isUndef(field) && isNullish(field) == false) {
-          JsValue z = field["_zod"];
-          if (!isUndef(z) && isNullish(z) == false && isFn(z["run"])) {
-            bool present = inOp(key, input);
-            JsValue fieldVal = undef();
-            if (present) fieldVal = input[key];
-            JsValue r = call2(z["run"], z, JS.object("value", fieldVal, "issues", newArray()), ctx);
-            if (isPromise(r)) {
-              throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
-            }
-            int optin = 0;
-            if (isStr(z["optin"])) {
-              string oi = toStr(z["optin"]);
-              if (oi == "optional") optin = 1;
-              else if (oi == "defaulted") optin = 2;
-            }
-            int optout = 0;
-            if (isStr(z["optout"]) && toStr(z["optout"]) == "optional") optout = 1;
-            int issueCount = len(r["issues"]);
-            bool wrote = false;
-            if (present && issueCount == 0) {
-              if (isUndef(r["value"])) nr[key] = undef();
-              else nr[key] = r["value"];
-              wrote = true;
-            }
-            if (!wrote) {
-              bool skip = false;
-              if (!present && optout == 1 && optin == 1) skip = true;
-              if (!skip && issueCount > 0) {
-                if (optin != 0 && optout == 1 && !present) skip = true;
-                else {
-                  int ii = 0;
-                  while (ii < issueCount) {
-                    JsValue it = r["issues"][ii];
-                    JsValue path = newArray();
-                    push(path, key);
-                    JsValue old = it["path"];
-                    if (isArr(old)) {
-                      int pi = 0;
-                      int pn = len(old);
-                      while (pi < pn) {
-                        push(path, old[pi]);
-                        pi = pi + 1;
-                      }
-                    }
-                    it["path"] = path;
-                    push(payload["issues"], it);
-                    ii = ii + 1;
-                  }
-                }
-              }
-              if (!skip && !present && optin == 0) {
-                if (issueCount == 0) {
-                  JsValue iss = JS.object("expected", "nonoptional", "code", "invalid_type", "input", undef());
-                  JsValue path = newArray();
-                  push(path, key);
-                  iss["path"] = path;
-                  push(payload["issues"], iss);
-                }
-                skip = true;
-              }
-              if (!skip) {
-                if (isUndef(r["value"])) {
-                  if (present) nr[key] = undef();
-                } else {
-                  nr[key] = r["value"];
-                }
-              }
-            }
-          }
-        }
-      }
-    } else {
-      int gi = 0;
-      while (gi < n) {
-        string key = toStr(raw[gi]);
-        if (key == "__proto__") {
-          gi = gi + 1;
-        } else {
-        JsValue field = shape[key];
-        if (!isUndef(field) && isNullish(field) == false) {
-          JsValue z = field["_zod"];
-          if (!isUndef(z) && isNullish(z) == false && isFn(z["run"])) {
-            bool present = inOp(key, input);
-            JsValue fieldVal = undef();
-            if (present) fieldVal = input[key];
-            JsValue r = call2(z["run"], z, JS.object("value", fieldVal, "issues", newArray()), ctx);
-            if (isPromise(r)) {
-              throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
-            }
-            int optin = 0;
-            if (isStr(z["optin"])) {
-              string oi = toStr(z["optin"]);
-              if (oi == "optional") optin = 1;
-              else if (oi == "defaulted") optin = 2;
-            }
-            int optout = 0;
-            if (isStr(z["optout"]) && toStr(z["optout"]) == "optional") optout = 1;
-            int issueCount = len(r["issues"]);
-            bool wrote = false;
-            if (present && issueCount == 0) {
-              if (isUndef(r["value"])) nr[key] = undef();
-              else nr[key] = r["value"];
-              wrote = true;
-            }
-            if (!wrote) {
-              bool skip = false;
-              if (!present && optout == 1 && optin == 1) skip = true;
-              if (!skip && issueCount > 0) {
-                if (optin != 0 && optout == 1 && !present) skip = true;
-                else {
-                  int ii = 0;
-                  while (ii < issueCount) {
-                    JsValue it = r["issues"][ii];
-                    JsValue path = newArray();
-                    push(path, key);
-                    JsValue old = it["path"];
-                    if (isArr(old)) {
-                      int pi = 0;
-                      int pn = len(old);
-                      while (pi < pn) {
-                        push(path, old[pi]);
-                        pi = pi + 1;
-                      }
-                    }
-                    it["path"] = path;
-                    push(payload["issues"], it);
-                    ii = ii + 1;
-                  }
-                }
-              }
-              if (!skip && !present && optin == 0) {
-                if (issueCount == 0) {
-                  JsValue iss = JS.object("expected", "nonoptional", "code", "invalid_type", "input", undef());
-                  JsValue path = newArray();
-                  push(path, key);
-                  iss["path"] = path;
-                  push(payload["issues"], iss);
-                }
-                skip = true;
-              }
-              if (!skip) {
-                if (isUndef(r["value"])) {
-                  if (present) nr[key] = undef();
-                } else {
-                  nr[key] = r["value"];
-                }
-              }
-            }
-          }
-        }
-        gi = gi + 1;
-        }
-      }
-    }
-    payload["value"] = nr;
-    return payload;
+    return undef();
   });
-  box["fn"] = self;
-  return self;
+  return payload;
 }
 
 export JsValue bindRun(JsValue parseFn, JsValue checks, JsValue fallback, JsValue intern, JsValue owner) {
-  int n = len(checks);
-  if (n == 0) return parseFn;
-  if (!checksAreJs(checks)) return fallback;
-  return JS.method2((JsValue self, JsValue payload, JsValue ctx) => {
-    if (!isUndef(ctx) && isNullish(ctx) == false) {
-      if (isStr(ctx["direction"]) && toStr(ctx["direction"]) == "backward") {
-        return call2(fallback, self, payload, ctx);
-      }
-      if (yes(ctx["skipChecks"])) return call2(parseFn, self, payload, ctx);
+  if (len(checks) == 0) return parseFn;
+  if (!invoke1(checks, "every", (JsValue ch) => ours(ch["_zod"]["def"])).truthy()) return fallback;
+  return (JsValue payload, JsValue ctx) => {
+    if (!isNullish(ctx)) {
+      if (JS.strictEqual(ctx["direction"], "backward")) return JS.call(fallback, undef(), payload, ctx);
+      if (yes(ctx["skipChecks"])) return JS.call(parseFn, undef(), payload, ctx);
     }
-    JsValue slot = JS.object();
-    slot["go"] = JS.method2((JsValue _s, JsValue pl, JsValue startV) => {
-      int i = JS.number(startV).toInt();
-      while (i < n) {
-        JsValue ch = checks[i];
-        if (!isUndef(ch) && isNullish(ch) == false) {
-          JsValue cin = ch["_zod"];
-          if (isUndef(cin) || isNullish(cin)) return call2(fallback, self, pl, ctx);
-          JsValue cdef = cin["def"];
-          bool hasWhen = false;
-          if (!isUndef(cdef) && isNullish(cdef) == false && isFn(cdef["when"])) hasWhen = true;
-          bool aborted = yes(pl["aborted"]);
-          if (!aborted) {
-            JsValue issues = pl["issues"];
-            int ai = 0;
-            int an = len(issues);
-            while (ai < an) {
-              JsValue cont = issues[ai]["continue"];
-              if (hasWhen) {
-                if (JS.strictEqual(cont, false)) aborted = true;
-              } else {
-                if (JS.strictEqual(cont, true) == false) aborted = true;
-              }
-              ai = ai + 1;
-            }
-          }
-          bool skip = false;
-          if (hasWhen) {
-            if (len(pl["issues"]) > 0 && aborted) skip = true;
-            if (!skip && !call1(cdef["when"], undef(), pl).truthy()) skip = true;
-          } else {
-            if (len(pl["issues"]) > 0 && aborted) skip = true;
-          }
-          if (!skip) {
-            JsValue fn = cin["check"];
-            if (!isFn(fn)) return call2(fallback, self, pl, ctx);
-            JsValue ret = call1(fn, ch, pl);
-            if (isPromise(ret)) {
-              if (!isUndef(ctx) && isNullish(ctx) == false && JS.strictEqual(ctx["async"], false)) {
-                throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
-              }
-              int next = i + 1;
-              return invoke1(promiseResolve(ret), "then", JS.method1((JsValue _t, JsValue _v) => {
-                return call2(slot["go"], undef(), pl, JS.number(0.0 + next));
-              }));
-            }
-          }
-        }
-        i = i + 1;
-      }
-      JsValue stamped = pl["issues"];
-      int si = 0;
-      int sn = len(stamped);
-      while (si < sn) {
-        if (isUndef(stamped[si]["schema"])) stamped[si]["schema"] = owner;
-        si = si + 1;
-      }
-      return pl;
-    });
-    JsValue result = call2(parseFn, self, payload, ctx);
-    if (isPromise(result)) {
-      return invoke1(result, "then", JS.method1((JsValue _r, JsValue next) => {
-        return call2(slot["go"], undef(), next, JS.number(0.0));
-      }));
-    }
-    return call2(slot["go"], undef(), result, JS.number(0.0));
-  });
+    JsValue result = JS.call(parseFn, undef(), payload, ctx);
+    if (isPromise(result)) return invoke1(result, "then", (JsValue next) => runChecks(checks, next, owner));
+    return runChecks(checks, result, owner);
+  };
 }
 
-export JsValue arrayParseFor(JsValue parseFallback, JsValue runFallback, JsValue inst) {
-  JsValue box = JS.object();
-  JsValue self = JS.method2((JsValue intern, JsValue payload, JsValue ctx) => {
+// Check bodies, as upstream's `_zod.check` functions state them.
+
+// min_length / max_length (length) and greater_than / less_than.
+JsValue sizeCheck(JsValue def, JsValue inst, bool max, bool length) {
+  string key = "minimum";
+  string code = "too_small";
+  if (max) {
+    key = "maximum";
+    code = "too_big";
+  }
+  return (JsValue payload) => {
     JsValue input = payload["value"];
-    if (!isArr(input)) {
-      push(payload["issues"], JS.object("expected", "array", "code", "invalid_type", "input", input, "inst", inst));
-      return payload;
+    JsValue size = input;
+    JsValue bound = def["value"];
+    bool inclusive = !JS.strictEqual(def["inclusive"], false);
+    string t = typeOf(input);
+    string origin = t;
+    if (t == "object") origin = "date";
+    else if (t != "number" && t != "bigint") origin = toStr(def["origin"]);
+    if (length) {
+      size = input["length"];
+      if (isStr(input)) size = invoke1(gArray(), "from", input)["length"];
+      bound = def[key];
+      inclusive = true;
+      origin = "unknown";
+      if (isArr(input)) origin = "array";
+      if (isStr(input)) origin = "string";
     }
-    JsValue lil = intern["~lil"];
-    if (isUndef(lil)) {
-      lil = call1(useLilFn, undef(), inst);
-      intern["~lil"] = lil;
+    JsValue hi = size;
+    JsValue lo = bound;
+    if (max) {
+      hi = bound;
+      lo = size;
     }
-    bool gated = yes(lil);
-    if (!isUndef(ctx) && isNullish(ctx) == false) {
-      if (yes(ctx["async"])) gated = true;
-      if (yes(ctx["jitless"])) gated = true;
-      if (isStr(ctx["direction"]) && toStr(ctx["direction"]) == "backward") gated = true;
-    }
-    if (gated) {
-      if (intern["run"] == box["fn"]) return call2(runFallback, intern, payload, ctx);
-      return call2(parseFallback, intern, payload, ctx);
-    }
-    JsValue el = intern["def"]["element"];
-    if (isUndef(el) || isNullish(el) || isUndef(el["_zod"]) || isFn(el["_zod"]["run"]) == false) {
-      return call2(parseFallback, intern, payload, ctx);
-    }
-    JsValue elz = el["_zod"];
-    int n = len(input);
-    JsValue out = construct1(gArray(), n);
-    JsValue issues = payload["issues"];
-    JsValue proms = newArray();
-    int i = 0;
-    while (i < n) {
-      JsValue r = call2(elz["run"], elz, JS.object("value", input[i], "issues", newArray()), ctx);
-      if (isPromise(r)) {
-        if (!isUndef(ctx) && isNullish(ctx) == false && JS.strictEqual(ctx["async"], false)) {
-          throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
-        }
-        int idx = i;
-        push(proms, invoke1(r, "then", JS.method1((JsValue _s, JsValue next) => {
-          JsValue iss = next["issues"];
-          if (!isUndef(iss) && len(iss) > 0) {
-            int j = 0;
-            int jn = len(iss);
-            while (j < jn) {
-              JsValue path = newArray();
-              push(path, JS.number(0.0 + idx));
-              JsValue old = iss[j]["path"];
-              if (isArr(old)) {
-                int pi = 0;
-                int pn = len(old);
-                while (pi < pn) {
-                  push(path, old[pi]);
-                  pi = pi + 1;
-                }
-              }
-              iss[j]["path"] = path;
-              push(issues, iss[j]);
-              j = j + 1;
-            }
-          }
-          out[idx] = next["value"];
-          return undef();
-        })));
-      } else {
-        JsValue iss = r["issues"];
-        if (!isUndef(iss) && len(iss) > 0) {
-          int j = 0;
-          int jn = len(iss);
-          while (j < jn) {
-            JsValue path = newArray();
-            push(path, JS.number(0.0 + i));
-            JsValue old = iss[j]["path"];
-            if (isArr(old)) {
-              int pi = 0;
-              int pn = len(old);
-              while (pi < pn) {
-                push(path, old[pi]);
-                pi = pi + 1;
-              }
-            }
-            iss[j]["path"] = path;
-            push(issues, iss[j]);
-            j = j + 1;
-          }
-        }
-        out[i] = r["value"];
-      }
-      i = i + 1;
-    }
-    payload["value"] = out;
-    if (len(proms) > 0) {
-      return invoke1(promiseAll(proms), "then", JS.method1((JsValue _s, JsValue _v) => {
-        return payload;
-      }));
-    }
-    return payload;
-  });
-  box["fn"] = self;
-  return self;
+    if (inclusive && JS.greaterThanOrEqual(hi, lo) || !inclusive && JS.greaterThan(hi, lo)) return undef();
+    JsValue issue = JS.object("origin", origin, "code", code);
+    issue[key] = bound;
+    if (isObj(bound) && isFn(bound["getTime"])) issue[key] = JS.invoke(bound, "getTime");
+    issue["inclusive"] = inclusive;
+    issue["input"] = input;
+    issue["inst"] = inst;
+    issue["continue"] = !def["abort"].truthy();
+    push(payload["issues"], issue);
+    return undef();
+  };
 }
 
-export JsValue makeBoundParseFn = jsFn(
-  "intern,fail",
-  "return function(data,params){var ctx=params==null?{async:false}:Object.assign({},params,{async:false});var result=intern.run({value:data,issues:[]},ctx);if(result instanceof Promise)throw new Error('Encountered Promise during synchronous parse. Use .parseAsync() instead.');if(!result.issues.length)return result.value;return fail(result,ctx);}"
-);
+JsValue formatCheck(JsValue def, JsValue inst) {
+  string format = toStr(def["format"]);
+  if (format == "int") format = "safeint";
+  bool isInt = format.includes("int");
+  float hi = 1.0 / 0.0;
+  if (format == "int32") hi = 2147483647.0;
+  if (format == "uint32") hi = 4294967295.0;
+  if (format == "float32") hi = 3.4028234663852886e38;
+  float lo = -hi;
+  if (format == "int32") lo = -hi - 1.0;
+  if (format == "uint32") lo = 0.0;
+  return (JsValue payload) => {
+    JsValue input = payload["value"];
+    JsValue issues = payload["issues"];
+    bool cont = !def["abort"].truthy();
+    if (isInt) {
+      if (!JS.invoke(gNumber(), "isInteger", input).truthy()) {
+        push(issues, JS.object("expected", "int", "format", format, "code", "invalid_type", "continue", false, "input", input, "inst", inst));
+        return undef();
+      }
+      if (!JS.invoke(gNumber(), "isSafeInteger", input).truthy()) {
+        JsValue issue = JS.object("input", input, "code", "too_small", "minimum", -9007199254740991.0);
+        if (toNum(input) > 0.0) issue = JS.object("input", input, "code", "too_big", "maximum", 9007199254740991.0);
+        issue["note"] = "Integers must be within the safe integer range.";
+        issue["inst"] = inst;
+        issue["origin"] = "int";
+        issue["inclusive"] = true;
+        issue["continue"] = cont;
+        push(issues, issue);
+        return undef();
+      }
+    }
+    float v = toNum(input);
+    if (v < lo || v > hi) {
+      JsValue issue = JS.object("origin", "number", "input", input, "code", "too_small", "minimum", lo);
+      if (v > hi) issue = JS.object("origin", "number", "input", input, "code", "too_big", "maximum", hi);
+      issue["inclusive"] = true;
+      issue["inst"] = inst;
+      issue["continue"] = cont;
+      push(issues, issue);
+    }
+    return undef();
+  };
+}
 
-export JsValue makeBoundSafeParseFn = jsFn(
-  "intern,fail",
-  "return function(data,params){var ctx=params==null?{async:false}:Object.assign({},params,{async:false});var result=intern.run({value:data,issues:[]},ctx);if(result instanceof Promise)throw new Error('Encountered Promise during synchronous parse. Use .parseAsync() instead.');if(!result.issues.length)return {success:true,data:result.value};return fail(result,ctx);}"
-);
+JsValue patternCheck(JsValue def, JsValue inst) {
+  return (JsValue payload) => {
+    JsValue pattern = def["pattern"];
+    pattern["lastIndex"] = 0;
+    if (JS.invoke(pattern, "test", payload["value"]).truthy()) return undef();
+    push(payload["issues"], JS.object("origin", "string", "code", "invalid_format", "format", def["format"], "input", payload["value"], "pattern", toStr(pattern), "inst", inst, "continue", !def["abort"].truthy()));
+    return undef();
+  };
+}
+
+export void attachJsCheck(JsValue inst) {
+  JsValue intern = inst["_zod"];
+  JsValue def = intern["def"];
+  if (isFn(intern["check"]) || !ours(def)) return;
+  string name = toStr(def["check"]);
+  if (name == "number_format") intern["check"] = formatCheck(def, inst);
+  else if (name == "string_format") intern["check"] = patternCheck(def, inst);
+  else intern["check"] = sizeCheck(def, inst, name.startsWith("max") || name.startsWith("less"), name.endsWith("length"));
+}
+
+// parse / safeParse bound to one schema.
+JsValue boundParse(JsValue intern, JsValue fail, bool safe) {
+  return (JsValue data, JsValue params) => {
+    JsValue ctx = objectAssign(JS.object(), params);
+    ctx["async"] = false;
+    JsValue result = JS.invoke(intern, "run", JS.object("value", data, "issues", newArray()), ctx);
+    if (isPromise(result)) throw construct1(gError(), "Encountered Promise during synchronous parse. Use .parseAsync() instead.");
+    if (len(result["issues"]) > 0) return JS.call(fail, undef(), result, ctx);
+    if (safe) return JS.object("success", true, "data", result["value"]);
+    return result["value"];
+  };
+}
+
+export JsValue makeBoundParseFn = (JsValue intern, JsValue fail) => boundParse(intern, fail, false);
+
+export JsValue makeBoundSafeParseFn = (JsValue intern, JsValue fail) => boundParse(intern, fail, true);

@@ -2,128 +2,307 @@
   "pin": "zod@4.4.3",
   "package": "@itslil/zod",
   "codec": "lilscript-codec gzip-9 / brotli-11",
-  "generatedAt": "2026-09-02T14:46:01.257Z",
+  "generatedAt": "2026-09-24T04:31:40.728Z",
   "tests": {
     "passed": 1353,
     "total": 1353,
     "match": true
   },
+  "surface": "zod@4.4.3 z restricted to the 181 members the port shares, English locale only",
+  "bars": {
+    "brotli11": "official-oxc-mangle",
+    "gzip9": "official-oxc-mangle",
+    "raw": "official-oxc-mangle"
+  },
   "size": [
     {
       "id": "official",
-      "name": "zod@4.4.3 ESM bundle",
-      "note": "esbuild bundle of official zod/v4",
-      "baseline": false,
-      "primary": false,
-      "raw": 545061,
-      "gzip9": 79480,
-      "brotli11": 64095,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "f556066767f332f7b8ee13b25c3024c22071c074a3a2c18bc3612ba821f8aedb"
+      "name": "zod@4.4.3 bundle, unminified",
+      "note": "esbuild bundle of the shared surface, English only",
+      "official": true,
+      "raw": 260903,
+      "gzip9": 47031,
+      "brotli11": 38651,
+      "baseline": false
     },
     {
       "id": "official-oxc-mangle",
-      "name": "Official \u00b7 Oxc closer-world",
-      "note": "Vite 8 Oxc of official v4, mangle on",
-      "baseline": true,
-      "primary": false,
-      "raw": 309023,
-      "gzip9": 66374,
-      "brotli11": 54716,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "3b64ac410c7e8a0f0ef302a686e304efc29d08b35ba0a76660a74b8628f8cf98"
+      "name": "Official · Oxc",
+      "note": "Vite 8 Oxc, mangle on",
+      "official": true,
+      "raw": 127709,
+      "gzip9": 34134,
+      "brotli11": 29437,
+      "baseline": true
     },
     {
       "id": "official-oxc-nomangle",
-      "name": "Official \u00b7 Oxc normal",
-      "note": "Oxc, mangle off",
-      "baseline": false,
-      "primary": false,
-      "raw": 395003,
-      "gzip9": 72663,
-      "brotli11": 59508,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "c7ba2c6f2b92fbd485a6a8a46c656a74e329214531743967f6e9956fd6b7a6b2"
+      "name": "Official · Oxc, mangle off",
+      "note": "Vite 8 Oxc, mangle off",
+      "official": true,
+      "raw": 186116,
+      "gzip9": 40098,
+      "brotli11": 34032,
+      "baseline": false
     },
     {
       "id": "official-terser-mangle",
-      "name": "Official \u00b7 Terser closer-world",
-      "note": "Terser, mangle on",
-      "baseline": false,
-      "primary": false,
-      "raw": 280279,
-      "gzip9": 63729,
-      "brotli11": 52560,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "fb9ca423af9ccfccb635e3ac102be772e68543884e31336ea0061eea5779edd7"
+      "name": "Official · Terser",
+      "note": "Terser 3 passes, mangle on",
+      "official": true,
+      "raw": 130452,
+      "gzip9": 34542,
+      "brotli11": 29642,
+      "baseline": false
     },
     {
       "id": "official-terser-nomangle",
-      "name": "Official \u00b7 Terser normal",
-      "note": "Terser, mangle off",
-      "baseline": false,
-      "primary": false,
-      "raw": 367467,
-      "gzip9": 70438,
-      "brotli11": 57515,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "5c22c278c083d29aa927ea53ffa372abc98287f97688296941ec86f35a893720"
+      "name": "Official · Terser, mangle off",
+      "note": "Terser 3 passes, mangle off",
+      "official": true,
+      "raw": 191256,
+      "gzip9": 40939,
+      "brotli11": 34604,
+      "baseline": false
+    },
+    {
+      "id": "official-esbuild",
+      "name": "Official · esbuild",
+      "note": "esbuild --minify",
+      "official": true,
+      "raw": 130491,
+      "gzip9": 35240,
+      "brotli11": 30367,
+      "baseline": false
     },
     {
       "id": "itslil-closer",
-      "name": "LilScript \u00b7 package ESM",
-      "note": "ESM output from LilScript 4dc4e33.",
-      "baseline": false,
+      "name": "@itslil/zod · shipped",
+      "note": "dist/zod.core.js + compat.js + index.js, Brotli objective (lilscript.toml), mangle on",
       "primary": true,
-      "raw": 360323,
-      "gzip9": 78301,
-      "brotli11": 65737,
-      "measuredAt": "2026-09-10T20:51:31Z",
-      "artifactSha256": "c3df1e81e11ba8dac02fa8256fb72f066bbf35b2915d608ad573f93c656130e6"
+      "objective": "brotli",
+      "tables": [
+        "brotli11",
+        "gzip9",
+        "raw"
+      ],
+      "raw": 95332,
+      "gzip9": 31749,
+      "brotli11": 28192,
+      "baseline": false
+    },
+    {
+      "id": "itslil-gzip",
+      "name": "@itslil/zod · gzip objective",
+      "note": "same files, core compiled with lilscript.gzip.toml",
+      "objective": "gzip",
+      "tables": [
+        "gzip9"
+      ],
+      "raw": 95332,
+      "gzip9": 31749,
+      "brotli11": 28192,
+      "baseline": false
+    },
+    {
+      "id": "itslil-raw",
+      "name": "@itslil/zod · raw objective",
+      "note": "same files, core compiled with lilscript.bytes.toml",
+      "objective": "raw",
+      "tables": [
+        "raw"
+      ],
+      "raw": 87323,
+      "gzip9": 32607,
+      "brotli11": 29180,
+      "baseline": false
+    },
+    {
+      "id": "itslil-core",
+      "name": "zod.core.js alone",
+      "note": "the compiler-written file by itself (the package's JavaScript glue excluded)",
+      "tables": [
+        "brotli11",
+        "gzip9",
+        "raw"
+      ],
+      "raw": 90567,
+      "gzip9": 30358,
+      "brotli11": 27008,
+      "baseline": false
+    },
+    {
+      "id": "itslil-normal",
+      "name": "@itslil/zod · mangle off",
+      "note": "same files, core compiled with lilscript.nomangle.toml",
+      "tables": [
+        "brotli11",
+        "gzip9",
+        "raw"
+      ],
+      "raw": 139091,
+      "gzip9": 39704,
+      "brotli11": 34851,
+      "baseline": false
+    },
+    {
+      "id": "itslil-esbuild-bundle",
+      "name": "@itslil/zod · esbuild bundle",
+      "note": "esbuild bundle of dist/index.js, unminified: esbuild re-prints our core (post-processed by esbuild, not compiler-written)",
+      "postProcessedBy": "esbuild",
+      "tables": [
+        "brotli11",
+        "gzip9",
+        "raw"
+      ],
+      "raw": 134055,
+      "gzip9": 36831,
+      "brotli11": 31732,
+      "baseline": false
     }
   ],
+  "delivered": [
+    {
+      "path": "dist/zod.core.js",
+      "writtenBy": "compiler",
+      "note": "LilScript, scripts/zod.lil with lilscript.toml",
+      "raw": 90567,
+      "gzip9": 30358,
+      "brotli11": 27008
+    },
+    {
+      "path": "dist/compat.js",
+      "writtenBy": "hand-written",
+      "note": "scripts/compat.mjs: upstream locales when zod is installed, and the JSONSchemaGenerator class; not compiler-written",
+      "raw": 769,
+      "gzip9": 398,
+      "brotli11": 314
+    },
+    {
+      "path": "dist/index.js",
+      "writtenBy": "generated",
+      "note": "re-exports of z's members, written by scripts/write-exports.mjs; not compiler-written",
+      "raw": 3996,
+      "gzip9": 993,
+      "brotli11": 870
+    },
+    {
+      "path": "dist/core.js",
+      "writtenBy": "generated",
+      "note": "zod/v4/core re-exports, scripts/write-exports.mjs; not compiler-written",
+      "raw": 584,
+      "gzip9": 283,
+      "brotli11": 229
+    },
+    {
+      "path": "dist/mini.js",
+      "writtenBy": "generated",
+      "note": "zod/mini re-exports, scripts/write-exports.mjs; not compiler-written",
+      "raw": 69,
+      "gzip9": 67,
+      "brotli11": 62
+    },
+    {
+      "path": "dist/locales.js",
+      "writtenBy": "generated",
+      "note": "zod/locales re-exports, scripts/write-exports.mjs; not compiler-written",
+      "raw": 90,
+      "gzip9": 91,
+      "brotli11": 74
+    },
+    {
+      "path": "dist/index.cjs",
+      "writtenBy": "post-processed by esbuild, not compiler-written",
+      "note": "CommonJS bundle of dist/index.js by esbuild (plan M12.2)",
+      "raw": 140326,
+      "gzip9": 38498,
+      "brotli11": 33206
+    }
+  ],
+  "previousRelease": {
+    "commit": "b80748e7",
+    "compiledAt": "2026-09-02",
+    "compiler": "LilScript feature/source-maps f504c93 (the old compiler, since deleted)",
+    "package": {
+      "note": "dist/zod.core.js + compat.js + visit.js + async-api.js + official-json-schema.js + regexes.js + index.js, each compressed on its own",
+      "raw": 205244,
+      "gzip9": 55109,
+      "brotli11": 47921
+    },
+    "core": {
+      "path": "dist/zod.core.js",
+      "raw": 133639,
+      "gzip9": 37748,
+      "brotli11": 32458
+    },
+    "cjs": {
+      "path": "dist/index.cjs",
+      "raw": 294308,
+      "gzip9": 62404,
+      "brotli11": 52164
+    },
+    "siteBar": {
+      "note": "the site then compared zod.core.js alone with Oxc over all of zod/v4, 51 locales included, which the port does not ship",
+      "brotli11": 54791
+    }
+  },
+  "compiler": {
+    "revision": "aa2052f0",
+    "binarySha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9",
+    "input": "scripts/zod.lil",
+    "config": "lilscript.toml",
+    "target": "js-module",
+    "output": "dist/zod.core.js",
+    "outputSha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c",
+    "compileWallMs": [
+      1181,
+      1141,
+      884
+    ],
+    "host": "8 × AMD EPYC 7763 64-Core Processor",
+    "date": "2026-09-24"
+  },
   "throughput": {
     "chromium": [
       {
         "id": "official",
         "name": "zod@4.4.3",
-        "ms": 0.0025833333330228924
+        "ms": 0.000390625
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod \u00b7 closer-world",
-        "ms": 0.0032083333330228925,
-        "ratio": 1.2419354839000414
+        "name": "@itslil/zod",
+        "ms": 0.0022604166665890564,
+        "ratio": 5.786666666467984
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod \u00b7 normal",
-        "ms": 0.0019895833327124514,
-        "ratio": 0.7701612901747901
+        "name": "@itslil/zod · mangle off",
+        "ms": 0.0022135416666666666,
+        "ratio": 5.666666666666666
       }
     ],
     "node": [
       {
         "id": "official",
         "name": "zod@4.4.3",
-        "ms": 0.0020260041145832965
+        "ms": 0.0004957423437500097
       },
       {
         "id": "itslil-closer",
-        "name": "@itslil/zod \u00b7 closer-world",
-        "ms": 0.003189273854166667,
-        "ratio": 1.5741694852493568
+        "name": "@itslil/zod",
+        "ms": 0.0027181910937499982,
+        "ratio": 5.483072261264641
       },
       {
         "id": "itslil-normal",
-        "name": "@itslil/zod \u00b7 normal",
-        "ms": 0.0031164128645833483,
-        "ratio": 1.5382065821837307
+        "name": "@itslil/zod · mangle off",
+        "ms": 0.0027729014583333365,
+        "ratio": 5.593432744433146
       }
     ]
   },
   "browser": "Playwright Chromium",
-  "runtime": "v20.19.0",
-  "warmupDiscard": 3,
-  "sizeMeasuredAt": "2026-09-10T20:51:31Z"
+  "runtime": "v24.11.1",
+  "warmupDiscard": 3
 }

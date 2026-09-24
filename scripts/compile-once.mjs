@@ -11,7 +11,7 @@ mkdirSync(resolve(root, "dist"), { recursive: true })
 const result = spawnSync(
   compiler,
   [
-    resolve(root, "src", "entry.lil"),
+    resolve(root, "scripts", "zod.lil"),
     "--target",
     "js-module",
     "--config",

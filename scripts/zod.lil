@@ -1,0 +1,407 @@
+// The package root compiled to dist/zod.core.js: the core (src/entry.lil) plus what upstream zod exposes and the core
+// does not implement itself: util helpers, clone, the format shorthands, safe codec calls, visit and deepPartial,
+// fromJSONSchema, tuple rest, JSON Schema (./json-schema.lil) and regexes. compat.js adds locales, the throwing
+// parse/encode/decode wrappers and the JSONSchemaGenerator class.
+import { z } from "../src/entry.lil";
+import { assignProp, defineProperty, hasOwn, isArr, isFn, isInstance, isNum, isObj, isStr, newError, newMap, objectCreate, objectKeys } from "../src/host.lil";
+import {
+  base64urlRe,
+  cidrv4Re,
+  cidrv6Re,
+  creditCardRe,
+  cuid2Re,
+  cuidRe,
+  datetimeRegex,
+  domainRe,
+  durationRe,
+  e164Re,
+  emailRe,
+  enumValues,
+  guidRe,
+  hexRe,
+  hostnameRe,
+  httpProtocolRe,
+  ipv4Re,
+  ipv6Re,
+  isoDateRe,
+  ksuidRe,
+  md5HexRe,
+  nanoidRe,
+  sha1HexRe,
+  sha256HexRe,
+  sha384HexRe,
+  sha512HexRe,
+  stringifyPrimitive,
+  timeRegex,
+  ulidRe,
+  uuidRe,
+  xidRe
+} from "../src/engine.lil";
+import { copy, generatorContext, generatorEmit, generatorProcess, innerTypeKinds, toJSONSchema } from "./json-schema.lil";
+
+extern JsValue Array;
+extern JsValue Map;
+extern JsValue Set;
+extern JsValue Symbol;
+extern JsValue Number;
+extern JsValue RegExp;
+
+JsValue core = z["core"];
+JsValue util = core["util"];
+
+bool nullish(JsValue value) {
+  return JS.isNullish(value);
+}
+
+JsValue or(JsValue value, JsValue fallback) {
+  if (JS.isNullish(value)) return fallback;
+  return value;
+}
+
+JsValue anchored(string source) {
+  return new Regex("^" + source + "$");
+}
+
+// ---- util ----
+
+bool isPlainObject(JsValue o) {
+  if (!isObj(o) || isArr(o)) return false;
+  JsValue ctor = o["constructor"];
+  if (!isFn(ctor)) return true;
+  JsValue prot = ctor["prototype"];
+  return isObj(prot) && hasOwn(prot, "isPrototypeOf");
+}
+
+util["isPlainObject"] = isPlainObject;
+util["shallowClone"] = (JsValue o) => {
+  if (isPlainObject(o)) return copy(o);
+  if (isArr(o)) return JS.invoke(Array, "from", o);
+  if (isInstance(Map, o) || isInstance(Set, o)) return JS.construct(o["constructor"], o);
+  return o;
+};
+util["floatSafeRemainder"] = (JsValue val, JsValue step) => {
+  float ratio = JS.number(val) / JS.number(step);
+  float rounded = ratio.round();
+  if ((ratio - rounded).abs() < 2.220446049250313e-16 * ratio.abs().max(1.0)) return 0.0;
+  return ratio - rounded;
+};
+util["jsonStringifyReplacer"] = (JsValue _key, JsValue value) => {
+  if (JS.typeOf(value) == "bigint") return value["toString"]();
+  return value;
+};
+util["nullish"] = (JsValue input) => nullish(input);
+util["prefixIssues"] = (JsValue path, JsValue issues) => issues["map"]((JsValue iss) => {
+  if (nullish(iss["path"])) iss["path"] = JS.array();
+  iss["path"]["unshift"](path);
+  return iss;
+});
+util["issue"] = (JsValue iss, JsValue input, JsValue inst) => {
+  if (isStr(iss)) return JS.object("message", iss, "code", "custom", "input", input, "inst", inst);
+  return copy(iss);
+};
+util["cleanEnum"] = (JsValue obj) => {
+  JsValue values = JS.array();
+  JsValue keys = objectKeys(obj);
+  for (number i = 0; i < keys.length; i = i + 1) {
+    if (JS.invoke(Number, "isNaN", JS.invoke(Number, "parseInt", keys[i], 10)).truthy()) values["push"](obj[keys[i]]);
+  }
+  return values;
+};
+util["getEnumValues"] = enumValues;
+util["joinValues"] = (JsValue array, JsValue separator) => array["map"]((JsValue v) => stringifyPrimitive(v))["join"](or(separator, "|"));
+util["cached"] = (JsValue getter) => {
+  JsValue out = JS.object();
+  defineProperty(out, "value", JS.object("get", JS.method0((JsValue self) => {
+    JsValue value = getter();
+    defineProperty(self, "value", JS.object("value", value));
+    return value;
+  }), "enumerable", true, "configurable", true));
+  return out;
+};
+util["assertNever"] = (JsValue _x) => {
+  throw newError("Unexpected value in exhaustive check");
+};
+util["assert"] = (JsValue _x) => JS.undefined();
+util["assertIs"] = util["assert"];
+util["assertEqual"] = (JsValue val) => val;
+
+core["clone"] = (JsValue inst, JsValue def, JsValue params) => {
+  JsValue cl = JS.construct(inst["_zod"]["constr"], or(def, inst["_zod"]["def"]));
+  if (!def.truthy() || (!nullish(params) && params["parent"].truthy())) cl["_zod"]["parent"] = inst;
+  return cl;
+};
+core["$constructor"] = (JsValue name, JsValue initializer) => {
+  JsValue ctor = JS.undefined();
+  ctor = JS.staticRest((JsValue args) => {
+    JsValue inst = objectCreate(ctor["prototype"]);
+    initializer(inst, or(args[0], JS.object()));
+    return inst;
+  });
+  defineProperty(ctor, "name", JS.object("value", name));
+  return ctor;
+};
+
+// ---- z members ----
+
+string[] formats = "e164 cidrv4 cidrv6 base64 base64url xid ksuid cuid cuid2 emoji uuidv4 uuidv6 uuidv7".split(" ");
+for (int i = 0; i < formats.length; i = i + 1) {
+  string format = formats[i];
+  z[format] = (JsValue params) => z["string"](params)[format](params);
+}
+z["int64"] = z["bigint"];
+z["uint64"] = z["bigint"];
+z["describe"] = (JsValue schema, JsValue description) => schema["describe"](description);
+z["meta"] = (JsValue schema, JsValue value) => schema["meta"](value);
+z["setErrorMap"] = (JsValue customError) => z["config"](JS.object("customError", customError));
+z["compile"] = (JsValue schema) => schema;
+
+JsValue backward(JsValue ctx) {
+  JsValue next = copy(ctx);
+  next["direction"] = "backward";
+  return next;
+}
+z["safeEncode"] = (JsValue schema, JsValue data, JsValue ctx) => schema["safeParse"](data, backward(ctx));
+z["safeDecode"] = (JsValue schema, JsValue data, JsValue ctx) => schema["safeParse"](data, ctx);
+z["safeEncodeAsync"] = (JsValue schema, JsValue data, JsValue ctx) => schema["safeParseAsync"](data, backward(ctx));
+z["safeDecodeAsync"] = (JsValue schema, JsValue data, JsValue ctx) => schema["safeParseAsync"](data, ctx);
+
+// ---- visit: a bottom-up rewrite of a schema tree; unhandled kinds and unchanged branches keep their identity ----
+
+JsValue RESOLVING = Symbol("z.visit/resolving");
+
+Record<string> childKeysOf = record {
+  object: "shape catchall",
+  array: "element",
+  tuple: "items rest",
+  record: "keyType valueType",
+  map: "keyType valueType",
+  set: "valueType",
+  union: "options",
+  intersection: "left right",
+  pipe: "in out",
+  function: "input output"
+};
+
+string childKeys(string type) {
+  if (type == "success" || innerTypeKinds.includes(type)) return "innerType";
+  return childKeysOf[type] ?? "";
+}
+
+JsValue visitNode(JsValue s, JsValue fn, JsValue cache) {
+  JsValue cached = cache["get"](s);
+  if (JS.strictEqual(cached, RESOLVING)) return JS.construct(z["ZodLazy"], JS.object("type", "lazy", "getter", () => cache["get"](s)));
+  if (!JS.isUndefined(cached)) return cached;
+  cache["set"](s, RESOLVING);
+  JsValue def = s["_zod"]["def"];
+  string type = JS.string(def["type"]);
+  bool changed = false;
+  JsValue next = copy(def);
+  auto map = (JsValue child) => {
+    JsValue mapped = visitNode(child, fn, cache);
+    if (!JS.strictEqual(mapped, child)) changed = true;
+    return mapped;
+  };
+  if (type == "lazy") {
+    JsValue getter = def["getter"];
+    JS.delete(next, "_cachedInner");
+    next["getter"] = () => visitNode(getter(), fn, cache);
+    changed = true;
+  }
+  string keys = childKeys(type);
+  if (keys != "") {
+    string[] names = keys.split(" ");
+    for (int i = 0; i < names.length; i = i + 1) {
+      string key = names[i];
+      JsValue child = def[key];
+      if ((key != "catchall" && key != "rest") || child.truthy()) {
+        if (JS.isArray(child)) next[key] = child["map"]((JsValue item) => map(item));
+        else if (key == "shape") {
+          JsValue shape = JS.object();
+          JsValue shapeKeys = objectKeys(child);
+          for (number j = 0; j < shapeKeys.length; j = j + 1) shape[JS.string(shapeKeys[j])] = map(child[JS.string(shapeKeys[j])]);
+          next[key] = shape;
+        } else next[key] = map(child);
+      }
+    }
+  }
+  JsValue node = s;
+  if (changed) node = JS.construct(s["_zod"]["constr"], next);
+  JsValue mapped = fn(node);
+  cache["set"](s, mapped);
+  return mapped;
+}
+
+JsValue visit(JsValue schema, JsValue fnOrHandlers) {
+  JsValue fn = fnOrHandlers;
+  if (!isFn(fn)) fn = (JsValue node) => {
+    JsValue handler = fnOrHandlers[JS.string(node["_zod"]["def"]["type"])];
+    if (handler.truthy()) return handler(node);
+    return node;
+  };
+  return visitNode(schema, fn, newMap());
+}
+
+z["visit"] = visit;
+core["visit"] = visit;
+z["deepPartial"] = (JsValue schema) => visit(schema, JS.object(
+  "object", (JsValue s) => s["partial"](),
+  // every partialed option admits `undefined`, which a discriminated union rejects as a duplicate
+  "union", (JsValue s) => {
+    JsValue def = s["_zod"]["def"];
+    if (JS.isUndefined(def["discriminator"])) return s;
+    return z["union"](def["options"]);
+  }
+));
+
+// ---- fromJSONSchema ----
+
+JsValue fromJSONSchema(JsValue json) {
+  if (!json.truthy() || JS.typeOf(json) != "object") return z["unknown"]();
+  JsValue type = json["type"];
+  JsValue format = json["format"];
+  if (!JS.isUndefined(json["const"])) return z["literal"](json["const"]);
+  if (json["enum"].truthy()) return z["enum"](json["enum"]["map"]((JsValue v) => JS.string(v)));
+  if (json["anyOf"].truthy()) return z["union"](json["anyOf"]["map"]((JsValue item) => fromJSONSchema(item)));
+  if (json["allOf"].truthy()) return json["allOf"]["map"]((JsValue item) => fromJSONSchema(item))["reduce"]((JsValue a, JsValue b) => a["and"](b));
+  if (type == "string") {
+    JsValue s = z["string"]();
+    if (format == "credit_card") s = s["check"](z["creditCard"]());
+    else if (format.truthy() && isFn(z[JS.string(format)])) s = s["check"](z[JS.string(format)]());
+    if (isNum(json["minLength"])) s = s["min"](json["minLength"]);
+    if (isNum(json["maxLength"])) s = s["max"](json["maxLength"]);
+    if (json["pattern"].truthy()) s = s["regex"](JS.construct(RegExp, json["pattern"]));
+    return s;
+  }
+  if (type == "number" || type == "integer") return z["number"]();
+  if (type == "boolean") return z["boolean"]();
+  if (type == "null") return z["null"]();
+  if (type == "array") return z["array"](fromJSONSchema(or(json["items"], JS.object())));
+  if (type == "object") {
+    JsValue shape = JS.object();
+    JsValue properties = or(json["properties"], JS.object());
+    JsValue required = json["required"];
+    JsValue keys = objectKeys(properties);
+    for (number i = 0; i < keys.length; i = i + 1) {
+      string key = JS.string(keys[i]);
+      JsValue field = fromJSONSchema(properties[key]);
+      if (nullish(required) || !required["includes"](key).truthy()) field = field["optional"]();
+      shape[key] = field;
+    }
+    return z["object"](shape);
+  }
+  return z["unknown"]();
+}
+
+z["fromJSONSchema"] = (JsValue json) => fromJSONSchema(json);
+
+defineProperty(z["ZodTuple"]["prototype"], "rest", JS.object("configurable", true, "value", JS.method1((JsValue self, JsValue rest) => z["tuple"](self["_zod"]["def"]["items"], rest))));
+
+// ---- JSON Schema ----
+
+z["toJSONSchema"] = toJSONSchema;
+core["toJSONSchema"] = toJSONSchema;
+z["ZodType"]["prototype"]["toJSONSchema"] = JS.method1((JsValue self, JsValue params) => toJSONSchema(self, params));
+
+// ---- regexes: the core's own patterns where it has them ----
+
+string ipv6Source = "(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))";
+// patterns with a "/" are built by calling RegExp: the emitter prints a literal's "/" as "\/", which changes .source
+JsValue sourced(string pattern) {
+  return JS.call(RegExp, JS.undefined(), pattern);
+}
+
+JsValue html5Email = sourced("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+JsValue unicodeEmail = new Regex("^[^\\s@\"]{1,64}@[^\\s@]{1,255}$", "u");
+
+JsValue uuid(JsValue version) {
+  if (!version.truthy()) return new Regex(uuidRe.source);
+  return anchored("([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-" + JS.string(version) + "[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})");
+}
+
+JsValue hashBase64(string body, string padding) {
+  return anchored("[A-Za-z0-9+/]{" + body + "}" + padding);
+}
+
+JsValue hashBase64url(string length) {
+  return anchored("[A-Za-z0-9_-]{" + length + "}");
+}
+
+JsValue regexes = JS.object(
+  "base64", sourced("^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"),
+  "base64url", base64urlRe,
+  "bigint", new Regex("^-?\\d+n?$"),
+  "boolean", new Regex("^(?:true|false)$", "i"),
+  "browserEmail", html5Email,
+  "cidrv4", cidrv4Re,
+  "cidrv6", cidrv6Re,
+  "creditCard", creditCardRe,
+  "cuid", cuidRe,
+  "cuid2", cuid2Re,
+  "date", isoDateRe,
+  "datetime", (JsValue args) => {
+    args["precision"];
+    return datetimeRegex(args);
+  },
+  "domain", domainRe,
+  "duration", durationRe,
+  "e164", e164Re,
+  "email", emailRe,
+  "emoji", () => new Regex("^[\\p{Extended_Pictographic}\\p{Emoji_Component}]+$", "u"),
+  "extendedDuration", new Regex("^[-+]?P(?!$)(?:(?:[-+]?\\d+Y)|(?:[-+]?\\d+[.,]\\d+Y$))?(?:(?:[-+]?\\d+M)|(?:[-+]?\\d+[.,]\\d+M$))?(?:(?:[-+]?\\d+W)|(?:[-+]?\\d+[.,]\\d+W$))?(?:(?:[-+]?\\d+D)|(?:[-+]?\\d+[.,]\\d+D$))?(?:T(?=[\\d+-])(?:(?:[-+]?\\d+H)|(?:[-+]?\\d+[.,]\\d+H$))?(?:(?:[-+]?\\d+M)|(?:[-+]?\\d+[.,]\\d+M$))?(?:[-+]?\\d+(?:[.,]\\d+)?S)?)??$"),
+  "guid", guidRe,
+  "hex", hexRe,
+  "hostname", hostnameRe,
+  "html5Email", html5Email,
+  "httpProtocol", httpProtocolRe,
+  "idnEmail", unicodeEmail,
+  "integer", new Regex("^-?\\d+$"),
+  "ipv4", ipv4Re,
+  "ipv6", ipv6Re,
+  "ksuid", ksuidRe,
+  "lowercase", new Regex("^[^A-Z]*$"),
+  "mac", (JsValue delimiter) => {
+    string e = JS.string(or(delimiter, ":")).replace(new Regex("[.*+?^${}()|[\\]\\\\]", "g"), "\\$&");
+    return new Regex("^(?:[0-9A-F]{2}" + e + "){5}[0-9A-F]{2}$|^(?:[0-9a-f]{2}" + e + "){5}[0-9a-f]{2}$");
+  },
+  "md5_base64", hashBase64("22", "=="),
+  "md5_base64url", hashBase64url("22"),
+  "md5_hex", md5HexRe,
+  "nanoid", nanoidRe,
+  "null", new Regex("^null$", "i"),
+  "number", new Regex("^-?\\d+(?:\\.\\d+)?$"),
+  "rfc5322Email", new Regex("^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"),
+  "sha1_base64", hashBase64("27", "="),
+  "sha1_base64url", hashBase64url("27"),
+  "sha1_hex", sha1HexRe,
+  "sha256_base64", hashBase64("43", "="),
+  "sha256_base64url", hashBase64url("43"),
+  "sha256_hex", sha256HexRe,
+  "sha384_base64", hashBase64("64", ""),
+  "sha384_base64url", hashBase64url("64"),
+  "sha384_hex", sha384HexRe,
+  "sha512_base64", hashBase64("86", "=="),
+  "sha512_base64url", hashBase64url("86"),
+  "sha512_hex", sha512HexRe,
+  "string", (JsValue params) => {
+    if (!params.truthy()) return anchored("[\\s\\S]*");
+    return anchored("[\\s\\S]{" + JS.string(or(params["minimum"], 0)) + "," + JS.string(or(params["maximum"], "")) + "}");
+  },
+  "time", (JsValue args) => {
+    args["precision"];
+    return timeRegex(args);
+  },
+  "ulid", ulidRe,
+  "undefined", new Regex("^undefined$", "i"),
+  "unicodeEmail", unicodeEmail,
+  "uppercase", new Regex("^[^a-z]*$"),
+  "uuid", uuid,
+  "uuid4", uuid(4),
+  "uuid6", uuid(6),
+  "uuid7", uuid(7),
+  "xid", xidRe
+);
+z["regexes"] = regexes;
+core["regexes"] = regexes;
+
+export { z, generatorContext, generatorProcess, generatorEmit };
+export JsValue default = z;

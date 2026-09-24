@@ -1,0 +1,803 @@
+// zod's to-json-schema and json-schema-processors (core/to-json-schema.ts, core/json-schema-processors.ts), ported
+// to LilScript and compiled with the core through scripts/zod.lil, which installs toJSONSchema on z.
+// Schemas, contexts and JSON documents are host objects, so they stay JsValue with their upstream key names.
+
+import { assignProp, defineProperty, isNum, newError, newMap, newSet, objectAssign, objectKeys, ownKeys, propertyIsEnumerable } from "../src/host.lil";
+import { enumValues, globalRegistry } from "../src/engine.lil";
+
+extern JsValue Object;
+extern JsValue Array;
+extern JsValue JSON;
+extern JsValue Symbol;
+extern JsValue Number;
+
+JsValue UNREPRESENTABLE = Symbol();
+
+// the kinds whose JSON Schema is their def.innerType's
+export string[] innerTypeKinds = ["optional", "nullable", "default", "prefault", "catch", "readonly", "nonoptional", "promise"];
+
+Record<string> unrepresentableNames = record {
+  bigint: "BigInt",
+  symbol: "Symbols",
+  undefined: "Undefined",
+  void: "Void",
+  date: "Date",
+  nan: "NaN",
+  custom: "Custom types",
+  function: "Function types",
+  transform: "Transforms",
+  map: "Map",
+  set: "Set"
+};
+
+Record<string> schemaUris = record {
+  "draft-2020-12": "https://json-schema.org/draft/2020-12/schema",
+  "draft-07": "http://json-schema.org/draft-07/schema#",
+  "draft-04": "http://json-schema.org/draft-04/schema#"
+};
+
+JsValue fail(string message) {
+  return newError(message);
+}
+
+bool nullish(JsValue value) {
+  return JS.isNullish(value);
+}
+
+JsValue or(JsValue value, JsValue fallback) {
+  if (JS.isNullish(value)) return fallback;
+  return value;
+}
+
+JsValue assignProps(JsValue target, JsValue source) {
+  JsValue keys = ownKeys(source);
+  for (number i = 0; i < keys.length; i = i + 1) {
+    JsValue key = keys[i];
+    if (propertyIsEnumerable(source, key)) assignProp(target, key, source[key]);
+  }
+  return target;
+}
+
+// { ...source }: own enumerable keys, defined (not assigned), so a "__proto__" key stays data
+export JsValue copy(JsValue source) {
+  if (nullish(source)) return JS.object();
+  return assignProps(JS.object(), source);
+}
+
+JsValue seenOf(JsValue ctx, JsValue schema) {
+  return ctx["seen"]["get"](schema);
+}
+
+JsValue seenEntries(JsValue ctx) {
+  return JS.invoke(Array, "from", ctx["seen"]);
+}
+
+bool isTarget(JsValue ctx, string target) {
+  return ctx["target"] == target;
+}
+
+bool legacyTarget(JsValue ctx) {
+  return isTarget(ctx, "draft-04") || isTarget(ctx, "openapi-3.0");
+}
+
+bool preModernTarget(JsValue ctx) {
+  return isTarget(ctx, "draft-07") || legacyTarget(ctx);
+}
+
+bool isInput(JsValue ctx) {
+  return ctx["io"] == "input";
+}
+
+// { ...params, path: [...params.path, ...segments] }
+JsValue at(JsValue params, JsValue segments) {
+  return JS.invoke(Object, "assign", JS.object(), params, JS.object("path", params["path"]["concat"](segments)));
+}
+
+JsValue rootParams() {
+  return JS.object("path", JS.array(), "schemaPath", JS.array());
+}
+
+JsValue initializeContext(JsValue params) {
+  JsValue target = or(params["target"], "draft-2020-12");
+  if (target == "draft-4") target = "draft-04";
+  if (target == "draft-7") target = "draft-07";
+  return JS.object(
+    "metadataRegistry", or(params["metadata"], globalRegistry()),
+    "target", target,
+    "unrepresentable", or(params["unrepresentable"], "throw"),
+    "override", params["override"],
+    "io", or(params["io"], "output"),
+    "counter", 0,
+    "seen", newMap(),
+    "cycles", or(params["cycles"], "ref"),
+    "reused", or(params["reused"], "inline"),
+    "external", params["external"]
+  );
+}
+
+bool handleUnrepresentable(JsValue schema, JsValue ctx, JsValue json, JsValue params, string message) {
+  JsValue result = ctx["unrepresentable"];
+  if (JS.typeOf(result) == "function") result = ctx["unrepresentable"](JS.object("zodSchema", schema, "path", params["path"], "message", message));
+  if (result == "any") return false;
+  if (JS.isUndefined(result) || result == "throw") throw fail(message);
+  objectAssign(json, result);
+  return true;
+}
+
+bool unrepresentable(JsValue schema, JsValue ctx, JsValue json, JsValue params, string what) {
+  return handleUnrepresentable(schema, ctx, json, params, what + " cannot be represented in JSON Schema");
+}
+
+JsValue process(JsValue schema, JsValue ctx, JsValue given) {
+  JsValue zod = schema["_zod"];
+  JsValue def = zod["def"];
+  JsValue seen = seenOf(ctx, schema);
+  if (seen.truthy()) {
+    seen["count"] = JS.add(seen["count"], 1);
+    if (given["schemaPath"]["includes"](schema).truthy()) seen["cycle"] = given["path"];
+    return seen["schema"];
+  }
+  JsValue result = JS.object("schema", JS.object(), "count", 1, "path", given["path"]);
+  ctx["seen"]["set"](schema, result);
+  ctx["sharedDefsExtractedFor"] = JS.undefined();
+  ctx["sharedEmitDoneFor"] = JS.undefined();
+  JsValue overrideSchema = JS.undefined();
+  if (!nullish(zod["toJSONSchema"])) overrideSchema = zod["toJSONSchema"]();
+  if (overrideSchema.truthy()) {
+    result["schema"] = overrideSchema;
+  } else {
+    JsValue params = JS.invoke(Object, "assign", JS.object(), given, JS.object("schemaPath", given["schemaPath"]["concat"](JS.array(schema)), "path", given["path"]));
+    if (zod["processJSONSchema"].truthy()) zod["processJSONSchema"](ctx, result["schema"], params);
+    else processType(schema, def, ctx, result["schema"], params);
+    JsValue parent = zod["parent"];
+    if (parent.truthy()) {
+      if (!result["ref"].truthy()) result["ref"] = parent;
+      process(parent, ctx, params);
+      seenOf(ctx, parent)["isParent"] = true;
+    }
+  }
+  JsValue json = result["schema"];
+  JsValue meta = ctx["metadataRegistry"]["get"](schema);
+  if (meta.truthy()) assignProps(json, meta);
+  if (isInput(ctx) && isTransforming(schema, newSet())) {
+    JS.delete(json, "examples");
+    JS.delete(json, "default");
+  }
+  if (isInput(ctx) && JS.in("_prefault", json) && nullish(json["default"])) json["default"] = json["_prefault"];
+  JS.delete(json, "_prefault");
+  return json;
+}
+
+JsValue pointerSegment(JsValue segment) {
+  return segment["replace"](new Regex("~", "g"), "~0")["replace"](new Regex("\\/", "g"), "~1");
+}
+
+string defsSegment(JsValue ctx) {
+  if (isTarget(ctx, "draft-2020-12")) return "$defs";
+  return "definitions";
+}
+
+JsValue metaId(JsValue registry, JsValue schema) {
+  JsValue meta = registry["get"](schema);
+  if (nullish(meta)) return JS.undefined();
+  return meta["id"];
+}
+
+// "<prefix>#/$defs/<id>" (or definitions), with the id escaped as a JSON pointer segment
+string defRef(JsValue ctx, string prefix, JsValue id) {
+  return prefix + "#/" + defsSegment(ctx) + "/" + JS.string(pointerSegment(id));
+}
+
+JsValue nextId(JsValue ctx, string prefix) {
+  JsValue id = prefix + JS.string(ctx["counter"]);
+  ctx["counter"] = JS.add(ctx["counter"], 1);
+  return id;
+}
+
+JsValue makeURI(JsValue ctx, JsValue root, JsValue entry) {
+  JsValue seen = entry[1];
+  JsValue external = ctx["external"];
+  if (external.truthy()) {
+    JsValue externalId = metaId(external["registry"], entry[0]);
+    JsValue uri = external["uri"];
+    if (externalId.truthy()) {
+      if (nullish(uri)) return JS.object("ref", externalId);
+      return JS.object("ref", uri(externalId));
+    }
+    JsValue id = or(seen["defId"], seen["schema"]["id"]);
+    if (nullish(id)) id = nextId(ctx, "schema");
+    seen["defId"] = id;
+    JsValue shared = "__shared";
+    if (!nullish(uri)) shared = uri("__shared");
+    return JS.object("defId", id, "ref", defRef(ctx, JS.string(shared), id));
+  }
+  if (JS.strictEqual(seen, root) && !seen["schema"]["id"].truthy()) return JS.object("ref", "#");
+  JsValue defId = seen["schema"]["id"];
+  if (nullish(defId)) defId = nextId(ctx, "__schema");
+  return JS.object("defId", defId, "ref", defRef(ctx, "", defId));
+}
+
+void extractToDef(JsValue ctx, JsValue root, JsValue entry) {
+  JsValue seen = entry[1];
+  if (seen["schema"]["$ref"].truthy()) return;
+  JsValue uri = makeURI(ctx, root, entry);
+  seen["def"] = copy(seen["schema"]);
+  if (uri["defId"].truthy()) seen["defId"] = uri["defId"];
+  JsValue schema = seen["schema"];
+  for (string key in schema) JS.delete(schema, key);
+  schema["$ref"] = uri["ref"];
+}
+
+void extractDefs(JsValue ctx, JsValue schema) {
+  JsValue root = seenOf(ctx, schema);
+  if (!root.truthy()) throw fail("Unprocessed schema. This is a bug in Zod.");
+  JsValue external = ctx["external"];
+  if (external.truthy() && JS.strictEqual(ctx["sharedDefsExtractedFor"], external)) return;
+  JsValue idToSchema = newMap();
+  JsValue entries = seenEntries(ctx);
+  for (number i = 0; i < entries.length; i = i + 1) {
+    JsValue entry = entries[i];
+    JsValue id = metaId(ctx["metadataRegistry"], entry[0]);
+    if (id.truthy()) {
+      JsValue existing = idToSchema["get"](id);
+      if (existing.truthy() && !JS.strictEqual(existing, entry[0])) throw fail("Duplicate schema id \"" + JS.string(id) + "\" detected during JSON Schema conversion. Two different schemas cannot share the same id when converted together.");
+      idToSchema["set"](id, entry[0]);
+    }
+  }
+  if (ctx["cycles"] == "throw") {
+    for (number i = 0; i < entries.length; i = i + 1) {
+      JsValue cycle = entries[i][1]["cycle"];
+      if (cycle.truthy()) throw fail("Cycle detected: #/" + JS.string(cycle["join"]("/")) + "/<root>\n\nSet the `cycles` parameter to `\"ref\"` to resolve cyclical schemas with defs.");
+    }
+  }
+  for (number i = 0; i < entries.length; i = i + 1) {
+    JsValue entry = entries[i];
+    JsValue seen = entry[1];
+    if (JS.strictEqual(schema, entry[0])
+      || (external.truthy() && metaId(external["registry"], entry[0]).truthy())
+      || metaId(ctx["metadataRegistry"], entry[0]).truthy()
+      || seen["cycle"].truthy()
+      || (JS.greaterThan(seen["count"], 1) && ctx["reused"] == "ref")) extractToDef(ctx, root, entry);
+  }
+  if (external.truthy()) ctx["sharedDefsExtractedFor"] = external;
+}
+
+void compactTypeUnion(JsValue schema) {
+  JsValue options = schema["anyOf"];
+  if (!JS.isArray(options) || options.length == 0 || !JS.isUndefined(schema["type"])) return;
+  JsValue types = JS.array();
+  for (number i = 0; i < options.length; i = i + 1) {
+    JsValue option = options[i];
+    if (!option.truthy() || JS.typeOf(option) != "object") return;
+    compactTypeUnion(option);
+    JsValue keys = objectKeys(option);
+    if (keys.length != 1 || keys[0] != "type") return;
+    JsValue members = JS.array()["concat"](option["type"]);
+    for (number j = 0; j < members.length; j = j + 1) {
+      JsValue member = members[j];
+      if (JS.typeOf(member) != "string") return;
+      if (!types["includes"](member).truthy()) types["push"](member);
+    }
+  }
+  JS.delete(schema, "anyOf");
+  if (types.length == 1) schema["type"] = types[0];
+  else schema["type"] = types;
+}
+
+// delete every key of `json` (but $ref and allOf) whose JSON equals the same key of `other`
+void dropSame(JsValue json, JsValue other) {
+  for (string key in json) {
+    if (key != "$ref" && key != "allOf" && JS.in(key, other) && JS.invoke(JSON, "stringify", json[key]) == JS.invoke(JSON, "stringify", other[key])) JS.delete(json, key);
+  }
+}
+
+void flattenRef(JsValue ctx, JsValue zodSchema) {
+  JsValue seen = seenOf(ctx, zodSchema);
+  if (JS.strictEqual(seen["ref"], null)) return;
+  JsValue schema = or(seen["def"], seen["schema"]);
+  JsValue cached = copy(schema);
+  JsValue ref = seen["ref"];
+  seen["ref"] = null;
+  if (ref.truthy()) {
+    flattenRef(ctx, ref);
+    JsValue refSeen = seenOf(ctx, ref);
+    JsValue refSchema = refSeen["schema"];
+    if (refSchema["$ref"].truthy() && preModernTarget(ctx)) {
+      if (nullish(schema["allOf"])) schema["allOf"] = JS.array();
+      schema["allOf"]["push"](refSchema);
+    } else {
+      assignProps(schema, refSchema);
+    }
+    assignProps(schema, cached);
+    if (JS.strictEqual(zodSchema["_zod"]["parent"], ref)) {
+      for (string key in schema) {
+        if (key != "$ref" && key != "allOf" && !JS.in(key, cached)) JS.delete(schema, key);
+      }
+    }
+    if (refSchema["$ref"].truthy() && refSeen["def"].truthy()) dropSame(schema, refSeen["def"]);
+  }
+  JsValue parent = zodSchema["_zod"]["parent"];
+  if (parent.truthy() && !JS.strictEqual(parent, ref)) {
+    flattenRef(ctx, parent);
+    JsValue parentSeen = seenOf(ctx, parent);
+    if (parentSeen["schema"]["$ref"].truthy()) {
+      schema["$ref"] = parentSeen["schema"]["$ref"];
+      if (parentSeen["def"].truthy()) dropSame(schema, parentSeen["def"]);
+    }
+  }
+  if (!nullish(ctx["override"])) ctx["override"](JS.object("zodSchema", zodSchema, "jsonSchema", schema, "path", or(seen["path"], JS.array())));
+}
+
+JsValue finalize(JsValue ctx, JsValue schema) {
+  JsValue root = seenOf(ctx, schema);
+  if (!root.truthy()) throw fail("Unprocessed schema. This is a bug in Zod.");
+  JsValue external = ctx["external"];
+  bool emit = !external.truthy() || !JS.strictEqual(ctx["sharedEmitDoneFor"], external);
+  if (emit) {
+    JsValue entries = seenEntries(ctx);
+    for (number i = entries.length - 1; i >= 0; i = i - 1) flattenRef(ctx, entries[i][0]);
+    if (!isTarget(ctx, "openapi-3.0")) {
+      for (number i = 0; i < entries.length; i = i + 1) compactTypeUnion(or(entries[i][1]["def"], entries[i][1]["schema"]));
+    }
+  }
+  JsValue result = JS.object();
+  if (JS.typeOf(ctx["target"]) == "string") {
+    string? uri = schemaUris[JS.string(ctx["target"])];
+    if (uri != null) result["$schema"] = uri;
+  }
+  if (external.truthy() && external["uri"].truthy()) {
+    JsValue id = metaId(external["registry"], schema);
+    if (!id.truthy()) throw fail("Schema is missing an `id` property");
+    result["$id"] = external["uri"](id);
+  }
+  if (root["defId"].truthy()) assignProps(result, root["schema"]);
+  else assignProps(result, or(root["def"], root["schema"]));
+  JsValue rootMetaId = metaId(ctx["metadataRegistry"], schema);
+  if (!JS.isUndefined(rootMetaId) && JS.strictEqual(result["id"], rootMetaId)) JS.delete(result, "id");
+  JsValue defs = JS.object();
+  if (external.truthy() && !nullish(external["defs"])) defs = external["defs"];
+  if (emit) {
+    JsValue entries = seenEntries(ctx);
+    for (number i = 0; i < entries.length; i = i + 1) {
+      JsValue seen = entries[i][1];
+      if (seen["def"].truthy() && seen["defId"].truthy()) {
+        if (JS.strictEqual(seen["def"]["id"], seen["defId"])) JS.delete(seen["def"], "id");
+        assignProp(defs, seen["defId"], seen["def"]);
+      }
+    }
+  }
+  if (external.truthy()) ctx["sharedEmitDoneFor"] = external;
+  else if (objectKeys(defs).length > 0) result[defsSegment(ctx)] = defs;
+  try {
+    JsValue finalized = JS.invoke(JSON, "parse", JS.invoke(JSON, "stringify", result));
+    JsValue standard = copy(schema["~standard"]);
+    standard["jsonSchema"] = JS.object("input", standardMethod(schema, "input"), "output", standardMethod(schema, "output"));
+    defineProperty(finalized, "~standard", JS.object("value", standard, "enumerable", false, "writable", false));
+    return finalized;
+  } catch {
+    throw fail("Error converting schema to JSON.");
+  }
+}
+
+JsValue standardMethod(JsValue schema, string io) {
+  return (JsValue params) => {
+    JsValue options = JS.object();
+    if (!nullish(params)) options = params;
+    JsValue context = copy(options["libraryOptions"]);
+    context["target"] = options["target"];
+    context["io"] = io;
+    JsValue ctx = initializeContext(context);
+    return emit(schema, ctx, rootParams());
+  };
+}
+
+JsValue emit(JsValue schema, JsValue ctx, JsValue params) {
+  process(schema, ctx, params);
+  extractDefs(ctx, schema);
+  return finalize(ctx, schema);
+}
+
+bool isTransforming(JsValue schema, JsValue seen) {
+  if (seen["has"](schema).truthy()) return false;
+  seen["add"](schema);
+  JsValue def = schema["_zod"]["def"];
+  JsValue type = def["type"];
+  if (type == "transform") return true;
+  if (type == "array") return isTransforming(def["element"], seen);
+  if (type == "set") return isTransforming(def["valueType"], seen);
+  if (type == "lazy") return isTransforming(def["getter"](), seen);
+  if (innerTypeKinds.includes(JS.string(type))) return isTransforming(def["innerType"], seen);
+  if (type == "intersection") return isTransforming(def["left"], seen) || isTransforming(def["right"], seen);
+  if (type == "record" || type == "map") return isTransforming(def["keyType"], seen) || isTransforming(def["valueType"], seen);
+  if (type == "pipe") return schema["_zod"]["traits"]["has"]("$ZodCodec").truthy() || isTransforming(def["in"], seen) || isTransforming(def["out"], seen);
+  if (type == "object") {
+    for (string key in def["shape"]) {
+      if (isTransforming(def["shape"][key], seen)) return true;
+    }
+    return false;
+  }
+  JsValue list = JS.array();
+  if (type == "union") list = def["options"];
+  if (type == "tuple") {
+    list = def["items"];
+    if (def["rest"].truthy()) list = list["concat"](JS.array(def["rest"]));
+  }
+  for (number i = 0; i < list.length; i = i + 1) {
+    if (isTransforming(list[i], seen)) return true;
+  }
+  return false;
+}
+
+JsValue serializeDefault(JsValue value, JsValue schema, JsValue ctx, JsValue json, JsValue params) {
+  bool bigint = false;
+  JsValue serialized = JS.invoke(JSON, "stringify", value, (JsValue _key, JsValue val) => {
+    if (JS.typeOf(val) != "bigint") return val;
+    bigint = true;
+    return null;
+  });
+  if (!bigint) return JS.invoke(JSON, "parse", serialized);
+  unrepresentable(schema, ctx, json, params, "BigInt defaults");
+  return UNREPRESENTABLE;
+}
+
+JsValue inputOptin(JsValue schema) {
+  JsValue def = schema["_zod"]["def"];
+  if (def["type"] == "pipe" && def["in"]["_zod"]["traits"]["has"]("$ZodTransform").truthy()) return inputOptin(def["out"]);
+  if (def["type"] == "catch") return inputOptin(def["innerType"]);
+  return schema["_zod"]["optin"];
+}
+
+bool optionalIn(JsValue ctx, JsValue schema) {
+  if (isInput(ctx)) return !JS.isUndefined(inputOptin(schema));
+  return !JS.isUndefined(schema["_zod"]["optout"]);
+}
+
+JsValue typeOfAll(JsValue values) {
+  JsValue type = JS.undefined();
+  for (number i = 0; i < values.length; i = i + 1) {
+    JsValue value = values[i];
+    string t = JS.typeOf(value);
+    if (JS.strictEqual(value, null)) t = "null";
+    if (i == 0) type = t;
+    else if (!JS.strictEqual(type, t)) return JS.undefined();
+  }
+  return type;
+}
+
+void processType(JsValue schema, JsValue def, JsValue ctx, JsValue json, JsValue params) {
+  JsValue zod = schema["_zod"];
+  JsValue bag = zod["bag"];
+  JsValue type = def["type"];
+  if (type == "string") {
+    json["type"] = "string";
+    JsValue format = bag["format"];
+    JsValue patterns = bag["patterns"];
+    if (isNum(bag["minimum"])) json["minLength"] = bag["minimum"];
+    if (isNum(bag["maximum"])) json["maxLength"] = bag["maximum"];
+    if (format.truthy()) {
+      JsValue mapped = format;
+      if (format == "guid") mapped = "uuid";
+      if (format == "url") mapped = "uri";
+      if (format == "datetime") mapped = "date-time";
+      if (format == "json_string") mapped = "json-string";
+      if (format != "regex" && format != "time") json["format"] = mapped;
+    }
+    if (bag["contentEncoding"].truthy()) json["contentEncoding"] = bag["contentEncoding"];
+    if (patterns.truthy() && JS.greaterThan(patterns["size"], 0)) {
+      JsValue regexes = JS.invoke(Array, "from", patterns);
+      if (regexes.length == 1) json["pattern"] = regexes[0]["source"];
+      else {
+        JsValue allOf = JS.array();
+        for (number i = 0; i < regexes.length; i = i + 1) {
+          JsValue item = JS.object();
+          if (preModernTarget(ctx)) item["type"] = "string";
+          item["pattern"] = regexes[i]["source"];
+          allOf["push"](item);
+        }
+        json["allOf"] = allOf;
+      }
+    }
+    return;
+  }
+  if (type == "number") {
+    JsValue format = bag["format"];
+    JsValue minimum = bag["minimum"];
+    JsValue maximum = bag["maximum"];
+    JsValue exclusiveMinimum = bag["exclusiveMinimum"];
+    JsValue exclusiveMaximum = bag["exclusiveMaximum"];
+    if (JS.typeOf(format) == "string" && format["includes"]("int").truthy()) json["type"] = "integer";
+    else json["type"] = "number";
+    bool legacy = legacyTarget(ctx);
+    if (isNum(exclusiveMinimum) && JS.greaterThanOrEqual(exclusiveMinimum, or(minimum, -1.0 / 0.0))) {
+      if (legacy) {
+        json["minimum"] = exclusiveMinimum;
+        json["exclusiveMinimum"] = true;
+      } else json["exclusiveMinimum"] = exclusiveMinimum;
+    } else if (isNum(minimum)) json["minimum"] = minimum;
+    if (isNum(exclusiveMaximum) && JS.lessThanOrEqual(exclusiveMaximum, or(maximum, 1.0 / 0.0))) {
+      if (legacy) {
+        json["maximum"] = exclusiveMaximum;
+        json["exclusiveMaximum"] = true;
+      } else json["exclusiveMaximum"] = exclusiveMaximum;
+    } else if (isNum(maximum)) json["maximum"] = maximum;
+    if (isNum(bag["multipleOf"])) json["multipleOf"] = bag["multipleOf"];
+    return;
+  }
+  if (type == "boolean" || type == "success") {
+    json["type"] = "boolean";
+    return;
+  }
+  if (type == "null") {
+    if (isTarget(ctx, "openapi-3.0")) {
+      json["type"] = "string";
+      json["nullable"] = true;
+      json["enum"] = JS.array(null);
+    } else json["type"] = "null";
+    return;
+  }
+  if (type == "never") {
+    json["not"] = JS.object();
+    return;
+  }
+  if (type == "any" || type == "unknown") return;
+  string? what = unrepresentableNames[JS.string(type)];
+  if (what != null) {
+    unrepresentable(schema, ctx, json, params, what);
+    return;
+  }
+  if (type == "enum") {
+    JsValue values = enumValues(def["entries"]);
+    JsValue t = typeOfAll(values);
+    if (t == "number" || t == "string" || values.length == 0) {
+      if (values.length == 0) json["type"] = "string";
+      else json["type"] = t;
+    }
+    json["enum"] = values;
+    return;
+  }
+  if (type == "literal") {
+    JsValue values = JS.array();
+    JsValue given = def["values"];
+    for (number i = 0; i < given.length; i = i + 1) {
+      JsValue value = given[i];
+      if (JS.isUndefined(value)) {
+        if (unrepresentable(schema, ctx, json, params, "Literal `undefined`")) return;
+      } else if (JS.typeOf(value) == "bigint") {
+        if (unrepresentable(schema, ctx, json, params, "BigInt literals")) return;
+        values["push"](Number(value));
+      } else values["push"](value);
+    }
+    if (values.length == 1) {
+      JsValue value = values[0];
+      if (JS.strictEqual(value, null)) json["type"] = "null";
+      else json["type"] = JS.typeOf(value);
+      if (legacyTarget(ctx)) json["enum"] = JS.array(value);
+      else json["const"] = value;
+    } else if (values.length > 1) {
+      JsValue t = typeOfAll(values);
+      if (t == "number" || t == "string" || t == "boolean" || t == "null") json["type"] = t;
+      json["enum"] = values;
+    }
+    return;
+  }
+  if (type == "template_literal") {
+    JsValue pattern = zod["pattern"];
+    if (!pattern.truthy()) throw fail("Pattern not found in template literal");
+    json["type"] = "string";
+    json["pattern"] = pattern["source"];
+    return;
+  }
+  if (type == "file") {
+    JsValue file = JS.object("type", "string", "format", "binary", "contentEncoding", "binary");
+    JsValue mime = bag["mime"];
+    if (!JS.isUndefined(bag["minimum"])) file["minLength"] = bag["minimum"];
+    if (!JS.isUndefined(bag["maximum"])) file["maxLength"] = bag["maximum"];
+    if (mime.truthy() && mime.length == 1) file["contentMediaType"] = mime[0];
+    objectAssign(json, file);
+    if (mime.truthy() && mime.length != 1) json["anyOf"] = mime["map"]((JsValue m) => JS.object("contentMediaType", m));
+    return;
+  }
+  if (type == "array") {
+    if (isNum(bag["minimum"])) json["minItems"] = bag["minimum"];
+    if (isNum(bag["maximum"])) json["maxItems"] = bag["maximum"];
+    json["type"] = "array";
+    json["items"] = process(def["element"], ctx, at(params, "items"));
+    return;
+  }
+  if (type == "object") {
+    JsValue shape = def["shape"];
+    JsValue properties = JS.object();
+    json["type"] = "object";
+    json["properties"] = properties;
+    for (string key in shape) assignProp(properties, key, process(shape[key], ctx, at(params, JS.array("properties", key))));
+    JsValue required = objectKeys(shape)["filter"]((JsValue key) => !optionalIn(ctx, shape[key]));
+    if (required.length > 0) json["required"] = required;
+    JsValue catchall = def["catchall"];
+    if (catchall.truthy() && catchall["_zod"]["def"]["type"] == "never") json["additionalProperties"] = false;
+    else if (!catchall.truthy()) {
+      if (ctx["io"] == "output") json["additionalProperties"] = false;
+    } else json["additionalProperties"] = process(catchall, ctx, at(params, "additionalProperties"));
+    return;
+  }
+  if (type == "union") {
+    string key = "anyOf";
+    if (JS.strictEqual(def["inclusive"], false)) key = "oneOf";
+    JsValue options = def["options"];
+    JsValue out = JS.array();
+    for (number i = 0; i < options.length; i = i + 1) out["push"](process(options[i], ctx, at(params, JS.array(key, i))));
+    json[key] = out;
+    return;
+  }
+  if (type == "intersection") {
+    JsValue a = process(def["left"], ctx, at(params, JS.array("allOf", 0)));
+    JsValue b = process(def["right"], ctx, at(params, JS.array("allOf", 1)));
+    json["allOf"] = flatAllOf(a)["concat"](flatAllOf(b));
+    return;
+  }
+  if (type == "tuple") {
+    JsValue items = def["items"];
+    json["type"] = "array";
+    bool modern = isTarget(ctx, "draft-2020-12");
+    bool openapi = isTarget(ctx, "openapi-3.0");
+    string prefixPath = "items";
+    if (modern) prefixPath = "prefixItems";
+    JsValue prefixItems = JS.array();
+    for (number i = 0; i < items.length; i = i + 1) prefixItems["push"](process(items[i], ctx, at(params, JS.array(prefixPath, i))));
+    JsValue rest = null;
+    if (def["rest"].truthy()) {
+      JsValue restPath = JS.array("additionalItems");
+      if (modern) restPath = JS.array("items");
+      if (openapi) restPath = JS.array("items", items.length);
+      rest = process(def["rest"], ctx, at(params, restPath));
+    }
+    number minItems = items.length;
+    while (minItems > 0) {
+      JsValue item = items[minItems - 1];
+      if (isInput(ctx)) {
+        if (JS.isUndefined(inputOptin(item))) break;
+      } else if (item["_zod"]["optout"] != "optional") break;
+      minItems = minItems - 1;
+    }
+    bool closed = !def["rest"].truthy();
+    if (modern) {
+      json["prefixItems"] = prefixItems;
+      if (closed) json["items"] = false;
+      else if (rest.truthy()) json["items"] = rest;
+    } else if (openapi) {
+      json["items"] = JS.object("anyOf", prefixItems);
+      if (rest.truthy()) prefixItems["push"](rest);
+    } else {
+      json["items"] = prefixItems;
+      if (closed) json["additionalItems"] = false;
+      else if (rest.truthy()) json["additionalItems"] = rest;
+    }
+    if (minItems > 0) json["minItems"] = minItems;
+    if (closed) json["maxItems"] = items.length;
+    if (isNum(bag["minimum"])) json["minItems"] = bag["minimum"];
+    if (isNum(bag["maximum"])) json["maxItems"] = bag["maximum"];
+    return;
+  }
+  if (type == "record") {
+    JsValue keyType = def["keyType"];
+    JsValue keyBag = keyType["_zod"]["bag"];
+    JsValue patterns = JS.undefined();
+    if (!nullish(keyBag)) patterns = keyBag["patterns"];
+    json["type"] = "object";
+    if (def["mode"] == "loose" && patterns.truthy() && JS.greaterThan(patterns["size"], 0)) {
+      JsValue valueSchema = process(def["valueType"], ctx, at(params, JS.array("patternProperties", "*")));
+      JsValue patternProperties = JS.object();
+      json["patternProperties"] = patternProperties;
+      patterns["forEach"]((JsValue pattern) => assignProp(patternProperties, pattern["source"], valueSchema));
+    } else {
+      if (isTarget(ctx, "draft-07") || isTarget(ctx, "draft-2020-12")) json["propertyNames"] = process(keyType, ctx, at(params, "propertyNames"));
+      json["additionalProperties"] = process(def["valueType"], ctx, at(params, "additionalProperties"));
+    }
+    JsValue keyValues = keyType["_zod"]["values"];
+    if (keyValues.truthy() && !def["partial"].truthy()) {
+      JsValue valid = JS.invoke(Array, "from", keyValues)["filter"]((JsValue v) => JS.typeOf(v) == "string" || JS.typeOf(v) == "number");
+      if (valid.length > 0) json["required"] = valid;
+    }
+    return;
+  }
+  if (type == "nullable") {
+    JsValue inner = process(def["innerType"], ctx, params);
+    if (isTarget(ctx, "openapi-3.0")) {
+      seenOf(ctx, schema)["ref"] = def["innerType"];
+      json["nullable"] = true;
+    } else json["anyOf"] = JS.array(inner, JS.object("type", "null"));
+    return;
+  }
+  // wrappers: the JSON Schema of the inner type, by reference, plus what the wrapper adds
+  if (!innerTypeKinds.includes(JS.string(type)) && type != "pipe" && type != "lazy") throw fail("[toJSONSchema]: Non-representable type encountered: " + JS.string(type));
+  JsValue inner = def["innerType"];
+  if (type == "lazy") inner = zod["innerType"];
+  if (type == "pipe") {
+    inner = def["out"];
+    if (isInput(ctx) && !def["in"]["_zod"]["traits"]["has"]("$ZodTransform").truthy()) inner = def["in"];
+  }
+  process(inner, ctx, params);
+  seenOf(ctx, schema)["ref"] = inner;
+  if (type == "readonly") json["readOnly"] = true;
+  if (type == "default") {
+    JsValue value = serializeDefault(def["defaultValue"], schema, ctx, json, params);
+    if (!JS.strictEqual(value, UNREPRESENTABLE)) json["default"] = value;
+  }
+  if (type == "prefault" && isInput(ctx)) {
+    JsValue value = serializeDefault(def["defaultValue"], schema, ctx, json, params);
+    if (!JS.strictEqual(value, UNREPRESENTABLE)) json["_prefault"] = value;
+  }
+  if (type == "catch") {
+    JsValue value = JS.undefined();
+    try {
+      value = def["catchValue"](JS.undefined());
+    } catch {
+      handleUnrepresentable(schema, ctx, json, params, "Dynamic catch values are not supported in JSON Schema");
+      return;
+    }
+    json["default"] = value;
+  }
+}
+
+JsValue flatAllOf(JsValue json) {
+  if (JS.in("allOf", json) && objectKeys(json).length == 1) return json["allOf"];
+  return JS.array(json);
+}
+
+export JsValue toJSONSchema(JsValue input, JsValue given) {
+  JsValue params = copy(given);
+  JsValue ctx = initializeContext(params);
+  if (JS.in("_idmap", input)) {
+    JsValue defs = JS.object();
+    JsValue schemas = JS.object();
+    JsValue entries = JS.invoke(Array, "from", input["_idmap"]["entries"]());
+    for (number i = 0; i < entries.length; i = i + 1) process(entries[i][1], ctx, rootParams());
+    ctx["external"] = JS.object("registry", input, "uri", params["uri"], "defs", defs);
+    for (number i = 0; i < entries.length; i = i + 1) {
+      extractDefs(ctx, entries[i][1]);
+      assignProp(schemas, entries[i][0], finalize(ctx, entries[i][1]));
+    }
+    if (objectKeys(defs).length > 0) {
+      JsValue shared = JS.object();
+      shared[defsSegment(ctx)] = defs;
+      schemas["__shared"] = shared;
+    }
+    return JS.object("schemas", schemas);
+  }
+  return emit(input, ctx, rootParams());
+}
+
+// JSONSchemaGenerator (compat.js) is a thin class over these three; its constructor takes only these options, and
+// only when truthy
+JsValue truthyOption(JsValue params, string key) {
+  if (nullish(params)) return JS.undefined();
+  return JS.or(params[key], JS.undefined());
+}
+
+export JsValue generatorContext(JsValue params) {
+  JsValue target = JS.undefined();
+  if (!nullish(params)) target = params["target"];
+  return initializeContext(JS.object(
+    "target", target,
+    "metadata", truthyOption(params, "metadata"),
+    "unrepresentable", truthyOption(params, "unrepresentable"),
+    "override", truthyOption(params, "override"),
+    "io", truthyOption(params, "io")
+  ));
+}
+
+export JsValue generatorProcess(JsValue schema, JsValue ctx, JsValue params) {
+  if (JS.isUndefined(params)) return process(schema, ctx, rootParams());
+  return process(schema, ctx, params);
+}
+
+export JsValue generatorEmit(JsValue schema, JsValue ctx, JsValue params) {
+  if (params.truthy()) {
+    if (params["cycles"].truthy()) ctx["cycles"] = params["cycles"];
+    if (params["reused"].truthy()) ctx["reused"] = params["reused"];
+    if (params["external"].truthy()) ctx["external"] = params["external"];
+  }
+  ctx["sharedDefsExtractedFor"] = JS.undefined();
+  ctx["sharedEmitDoneFor"] = JS.undefined();
+  extractDefs(ctx, schema);
+  return copy(finalize(ctx, schema));
+}

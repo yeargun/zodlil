@@ -29,7 +29,8 @@ function run(cmd, args, opts = {}) {
 export function compile(config, out) {
   mkdirSync(resolve(root, "dist"), { recursive: true })
   run(compilerPath(), [
-    resolve(root, "src", "entry.lil"),
+    // scripts/zod.lil is the package root: the core (src/entry.lil) plus the upstream surface it lacks
+    resolve(root, "scripts", "zod.lil"),
     "--target",
     "js-module",
     "--config",

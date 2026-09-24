@@ -50,8 +50,8 @@ const result = {
   closerMs: closerReport.warmMedianMs,
   normalMs: normalReport ? normalReport.warmMedianMs : null,
   official: summarize("zod@4.4.3", officialReport, officialReport.warmMedianMs),
-  closer: summarize("@itslil/zod · closer-world", closerReport, officialReport.warmMedianMs),
-  normal: normalReport ? summarize("@itslil/zod · normal", normalReport, officialReport.warmMedianMs) : null,
+  closer: summarize("@itslil/zod", closerReport, officialReport.warmMedianMs),
+  normal: normalReport ? summarize("@itslil/zod · mangle off", normalReport, officialReport.warmMedianMs) : null,
   match: checked.match,
 }
 

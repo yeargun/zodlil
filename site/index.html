@@ -87,9 +87,11 @@
           <p>
             Same 48-object batch, 400 rounds per sample. Quiet median after discarding the first 3.
             Output must match official <code>zod@4.4.3</code>. Ratio is lane / official (lower is faster).
-            This release is slower than the last one: the rewrite dropped the fast paths that were
-            JavaScript source compiled with <code>new Function</code> (forbidden under a strict CSP),
-            and upstream compiles its object parsers that way. Size comes first in this port.
+            The port parses several times slower than official zod: the rewrite dropped the fast paths
+            that were JavaScript source compiled with <code>new Function</code> (forbidden under a
+            strict CSP), and upstream compiles its object parsers that way. On this shared host,
+            back-to-back runs disagree by up to 2× on the ratio, so read it as an order of magnitude.
+            Size comes first in this port.
           </p>
         </div>
         <div class="perf-cards" id="perf-cards"></div>
@@ -276,8 +278,8 @@
           <p>
             Wall time of each compile of <code>scripts/zod.lil</code> with the shipped config, on
             the host that built this release. Every run reproduces the shipped
-            <code>dist/zod.core.js</code> byte for byte. The previous release was built by the old
-            compiler, since deleted.
+            <code>dist/zod.core.js</code> byte for byte. The previous release (2026-09-24) was compiled
+            by LilScript <code>aa2052f0</code>.
           </p>
         </div>
         <div class="compiler-comparison" id="compiler-run"></div>

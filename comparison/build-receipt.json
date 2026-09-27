@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "name": "zodlil",
-  "measuredAt": "2026-09-24T04:39:20Z",
+  "measuredAt": "2026-09-27T16:36:06Z",
   "status": "verified",
   "buildPassed": true,
   "summary": "A clean build of sourceCommit reproduced the published dist/ byte for byte and passed the repository test command.",
-  "sourceCommit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3",
-  "previousPublicCommit": "b5c4d10a14314bffa01db5c874e6a6e553f592e8",
+  "sourceCommit": "96bfdb2ad13c65e03dceebaa08886f176104931b",
+  "previousPublicCommit": "4709ad60b36f2b8e7dc07105bcc999ab1d40d60f",
   "compiler": {
-    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9",
+    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041",
     "profile": "release",
     "dirty": false
   },
@@ -24,14 +24,14 @@
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      5.029296875,
-      3.49658203125,
-      3.14599609375
+      4.2822265625,
+      6.0341796875,
+      8.31396484375
     ],
     "loadAtEnd": [
-      11.8671875,
-      6.4287109375,
-      4.251953125
+      15.04052734375,
+      10.1533203125,
+      9.529296875
     ],
     "concurrencyNote": "One port at a time on this host, which also runs unrelated jobs; timings are contextual wall times, not controlled speedup benchmarks."
   },
@@ -45,30 +45,30 @@
   "comparisonScope": "zod@4.4.3's z restricted to the 181 members the port shares, English locale only, against the @itslil/zod package's ESM as it loads (zod.core.js, compat.js, index.js). Original ESM assembled from the pinned Git source build.",
   "sizes": {
     "previous": {
-      "path": "dist/zod.core.js",
-      "raw": 133639,
-      "gzip9": 37748,
-      "brotli11": 32458,
-      "sha256": "a0e66fd121d1973f21e4b3f367b4e01fbe6be9f2f510139a9003f1b4df9d9abd"
+      "path": "dist/zod.core.js@4709ad6",
+      "raw": 90567,
+      "gzip9": 30358,
+      "brotli11": 27008,
+      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
     },
     "previousPackage": {
-      "note": "dist/zod.core.js + compat.js + visit.js + async-api.js + official-json-schema.js + regexes.js + index.js, each compressed on its own",
-      "raw": 205244,
-      "gzip9": 55109,
-      "brotli11": 47921
+      "note": "dist/zod.core.js + compat.js + index.js, each compressed on its own",
+      "raw": 95332,
+      "gzip9": 31749,
+      "brotli11": 28192
     },
     "current": {
       "path": "dist/zod.core.js + dist/compat.js + dist/index.js",
-      "raw": 95332,
-      "gzip9": 31749,
-      "brotli11": 28192,
+      "raw": 95150,
+      "gzip9": 31724,
+      "brotli11": 28132,
       "files": [
         {
           "path": "dist/zod.core.js",
-          "raw": 90567,
-          "gzip9": 30358,
-          "brotli11": 27008,
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "raw": 90385,
+          "gzip9": 30333,
+          "brotli11": 26948,
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         },
         {
           "path": "dist/compat.js",
@@ -155,10 +155,10 @@
     },
     {
       "path": "dist/index.cjs",
-      "raw": 140326,
-      "gzip9": 38498,
-      "brotli11": 33206,
-      "sha256": "690b13dbe85ab2e7dc328deccc3d23c2947a468c12a33d14dc763635ab2f9654"
+      "raw": 139955,
+      "gzip9": 38460,
+      "brotli11": 33201,
+      "sha256": "1b8c86a709a441fbb50fa9b2bd34bbdcb4ef370d2d65c218de4075248cfbdac8"
     },
     {
       "path": "dist/index.js",
@@ -169,10 +169,10 @@
     },
     {
       "path": "dist/zod.core.js",
-      "raw": 90567,
-      "gzip9": 30358,
-      "brotli11": 27008,
-      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+      "raw": 90385,
+      "gzip9": 30333,
+      "brotli11": 26948,
+      "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
     },
     {
       "path": "dist/locales.js",
@@ -190,13 +190,13 @@
     }
   ],
   "timing": {
-    "primaryCompilerSeconds": 0.8280580043792725,
+    "primaryCompilerSeconds": 5.591519832611084,
     "primaryScope": "The lilscript.toml invocation that writes the published dist/zod.core.js, median of three clean builds.",
-    "compilerSeconds": 0.8280580043792725,
+    "compilerSeconds": 5.591519832611084,
     "compilerScope": "Wall time of the compiler invocation in one package build (scripts/zod.lil with lilscript.toml), median of three clean builds.",
-    "packageSeconds": 1.1185471779972431,
+    "packageSeconds": 6.299483650014736,
     "packageScope": "node scripts/build.mjs --compile; median of three clean builds.",
-    "upstreamSeconds": 20.062524620996555,
+    "upstreamSeconds": 34.09708702296484,
     "upstreamScope": "corepack pnpm --filter zod build in the pinned zod 4.4.3 checkout; median of three clean builds."
   },
   "behavior": {
@@ -204,24 +204,23 @@
     "summary": "Repository test command passed (exit 0). Tests 1353 passed (1353)",
     "after": {
       "exitCode": 0,
-      "tail": "\n RUN  v4.1.11 /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil\n\n\n Test Files  82 passed (82)\n      Tests  1353 passed (1353)\n   Start at  04:39:00\n   Duration  19.54s (transform 8.01s, setup 0ms, import 24.08s, tests 19.90s, environment 14ms)\n\n"
+      "tail": "\n RUN  v4.1.11 /home/azureuser/lilscript-work/release-0927/ports/zodlil\n\n\n Test Files  82 passed (82)\n      Tests  1353 passed (1353)\n   Start at  16:35:47\n   Duration  18.58s (transform 10.64s, setup 0ms, import 32.06s, tests 27.36s, environment 23ms)\n\n"
     }
   },
   "findings": [
-    "The one LilScript compiler (aa2052f0) rebuilt the port from the integrated module rewrite; dist/zod.core.js is compiler output with no post-minifier. dist/index.cjs is esbuild's CommonJS bundle of dist/index.js (post-processed by esbuild, not compiler-written; plan M12.2).",
-    "Previous public package 47921 -> 28192 Brotli-11; dist/zod.core.js 32458 -> 27008 (the previous files were old-route compiles).",
-    "The 2026-09-10 audit's behavior gate failed (973/1317 with compiler 4dc4e33); this build passes all 1353 official classic tests.",
-    "Parse throughput is lower than the previous release: the rewrite removed JavaScript fast paths compiled with new Function.",
+    "The one LilScript compiler (24968659) rebuilt the port; dist/zod.core.js is compiler output with no post-minifier. dist/index.cjs is esbuild's CommonJS bundle of dist/index.js (post-processed by esbuild, not compiler-written; plan M12.2).",
+    "Previous public package 28192 -> 28132 Brotli-11; dist/zod.core.js 27008 -> 26948 (the previous files were compiled by aa2052f0, the 2026-09-24 release).",
+    "This build passes all 1353 official classic tests.",
     "Upstream version gap: pinned 4.4.3; no compatibility upgrade is implied."
   ],
   "primaryArtifact": "dist/zod.core.js",
   "beforePage": {
     "url": "https://yeargun.github.io/zodlil/",
     "status": 200,
-    "sha256": "f38dfadf3afb2c413757468d21992b573f35a7460660484e3ff5295af7dffb08",
-    "lastModified": "Thu, 10 Sep 2026 21:14:07 GMT"
+    "sha256": "9e939db5fadfe9e48c8bc25805d1d20a2090254ca66ab6d47edbdc1a679efbfc",
+    "lastModified": "Thu, 24 Sep 2026 04:40:42 GMT"
   },
-  "codecSha256": "125776830df72bbaf9704fee3c38bb0bf29bfc6bcceb5bc8707a0507a128d7b9",
+  "codecSha256": "85329d361ef3339d4ff7b7ca1f00065d561340eb4fc98a2799af327134a3a3f0",
   "publicationArtifacts": [
     {
       "path": "dist/compat.js",
@@ -233,7 +232,7 @@
     },
     {
       "path": "dist/index.cjs",
-      "sha256": "690b13dbe85ab2e7dc328deccc3d23c2947a468c12a33d14dc763635ab2f9654"
+      "sha256": "1b8c86a709a441fbb50fa9b2bd34bbdcb4ef370d2d65c218de4075248cfbdac8"
     },
     {
       "path": "dist/index.js",
@@ -249,11 +248,11 @@
     },
     {
       "path": "dist/zod.core.js",
-      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+      "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
     }
   ],
   "publicationPolicy": "Promote freshly tested distribution",
-  "publicationBase": "b5c4d10a14314bffa01db5c874e6a6e553f592e8",
+  "publicationBase": "4709ad60b36f2b8e7dc07105bcc999ab1d40d60f",
   "publicationSourceFingerprint": "b1e2773e224becac40befb646bc6bfdf262ca0ed4de5fd702152bc54b31a9937",
   "comparisonArtifacts": [
     {
@@ -262,25 +261,25 @@
     },
     {
       "path": "site/esm-comparison/lilscript.js",
-      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+      "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
     },
     {
       "path": "site/source-build.json",
-      "sha256": "dfa3dc33ac1ee9de804083ecf3c9fc216c488b2906c71ce96ffa1b6c9ac6780d"
+      "sha256": "fda28279107ebc01bc53dab8aaad22098e1acb7c8853f33c0530b6d3c02a6149"
     },
     {
       "path": "site/comparison.json",
-      "sha256": "066ce7772ab88be48c1c467540c139018882e86aa68daba5bc2ba27d5b19bba4"
+      "sha256": "4f9d577e910ffe3afcf70b091bd52ca5ca1ee0e0bc5bb249d752c47253e286f1"
     }
   ],
   "sourceBuildReceipt": "comparison/source-build/result.json",
   "currentMeasurement": {
     "compiler": {
-      "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-      "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
+      "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+      "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
     },
     "source": {
-      "commit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3"
+      "commit": "96bfdb2ad13c65e03dceebaa08886f176104931b"
     },
     "upstream": {
       "repository": "https://github.com/colinhacks/zod.git",

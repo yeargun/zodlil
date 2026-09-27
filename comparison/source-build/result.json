@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "name": "zodlil",
-  "startedAt": "2026-09-24T04:37:21Z",
+  "startedAt": "2026-09-27T16:33:21Z",
   "machine": {
     "provider": "Azure",
     "instanceClass": "Standard_B8als_v2",
@@ -13,19 +13,19 @@
     "node": "v24.11.1",
     "rayonThreads": 8,
     "loadAtStart": [
-      5.029296875,
-      3.49658203125,
-      3.14599609375
+      4.2822265625,
+      6.0341796875,
+      8.31396484375
     ],
     "loadAtEnd": [
-      11.8671875,
-      6.4287109375,
-      4.251953125
+      15.04052734375,
+      10.1533203125,
+      9.529296875
     ]
   },
   "compiler": {
-    "commit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
-    "sha256": "13cb49a93fb3e376a5978484835322c84adea692b69ae4720775291377cf18f9"
+    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
+    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
   },
   "source": {
     "repository": "https://github.com/colinhacks/zod.git",
@@ -35,8 +35,8 @@
     "directory": "packages/zod"
   },
   "portSource": {
-    "commit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3",
-    "snapshot": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil"
+    "commit": "96bfdb2ad13c65e03dceebaa08886f176104931b",
+    "snapshot": "/home/azureuser/lilscript-work/release-0927/ports/zodlil"
   },
   "prerequisiteAdjustments": null,
   "steps": {
@@ -49,29 +49,13 @@
         "--ignore-scripts"
       ],
       "cwd": "upstream",
-      "wallSeconds": 22.387606882999535,
-      "cpuSeconds": 26.596111999999998,
+      "wallSeconds": 3.5376533240196295,
+      "cpuSeconds": 2.735305,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-install.log",
-      "logSha256": "4c21a44ccaac0d8966d83faf70c2d3b74581aa3b964d195a9c249c0999bca176",
-      "tail": "Scope: all 8 workspace projects\nLockfile is up to date, resolution step is skipped\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +1060\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nProgress: resolved 1060, reused 427, downloaded 15, added 7\nProgress: resolved 1060, reused 427, downloaded 156, added 444\nProgress: resolved 1060, reused 427, downloaded 165, added 448\nProgress: resolved 1060, reused 427, downloaded 169, added 448\nProgress: resolved 1060, reused 427, downloaded 196, added 466\nProgress: resolved 1060, reused 427, downloaded 266, added 517\nProgress: resolved 1060, reused 427, downloaded 285, added 525\nProgress: resolved 1060, reused 427, downloaded 332, added 553\nProgress: resolved 1060, reused 427, downloaded 343, added 557\nProgress: resolved 1060, reused 427, downloaded 407, added 619\nProgress: resolved 1060, reused 427, downloaded 451, added 709\nProgress: resolved 1060, reused 427, downloaded 532, added 818\nProgress: resolved 1060, reused 427, downloaded 540, added 821\nProgress: resolved 1060, reused 427, downloaded 629, added 1005\nProgress: resolved 1060, reused 427, downloaded 629, added 1048\nProgress: resolved 1060, reused 427, downloaded 631, added 1059\nProgress: resolved 1060, reused 427, downloaded 632, added 1059\nProgress: resolved 1060, reused 427, downloaded 632, added 1060, done\n(node:2475682) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n\ndevDependencies:\n+ @arethetypeswrong/cli 0.17.4\n+ @biomejs/biome 1.9.4\n+ @seriousme/openapi-schema-validator 2.9.0\n+ @types/benchmark 2.1.5\n+ @types/semver 7.7.0\n+ @web-std/file 3.0.3\n+ arktype 2.1.19\n+ benchmark 2.1.4\n+ chalk 5.4.1\n+ console-table-printer 2.12.1\n+ esbuild 0.25.5\n+ execa 9.5.2\n+ globby 16.2.0\n+ husky 9.1.7\n+ jsr 0.12.4\n+ lint-staged 16.4.0\n+ madge 8.0.0\n+ mitata 0.1.14\n+ prettier 3.5.3\n+ recheck 4.5.0\n+ rolldown 1.0.0-beta.18\n+ rollup 4.60.2\n+ semver 7.7.2\n+ supershy 1.0.0\n+ tinybench 2.9.0\n+ ts-morph 28.0.0\n+ tsdown 0.21.10\n+ tslib 2.8.1\n+ tsx 4.19.3\n+ typescript 5.5.4\n+ vite 7.3.2\n+ vitest 4.1.5\n+ zod 4.4.3 <- packages/zod\n+ zod3 <- zod 3.24.3\n+ zshy 0.7.2\n\nDone in 20.8s using pnpm v10.12.1\n"
-    },
-    "lilscript-install": {
-      "command": [
-        "npm",
-        "ci",
-        "--no-audit",
-        "--no-fund"
-      ],
-      "cwd": "port",
-      "wallSeconds": 3.4366871469974285,
-      "cpuSeconds": 4.108665000000002,
-      "exitCode": 0,
-      "timedOut": false,
-      "log": "lilscript-install.log",
-      "logSha256": "51d0bb94614d72583f3cfe68ba0e8702ffed29343ab36321af5bb6da732527ff",
-      "tail": "\nadded 113 packages in 3s\n"
+      "logSha256": "ec638683c8f75b978c87a4d884913fec020feb6d1fae2fdb7ce25b98243ac2d3",
+      "tail": "Scope: all 8 workspace projects\nLockfile is up to date, resolution step is skipped\nAlready up to date\n(node:3810608) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n\nDone in 3.3s using pnpm v10.12.1\n"
     },
     "original-build-1": {
       "command": [
@@ -82,13 +66,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 12.048650106000423,
-      "cpuSeconds": 24.506240000000005,
+      "wallSeconds": 29.828775617002975,
+      "cpuSeconds": 32.60563,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-1.log",
-      "logSha256": "0517838db18d07c544219cd6fe2a36419c385ad9a74fbabebc365ee66272da3c",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 583ms. No fixes applied.\n"
+      "logSha256": "2bfeb0dfd1632168ab1063ff2766718c25931abc5eb487949c3b73177e4eb914",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1445ms. No fixes applied.\n"
     },
     "lilscript-build-1": {
       "command": [
@@ -97,8 +81,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.1185471779972431,
-      "cpuSeconds": 1.047900999999996,
+      "wallSeconds": 6.299483650014736,
+      "cpuSeconds": 4.808408000000002,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-1.log",
@@ -107,19 +91,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224679.7204268,
-          "wallSeconds": 0.8131608963012695,
+          "startedAt": 1790526835.5784025,
+          "wallSeconds": 5.591519832611084,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     },
@@ -130,8 +114,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.116535806999309,
-      "cpuSeconds": 1.0544980000000006,
+      "wallSeconds": 7.557339877996128,
+      "cpuSeconds": 4.831742999999994,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-2.log",
@@ -140,19 +124,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224680.8482742,
-          "wallSeconds": 0.8280580043792725,
+          "startedAt": 1790526841.877944,
+          "wallSeconds": 6.790278673171997,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     },
@@ -165,13 +149,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 20.062524620996555,
-      "cpuSeconds": 30.023986,
+      "wallSeconds": 42.377051640010905,
+      "cpuSeconds": 33.57645500000002,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-2.log",
-      "logSha256": "128700950bcc082a2928c594f6558179838ef8858e9d9f08d4d0aa35413e1cd8",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1085ms. No fixes applied.\n"
+      "logSha256": "b36a2fa1528cf69be62ec1724d6623daabcf1274765e853b0f1966de900d4fa9",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1590ms. No fixes applied.\n"
     },
     "original-build-3": {
       "command": [
@@ -182,13 +166,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 23.554424695998023,
-      "cpuSeconds": 32.336611,
+      "wallSeconds": 34.09708702296484,
+      "cpuSeconds": 29.91858899999999,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-3.log",
-      "logSha256": "8632659fed726025acc9ab59efc6216ea205967b4fa851b34b189e94181374d7",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1058ms. No fixes applied.\n"
+      "logSha256": "27ed91283c987c9538e2a977d271cc03f400963ffb9a82ad018d8cc336e09315",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1383ms. No fixes applied.\n"
     },
     "lilscript-build-3": {
       "command": [
@@ -197,8 +181,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.8799639260032563,
-      "cpuSeconds": 1.581089999999989,
+      "wallSeconds": 6.035637906985357,
+      "cpuSeconds": 4.5816839999999965,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-3.log",
@@ -207,32 +191,32 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224725.6545277,
-          "wallSeconds": 1.4723644256591797,
+          "startedAt": 1790526925.8866286,
+          "wallSeconds": 5.424484729766846,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     },
     "original-esm": {
       "command": [
         "node",
-        "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/tools/source-esm.mjs",
-        "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild",
+        "/home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/tools/source-esm.mjs",
+        "/home/azureuser/lilscript-work/release-0927/srcbuild/zodlil",
         "zodlil"
       ],
       "cwd": "upstream",
-      "wallSeconds": 11.989851569996972,
-      "cpuSeconds": 12.956898000000017,
+      "wallSeconds": 13.799543317989446,
+      "cpuSeconds": 12.108178000000002,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-esm.log",
@@ -246,13 +230,13 @@
         "node scripts/test.mjs"
       ],
       "cwd": "port",
-      "wallSeconds": 20.555061924002075,
-      "cpuSeconds": 43.42530600000001,
+      "wallSeconds": 19.86584058299195,
+      "cpuSeconds": 41.26306600000001,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-tests.log",
-      "logSha256": "acebac67240984c4dd492ea9b1be22e4e9c950e5be93b44529c2f7a6f9efdcfa",
-      "tail": "\n RUN  v4.1.11 /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil\n\n\n Test Files  82 passed (82)\n      Tests  1353 passed (1353)\n   Start at  04:39:00\n   Duration  19.54s (transform 8.01s, setup 0ms, import 24.08s, tests 19.90s, environment 14ms)\n\n"
+      "logSha256": "83e81dab5c09f61441238bc5b54f6514126dba2d8b0989a2a30810aaa72f1061",
+      "tail": "\n RUN  v4.1.11 /home/azureuser/lilscript-work/release-0927/ports/zodlil\n\n\n Test Files  82 passed (82)\n      Tests  1353 passed (1353)\n   Start at  16:35:47\n   Duration  18.58s (transform 10.64s, setup 0ms, import 32.06s, tests 27.36s, environment 23ms)\n\n"
     }
   },
   "nativeBuilds": [
@@ -265,13 +249,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 12.048650106000423,
-      "cpuSeconds": 24.506240000000005,
+      "wallSeconds": 29.828775617002975,
+      "cpuSeconds": 32.60563,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-1.log",
-      "logSha256": "0517838db18d07c544219cd6fe2a36419c385ad9a74fbabebc365ee66272da3c",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 583ms. No fixes applied.\n"
+      "logSha256": "2bfeb0dfd1632168ab1063ff2766718c25931abc5eb487949c3b73177e4eb914",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1445ms. No fixes applied.\n"
     },
     {
       "command": [
@@ -282,13 +266,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 20.062524620996555,
-      "cpuSeconds": 30.023986,
+      "wallSeconds": 42.377051640010905,
+      "cpuSeconds": 33.57645500000002,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-2.log",
-      "logSha256": "128700950bcc082a2928c594f6558179838ef8858e9d9f08d4d0aa35413e1cd8",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1085ms. No fixes applied.\n"
+      "logSha256": "b36a2fa1528cf69be62ec1724d6623daabcf1274765e853b0f1966de900d4fa9",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1590ms. No fixes applied.\n"
     },
     {
       "command": [
@@ -299,13 +283,13 @@
         "build"
       ],
       "cwd": "upstream",
-      "wallSeconds": 23.554424695998023,
-      "cpuSeconds": 32.336611,
+      "wallSeconds": 34.09708702296484,
+      "cpuSeconds": 29.91858899999999,
       "exitCode": 0,
       "timedOut": false,
       "log": "original-build-3.log",
-      "logSha256": "8632659fed726025acc9ab59efc6216ea205967b4fa851b34b189e94181374d7",
-      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1058ms. No fixes applied.\n"
+      "logSha256": "27ed91283c987c9538e2a977d271cc03f400963ffb9a82ad018d8cc336e09315",
+      "tail": "\n> zod@4.4.3 build /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> zshy --project tsconfig.build.json\n\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 zshy \u00bb the bundler-free TypeScript build tool \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Starting build...\n\u00bb  Detected project root: /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n\u00bb  Reading package.json from ./package.json\n\u00bb  Reading tsconfig from ./tsconfig.build.json\n\u00bb  You're building your code to the project root. This means your compiled files will be generated alongside your source files.\n   Ensure that your \"files\" in package.json does not include TypeScript source files, or your users may experience .d.ts resolution issues in some environments:\n     \"files\": [\"**/*.js\", \"**/*.mjs\", \"**/*.cjs\", \"**/*.d.ts\", \"**/*.d.mts\", \"**/*.d.cts\"]\n\u00bb  Determining entrypoints...\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Subpath            \u2502 Entrypoint                      \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 \"zod\"              \u2502 ./src/index.ts                  \u2551\n   \u2551 \"zod/mini\"         \u2502 ./src/mini/index.ts             \u2551\n   \u2551 \"zod/locales\"      \u2502 ./src/locales/index.ts          \u2551\n   \u2551 \"zod/v3\"           \u2502 ./src/v3/index.ts               \u2551\n   \u2551 \"zod/v4\"           \u2502 ./src/v4/index.ts               \u2551\n   \u2551 \"zod/v4-mini\"      \u2502 ./src/v4-mini/index.ts          \u2551\n   \u2551 \"zod/v4/mini\"      \u2502 ./src/v4/mini/index.ts          \u2551\n   \u2551 \"zod/v4/core\"      \u2502 ./src/v4/core/index.ts          \u2551\n   \u2551 \"zod/v4/locales\"   \u2502 ./src/v4/locales/index.ts       \u2551\n   \u2551 \"zod/v4/locales/*\" \u2502 ./src/v4/locales/* (53 matches) \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Resolved build paths:\n   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n   \u2551 Location \u2502 Resolved path \u2551\n   \u255f\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2562\n   \u2551 rootDir  \u2502 ./src         \u2551\n   \u2551 outDir   \u2502 .             \u2551\n   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\u00bb  Package is an ES module (package.json#/type is \"module\")\n\u00bb  Skipping cleanup of outDir as it contains source files\n\u00bb  Skipping cleanup of declarationDir as it contains source files\n\u00bb  Building CJS... (rewriting .ts -> .cjs/.d.cts)\n\u00bb  Building ESM...\n\u00bb  Updating package.json...\n\u00bb  Updating jsr.json...\n\u00bb  Reading jsr.json from ./jsr.json\n\u00bb  Build complete! \u2705\n\n> zod@4.4.3 postbuild /home/azureuser/lilscript-work/release-0927/srcbuild/zodlil/upstream/zodlil/packages/zod\n> tsx ../../scripts/write-stub-package-jsons.ts && pnpm biome check --write .\n\n\u2705 Created locales/package.json\n\u2705 Created mini/package.json\n\u2705 Created v3/package.json\n\u2705 Created v4/classic/package.json\n\u2705 Created v4/core/package.json\n\u2705 Created v4/package.json\n\u2705 Created v4/locales/package.json\n\u2705 Created v4/mini/package.json\n\u2705 Created v4-mini/package.json\n\n\u2728 Done! All stub package.json files have been created.\nChecked 287 files in 1383ms. No fixes applied.\n"
     }
   ],
   "lilscriptBuilds": [
@@ -316,8 +300,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.1185471779972431,
-      "cpuSeconds": 1.047900999999996,
+      "wallSeconds": 6.299483650014736,
+      "cpuSeconds": 4.808408000000002,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-1.log",
@@ -326,19 +310,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224679.7204268,
-          "wallSeconds": 0.8131608963012695,
+          "startedAt": 1790526835.5784025,
+          "wallSeconds": 5.591519832611084,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     },
@@ -349,8 +333,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.116535806999309,
-      "cpuSeconds": 1.0544980000000006,
+      "wallSeconds": 7.557339877996128,
+      "cpuSeconds": 4.831742999999994,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-2.log",
@@ -359,19 +343,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224680.8482742,
-          "wallSeconds": 0.8280580043792725,
+          "startedAt": 1790526841.877944,
+          "wallSeconds": 6.790278673171997,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     },
@@ -382,8 +366,8 @@
         "node scripts/build.mjs --compile"
       ],
       "cwd": "port",
-      "wallSeconds": 1.8799639260032563,
-      "cpuSeconds": 1.581089999999989,
+      "wallSeconds": 6.035637906985357,
+      "cpuSeconds": 4.5816839999999965,
       "exitCode": 0,
       "timedOut": false,
       "log": "lilscript-build-3.log",
@@ -392,19 +376,19 @@
       "invocations": [
         {
           "args": [
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/scripts/zod.lil",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/scripts/zod.lil",
             "--target",
             "js-module",
             "--config",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/lilscript.toml",
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/lilscript.toml",
             "-o",
-            "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js"
+            "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js"
           ],
-          "startedAt": 1790224725.6545277,
-          "wallSeconds": 1.4723644256591797,
+          "startedAt": 1790526925.8866286,
+          "wallSeconds": 5.424484729766846,
           "exitCode": 0,
-          "output": "/home/azureuser/lilscript-work/release-m2/zodlil/srcbuild/ports/zodlil/dist/zod.core.js",
-          "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+          "output": "/home/azureuser/lilscript-work/release-0927/ports/zodlil/dist/zod.core.js",
+          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
         }
       ]
     }
@@ -429,19 +413,19 @@
     "external": [],
     "samples": [
       {
-        "bundleSeconds": 0.132788454,
-        "wallSeconds": 2.868548461
+        "bundleSeconds": 0.11999199399999998,
+        "wallSeconds": 2.878994007
       },
       {
-        "bundleSeconds": 0.08096842400000014,
-        "wallSeconds": 2.110181867
+        "bundleSeconds": 0.09662961999999971,
+        "wallSeconds": 2.977723819
       },
       {
-        "bundleSeconds": 0.06156143200000042,
-        "wallSeconds": 2.071546749
+        "bundleSeconds": 0.07841034300000047,
+        "wallSeconds": 2.2930977880000007
       }
     ],
-    "medianSeconds": 2.110181867,
+    "medianSeconds": 2.878994007,
     "toolchain": {
       "esbuild": "0.28.1",
       "terser": "5.51.2",
@@ -541,10 +525,10 @@
     },
     {
       "path": "dist/index.cjs",
-      "raw": 140326,
-      "gzip9": 38498,
-      "brotli11": 33206,
-      "sha256": "690b13dbe85ab2e7dc328deccc3d23c2947a468c12a33d14dc763635ab2f9654"
+      "raw": 139955,
+      "gzip9": 38460,
+      "brotli11": 33201,
+      "sha256": "1b8c86a709a441fbb50fa9b2bd34bbdcb4ef370d2d65c218de4075248cfbdac8"
     },
     {
       "path": "dist/index.js",
@@ -555,10 +539,10 @@
     },
     {
       "path": "dist/zod.core.js",
-      "raw": 90567,
-      "gzip9": 30358,
-      "brotli11": 27008,
-      "sha256": "a4893593828bb3c18181cad44ac872e3618b70b9e071dae932dcb2f4c358318c"
+      "raw": 90385,
+      "gzip9": 30333,
+      "brotli11": 26948,
+      "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
     },
     {
       "path": "dist/locales.js",
@@ -578,17 +562,17 @@
   "nativeBuildsSummary": {
     "samples": 3,
     "successful": 3,
-    "medianSeconds": 20.062524620996555,
-    "minimumSeconds": 12.048650106000423,
-    "maximumSeconds": 23.554424695998023
+    "medianSeconds": 34.09708702296484,
+    "minimumSeconds": 29.828775617002975,
+    "maximumSeconds": 42.377051640010905
   },
   "lilscriptBuildsSummary": {
     "samples": 3,
     "successful": 3,
-    "medianSeconds": 1.1185471779972431,
-    "minimumSeconds": 1.116535806999309,
-    "maximumSeconds": 1.8799639260032563
+    "medianSeconds": 6.299483650014736,
+    "minimumSeconds": 6.035637906985357,
+    "maximumSeconds": 7.557339877996128
   },
   "status": "complete",
-  "finishedAt": "2026-09-24T04:39:20Z"
+  "finishedAt": "2026-09-27T16:36:06Z"
 }

@@ -7,9 +7,9 @@
     "directory": "packages/zod"
   },
   "portSource": {
-    "commit": "a81e4ab7fb07ad0c30d2a978afbbdabce1dfdac3"
+    "commit": "96bfdb2ad13c65e03dceebaa08886f176104931b"
   },
-  "compilerCommit": "aa2052f081ca8184666ca280ee9b91d476e46cfc",
+  "compilerCommit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
   "install": [
     "corepack",
     "pnpm",

@@ -331,7 +331,7 @@ var Qa = (a) => {
   let b = a._zod, c = b.def;
   if (typeof b.check == "function" || !Ja(c)) return;
   let d = c.check + "";
-  if (d == "number_format") b.check = ((a2, b2) => {
+  b.check = d == "number_format" ? ((a2, b2) => {
     let c2 = a2.format + "";
     if (c2 == "int") c2 = "safeint";
     let d2 = c2.includes("int"), e = 1 / 0;
@@ -370,14 +370,12 @@ var Qa = (a) => {
         E(i, a3);
       }
     };
-  })(c, a);
-  else if (d == "string_format") b.check = /* @__PURE__ */ ((a2, b2) => (c2) => {
+  })(c, a) : d == "string_format" ? /* @__PURE__ */ ((a2, b2) => (c2) => {
     let d2 = a2.pattern;
     d2.lastIndex = 0;
     if (d2.test(c2.value)) return;
     E(c2.issues, { origin: "string", code: "invalid_format", format: a2.format, input: c2.value, pattern: d2 + "", inst: b2, continue: !a2.abort });
-  })(c, a);
-  else b.check = ((a2, b2, c2, d2) => {
+  })(c, a) : ((a2, b2, c2, d2) => {
     let e = "minimum", f = "too_small";
     if (c2) {
       e = "maximum";
@@ -843,7 +841,7 @@ var Yb = () => {
   b.allowsEval = c;
   let d = a.Uint8Array, e = (b2) => d.from(a.atob(b2), (a2) => a2.charCodeAt(0)), f = (b2) => {
     let c2;
-    return a.btoa((c2 = Array.from(b2, (a2) => String.fromCharCode(a2)), c2).join(""));
+    return (c2 = Array.from(b2, (a2) => String.fromCharCode(a2)).join(""), a).btoa(c2);
   };
   b.base64ToUint8Array = e;
   b.uint8ArrayToBase64 = f;
@@ -967,7 +965,7 @@ var pc = (a) => {
     let a3 = b.handle._zod.innerType;
     if (a3 == null && typeof b.def.getter == "function") a3 = (0, b.def.getter)();
     let c = pb(a3);
-    if (!c) return b;
+    if (!c) break;
     b = c;
   }
   return b;
@@ -1441,11 +1439,7 @@ var Xc = (a, b, c) => {
     if (g.coerce && f <= ue && f != te) {
       try {
         let a3;
-        if (f == pe) a3 = String(e);
-        else if (f == qe) a3 = Number(e);
-        else if (f == re) a3 = Boolean(e);
-        else if (f == se) a3 = $(e);
-        else a3 = new Date(e);
+        a3 = f == pe ? String(e) : f == qe ? Number(e) : f == re ? Boolean(e) : f == se ? $(e) : new Date(e);
         b.value = a3;
         e = a3;
       } catch {
@@ -1912,16 +1906,13 @@ var td = (a, b) => {
         if (b2 !== "__proto__") S(c, b2, a2[b2]);
       });
     });
-    let e = F(b), f = F(a);
-    {
-      let d = f, g = 0;
-      for (; g < d.length; ++g) {
-        let f2 = d[g] ?? "";
-        if (f2 != "__proto__" && e.includes(f2)) {
-          let d2 = td(a[f2], b[f2]);
-          if (!d2.valid) return sd(false, "mergeErrorPath", [f2].concat(d2.mergeErrorPath));
-          c[f2] = d2.data;
-        }
+    let e = F(b), f = F(a), g = f, h = 0;
+    for (; h < g.length; ++h) {
+      let d = g[h] ?? "";
+      if (d != "__proto__" && e.includes(d)) {
+        let e2 = td(a[d], b[d]);
+        if (!e2.valid) return sd(false, "mergeErrorPath", [d].concat(e2.mergeErrorPath));
+        c[d] = e2.data;
       }
     }
     return sd(true, "data", c);
@@ -2629,9 +2620,7 @@ var Kg = (a, b, c, d) => {
     let f = {};
     for (let a2 in e2) {
       let g = e2[a2];
-      if (b == null || b[a2]) if (!c) g = new Eh({ type: "nonoptional", innerType: g });
-      else if (d) g = cj(g);
-      else g = new yh({ type: "optional", innerType: g });
+      if (b == null || b[a2]) g = !c ? new Eh({ type: "nonoptional", innerType: g }) : d ? cj(g) : new yh({ type: "optional", innerType: g });
       S(f, a2, g);
     }
     return f;
@@ -2728,43 +2717,42 @@ function Lk(a) {
   };
 }
 var Yg = () => {
-  let c, d;
   $b();
   Lb();
-  ug($g)((c = { parse: (a2) => {
+  ug($g)({ parse: (a2) => {
     let b2;
-    b2 = (c2, d2) => Od(a2, c2, d2, b2);
+    b2 = (c, d) => Od(a2, c, d, b2);
     return b2;
-  }, safeParse: (a2) => Ta(a2._zod, (b2, c2) => Nd(a2, b2, c2)), parseAsync: (a2) => (b2, c2) => Og(a2, b2, c2), safeParseAsync: (a2) => (b2, c2) => Qd(a2, b2, c2), spa: (a2) => a2.safeParseAsync, encode: Ng("backward"), decode: Ng("forward"), encodeAsync: Pg("backward"), decodeAsync: Pg("forward"), safeEncode: Qg("backward", false), safeDecode: Qg("forward", false), safeEncodeAsync: Qg("backward", true), safeDecodeAsync: Qg("forward", true), optional: (a2) => () => new yh({ type: "optional", innerType: a2 }), exactOptional: (a2) => () => cj(a2), nullable: (a2) => () => new Ah({ type: "nullable", innerType: a2 }), nullish: (a2) => () => new yh({ type: "optional", innerType: new Ah({ type: "nullable", innerType: a2 }) }), array: (a2) => () => zi(a2), or: (a2) => (b2) => Ci([a2, b2]), and: (a2) => (b2) => new xh({ type: "intersection", left: a2, right: b2 }), default: (a2) => (b2) => Lg(Bh, "default", a2, b2), prefault: (a2) => (b2) => Lg(Ch, "prefault", a2, b2), catch: (a2) => (b2) => {
-    let c2 = b2;
-    if (typeof b2 != "function") c2 = () => b2;
-    return new Dh({ type: "catch", innerType: a2, catchValue: c2 });
+  }, safeParse: (a2) => Ta(a2._zod, (b2, c) => Nd(a2, b2, c)), parseAsync: (a2) => (b2, c) => Og(a2, b2, c), safeParseAsync: (a2) => (b2, c) => Qd(a2, b2, c), spa: (a2) => a2.safeParseAsync, encode: Ng("backward"), decode: Ng("forward"), encodeAsync: Pg("backward"), decodeAsync: Pg("forward"), safeEncode: Qg("backward", false), safeDecode: Qg("forward", false), safeEncodeAsync: Qg("backward", true), safeDecodeAsync: Qg("forward", true), optional: (a2) => () => new yh({ type: "optional", innerType: a2 }), exactOptional: (a2) => () => cj(a2), nullable: (a2) => () => new Ah({ type: "nullable", innerType: a2 }), nullish: (a2) => () => new yh({ type: "optional", innerType: new Ah({ type: "nullable", innerType: a2 }) }), array: (a2) => () => zi(a2), or: (a2) => (b2) => Ci([a2, b2]), and: (a2) => (b2) => new xh({ type: "intersection", left: a2, right: b2 }), default: (a2) => (b2) => Lg(Bh, "default", a2, b2), prefault: (a2) => (b2) => Lg(Ch, "prefault", a2, b2), catch: (a2) => (b2) => {
+    let c = b2;
+    if (typeof b2 != "function") c = () => b2;
+    return new Dh({ type: "catch", innerType: a2, catchValue: c });
   }, nonoptional: (a2) => (b2) => eg(Eh, { type: "nonoptional", innerType: a2 }, b2), transform: (a2) => (b2) => Pi(a2, Oi(b2)), pipe: (a2) => (b2) => Pi(a2, b2), readonly: (a2) => () => new Lh({ type: "readonly", innerType: a2 }), brand: (a2) => () => a2, describe: (a2) => (b2) => {
-    let c2 = kc(a2);
-    ac().add(c2, { description: b2 });
-    return c2;
+    let c = kc(a2);
+    ac().add(c, { description: b2 });
+    return c;
   }, meta: (a2) => Lk((b2) => {
     if (b2[0] === void 0) return ac().get(a2);
-    let c2 = kc(a2);
-    ac().add(c2, b2[0]);
-    return c2;
+    let c = kc(a2);
+    ac().add(c, b2[0]);
+    return c;
   }), refine: mg(Ki), superRefine: mg(Li), overwrite: mg((a2, b2) => lg(a2)), check: (a2) => Lk((b2) => {
-    let c2 = a2, d2 = 0;
-    while (d2 < b2.length) {
-      let a3 = b2[d2];
-      if (typeof a3 == "function") c2 = mc(c2, ic(a3));
-      else if (j(a3) && a3._zod !== void 0) c2 = mc(c2, a3);
-      d2 = d2 + 1 | 0;
+    let c = a2, d = 0;
+    while (d < b2.length) {
+      let a3 = b2[d];
+      if (typeof a3 == "function") c = mc(c, ic(a3));
+      else if (j(a3) && a3._zod !== void 0) c = mc(c, a3);
+      d = d + 1 | 0;
     }
-    return c2;
+    return c;
   }), with: (a2) => a2.check, clone: (a2) => (b2) => kc(a2, b2), isOptional: (a2) => () => Ld(a2).success, isNullable: (a2) => () => Ld(a2, null).success, apply: (a2) => Lk((b2) => {
-    let c2 = Array.from(b2);
-    c2[0] = a2;
-    return b2[0].apply(void 0, c2);
-  }), register: (a2) => (b2, c2) => {
-    b2.add(a2, c2);
+    let c = Array.from(b2);
+    c[0] = a2;
+    return b2[0].apply(void 0, c);
+  }), register: (a2) => (b2, c) => {
+    b2.add(a2, c);
     return a2;
-  } }, c));
+  } });
   Td($g.prototype, "~standard", (a2) => ({ validate: (b2) => {
     try {
       return Rg(Ld(a2, b2));
@@ -2780,13 +2768,13 @@ var Yg = () => {
   }));
   let a = _g.prototype;
   for (let b2 in ni) Td(a, b2, rg(b2, ni[b2]), true);
-  ug(_g)((d = { includes: og("includes", "includes"), startsWith: og("starts_with", "prefix"), endsWith: og("ends_with", "suffix"), regex: mg((a2, b2) => qg("regex", a2, b2)), uuidv4: sg("4"), uuidv6: sg("6"), uuidv7: sg("7"), mac: mg((a2, b2) => qg("mac", tg(a2), a2)), datetime: mg((a2, b2) => qg("datetime", me(a2), a2)), date: mg((a2, b2) => qg("date", new RegExp("^" + Ff + "$"), a2)), time: mg((a2, b2) => qg("time", le(a2), a2)), trim: pg(ki), toLowerCase: pg((a2) => a2.toLowerCase()), toUpperCase: pg((a2) => a2.toUpperCase()), lowercase: mg((a2, b2) => hg("lowercase", {}, a2)), uppercase: mg((a2, b2) => hg("uppercase", {}, a2)), normalize: mg((a2, b2) => lg((b3) => b3.normalize(a2))), slugify: pg(li), format: (a2) => dg(a2._zod.bag.format), minLength: (a2) => dg(a2._zod.bag.minimum), maxLength: (a2) => dg(a2._zod.bag.maximum), min: ai, max: bi, length: ci, nonempty: di }, d));
+  ug(_g)({ includes: og("includes", "includes"), startsWith: og("starts_with", "prefix"), endsWith: og("ends_with", "suffix"), regex: mg((a2, b2) => qg("regex", a2, b2)), uuidv4: sg("4"), uuidv6: sg("6"), uuidv7: sg("7"), mac: mg((a2, b2) => qg("mac", tg(a2), a2)), datetime: mg((a2, b2) => qg("datetime", me(a2), a2)), date: mg((a2, b2) => qg("date", new RegExp("^" + Ff + "$"), a2)), time: mg((a2, b2) => qg("time", le(a2), a2)), trim: pg(ki), toLowerCase: pg((a2) => a2.toLowerCase()), toUpperCase: pg((a2) => a2.toUpperCase()), lowercase: mg((a2, b2) => hg("lowercase", {}, a2)), uppercase: mg((a2, b2) => hg("uppercase", {}, a2)), normalize: mg((a2, b2) => lg((b3) => b3.normalize(a2))), slugify: pg(li), format: (a2) => dg(a2._zod.bag.format), minLength: (a2) => dg(a2._zod.bag.minimum), maxLength: (a2) => dg(a2._zod.bag.maximum), min: ai, max: bi, length: ci, nonempty: di });
   ug(ah)({ int: mg((a2, b2) => hg("number_format", { format: "int" }, a2)), safe: mg((a2, b2) => hg("number_format", { format: "safeint" }, a2)), positive: kg("greater_than", false, false), nonnegative: kg("greater_than", true, false), negative: kg("less_than", false, false), nonpositive: kg("less_than", true, false), multipleOf: ii, step: ii, finite: (a2) => () => a2, format: (a2) => dg(a2._zod.bag.format), minValue: (a2) => Wg(a2, "minimum", "exclusiveMinimum", "max", Number.NEGATIVE_INFINITY), maxValue: (a2) => Wg(a2, "maximum", "exclusiveMaximum", "min", Number.POSITIVE_INFINITY), isInt: (a2) => {
     let b2 = a2._zod.bag;
     if (((b2.format || "") + "").includes("int")) return true;
-    let c2 = b2.multipleOf;
-    if (c2 === void 0) c2 = 0.5;
-    return Number.isSafeInteger(c2);
+    let c = b2.multipleOf;
+    if (c === void 0) c = 0.5;
+    return Number.isSafeInteger(c);
   }, isFinite: (a2) => true, gt: ei, gte: fi, min: fi, lt: gi, lte: hi, max: hi });
   ug(ch)({ positive: kg("greater_than", false, true), nonnegative: kg("greater_than", true, true), negative: kg("less_than", false, true), nonpositive: kg("less_than", true, true), multipleOf: ii, format: (a2) => dg(a2._zod.bag.format), minValue: (a2) => dg(a2._zod.bag.minimum), maxValue: (a2) => dg(a2._zod.bag.maximum), gt: ei, gte: fi, min: fi, lt: gi, lte: hi, max: hi });
   ug(eh)({ min: fi, max: hi, minDate: (a2) => Xg(a2, "minimum"), maxDate: (a2) => Xg(a2, "maximum") });
@@ -2795,9 +2783,9 @@ var Yg = () => {
   ug(sh)(b);
   ug(th)(b);
   ug(Nh)({ mime: mg((a2, b2) => {
-    let c2 = a2;
-    if (!Array.isArray(a2)) c2 = [a2];
-    return hg("mime_type", { mime: c2 }, b2);
+    let c = a2;
+    if (!Array.isArray(a2)) c = [a2];
+    return hg("mime_type", { mime: c }, b2);
   }), min: b.min, max: b.max });
   vg(oh, "shape", Jk((a2) => a2._zod.def.shape));
   ug(oh)({ strict: (a2) => () => kc(a2, { catchall: vi() }), passthrough: (a2) => () => kc(a2, { catchall: ui() }), strip: (a2) => () => {
@@ -2806,24 +2794,24 @@ var Yg = () => {
     return new oh(b2);
   }, loose: (a2) => a2.passthrough, catchall: (a2) => (b2) => kc(a2, { catchall: b2 }), extend: (a2) => (b2) => {
     if (Ag(a2)) {
-      let c2 = a2._zod.def.shape ?? {};
-      for (let a3 in b2) if (W(c2, a3) !== void 0) throw new Error("Cannot overwrite keys on object schemas containing refinements. Use `.safeExtend()` instead.");
+      let c = a2._zod.def.shape ?? {};
+      for (let a3 in b2) if (W(c, a3) !== void 0) throw new Error("Cannot overwrite keys on object schemas containing refinements. Use `.safeExtend()` instead.");
     }
     return kc(a2, Dg(a2, b2));
   }, safeExtend: (a2) => (b2) => kc(a2, Dg(a2, b2)), merge: (a2) => (b2) => {
     if (Ag(a2)) throw new Error(".merge() cannot be used on object schemas containing refinements. Use .safeExtend() instead.");
-    let c2 = Dg(a2, b2._zod.def.shape);
-    M(c2, "catchall", { configurable: true, enumerable: true, get: () => b2._zod.def.catchall });
-    let d2 = b2._zod.def.checks;
-    if (!Array.isArray(d2)) d2 = [];
-    c2.checks = d2;
-    return kc(a2, c2);
+    let c = Dg(a2, b2._zod.def.shape);
+    M(c, "catchall", { configurable: true, enumerable: true, get: () => b2._zod.def.catchall });
+    let d = b2._zod.def.checks;
+    if (!Array.isArray(d)) d = [];
+    c.checks = d;
+    return kc(a2, c);
   }, pick: (a2) => (b2) => Vg(a2, b2, true, "pick"), omit: (a2) => (b2) => Vg(a2, b2, false, "omit"), partial: (a2) => (b2) => Kg(a2, b2, true, false), exactPartial: (a2) => (b2) => Kg(a2, b2, true, true), required: (a2) => (b2) => Kg(a2, b2, false, false), keyof: (a2) => () => xi(F(a2._zod.def.shape ?? {})) });
-  ug(nh)({ extract: (a2) => (b2, c2) => Ug(a2, b2, c2, true), exclude: (a2) => (b2, c2) => Ug(a2, b2, c2, false) });
-  ug(Ph)({ implement: Tg(false, "implement"), implementAsync: Tg(true, "implementAsync"), input: (a2) => (b2, c2) => {
-    let d2 = b2;
-    if (Array.isArray(b2)) d2 = Ai(b2, c2);
-    return kc(a2, { input: d2 });
+  ug(nh)({ extract: (a2) => (b2, c) => Ug(a2, b2, c, true), exclude: (a2) => (b2, c) => Ug(a2, b2, c, false) });
+  ug(Ph)({ implement: Tg(false, "implement"), implementAsync: Tg(true, "implementAsync"), input: (a2) => (b2, c) => {
+    let d = b2;
+    if (Array.isArray(b2)) d = Ai(b2, c);
+    return kc(a2, { input: d });
   }, output: (a2) => (b2) => kc(a2, { output: b2 }) });
   [yh, Ah, Eh, Bh, Dh, Ch, Gh, Oh, Lh].forEach((a2) => Td(a2.prototype, "unwrap", ji, true));
   Td(Bh.prototype, "removeDefault", ji, true);
@@ -3000,8 +2988,7 @@ var Vj = (a) => {
     }
   }
   delete a.anyOf;
-  if (c.length == 1) a.type = c[0];
-  else a.type = c;
+  a.type = c.length == 1 ? c[0] : c;
 };
 var Wj = (a, b) => {
   for (let c in a) if (c != "$ref" && c != "allOf" && c in b && JSON.stringify(a[c]) == JSON.stringify(b[c])) delete a[c];
@@ -3182,8 +3169,7 @@ var ek = (a, b, c, d, e) => {
   }
   if (h == "number") {
     let a2 = g.format, b2 = g.minimum, e2 = g.maximum, f2 = g.exclusiveMinimum, h2 = g.exclusiveMaximum;
-    if (typeof a2 == "string" && a2.includes("int")) d.type = "integer";
-    else d.type = "number";
+    d.type = typeof a2 == "string" && a2.includes("int") ? "integer" : "number";
     let i2 = Ej(c);
     if (typeof f2 == "number" && f2 >= yj(b2, -1 / 0)) {
       if (i2) {
@@ -3224,8 +3210,7 @@ var ek = (a, b, c, d, e) => {
   }
   if (h == "enum") {
     let a2 = Ud(b.entries), c2 = dk(a2);
-    if (c2 == "number" || c2 == "string" || a2.length == 0) if (a2.length == 0) d.type = "string";
-    else d.type = c2;
+    if (c2 == "number" || c2 == "string" || a2.length == 0) d.type = a2.length == 0 ? "string" : c2;
     d.enum = a2;
     return;
   }
@@ -3242,8 +3227,7 @@ var ek = (a, b, c, d, e) => {
     }
     if (f2.length == 1) {
       let a2 = f2[0];
-      if (a2 === null) d.type = "null";
-      else d.type = typeof a2;
+      d.type = a2 === null ? "null" : typeof a2;
       if (Ej(c)) d.enum = [a2];
       else d.const = a2;
     } else if (f2.length > 1) {

@@ -1,34 +1,51 @@
+# Compiler-owned delivery; no JavaScript post-minifier or export rewriting.
+[policy]
+version = 3
 [package]
 name = "zodlil"
 version = "4.4.3"
 abi = 1
 entry = "src/entry.lil"
-
 [optimization]
 preset = "maximum"
 call_site_specialization = true
-
 [javascript]
-# 8.89: `assume_pure_property_reads` is UNSOUND for this port and must stay off.
-# zod exposes `minLength`, `maxLength` and `format` as getters on its schema
-# objects; assuming a property read is pure lets those reads be elided, and the
-# getters then never run -- `expected undefined to deeply equal 5n`. Three of the
-# 1,353 upstream tests catch it.
+# Plain-data reads must not run getters; disable for effectful accessor integrations.
 assume_pure_property_reads = false
 priority = "size-first"
-optimization_level = 15
-cost_model = "brotli"
+# Assumes unpatched platform builtins; disable when consumers replace them.
 assume_pristine_builtins = true
-strip_console = true
-candidate_search = "production"
-candidate_limit = 1536
-candidate_byte_budget = 1048576
-candidate_beam_width = 12
+# Remove debugLog instrumentation; ordinary print and host console effects remain.
+strip_debug = true
 
+# Preserved effort setting. 13 favors size; 14/15 allow more expensive marginal searches.
+[effort]
+level = 15
+
+# Optimize the delivered files for this codec, independently of raw/gzip objectives.
+[objective]
+codecs = "brotli"
 [mangle]
 identifiers = true
 properties = true
 pool_strings = true
 
-[bundle]
-mode = "single"
+[delivery]
+mode = "split"
+directory = "."
+host_modules = "embed"
+entry_names = "[name].js"
+chunk_names = "chunks/[name]-[index].js"
+[delivery.entries]
+index = "src/package/index.lil"
+core = "src/package/core.lil"
+mini = "src/package/mini.lil"
+locales = "src/package/locales.lil"
+compat = "src/package/compat.lil"
+"zod.core" = "scripts/zod.lil"
+
+[[delivery.also]]
+name = "cjs"
+format = "cjs"
+entry_names = "[name].cjs"
+chunk_names = "chunks/[name]-[index].cjs"

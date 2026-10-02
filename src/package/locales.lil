@@ -1,0 +1,3 @@
+import {z} from "./index.lil";
+export JsValue default=z["locales"];
+export JsValue en=default["en"];

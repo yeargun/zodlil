@@ -1,78 +1,33 @@
-import assert from "node:assert/strict"
-import { createHash } from "node:crypto"
-import { existsSync, readFileSync, statSync } from "node:fs"
-import { describe, it } from "node:test"
-import { dirname, resolve } from "node:path"
-import { fileURLToPath } from "node:url"
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
-const site = resolve(root, "_site")
-const results = () => JSON.parse(readFileSync(resolve(site, "results.json"), "utf8"))
-const bytes = (path) => statSync(resolve(root, path)).size
-
-describe("github pages artifact", () => {
-  it("ships the landing page, compiled core, and results", () => {
-    for (const path of ["index.html", "styles.css", "app.js", "compiler-run.js", "results.json", "zod.js", ".nojekyll"]) {
-      assert.equal(existsSync(resolve(site, path)), true, path)
-    }
-  })
-
-  it("compares the shipped package against the smallest official minifier, per codec", () => {
-    const html = readFileSync(resolve(site, "index.html"), "utf8")
-    assert.match(html, /@itslil\/zod/)
-    assert.match(html, /Brotli-11/)
-    assert.match(html, /vs bar/)
-    assert.match(html, /vs bar raw \/ gzip \/ Brotli/)
-    assert.match(html, /English\s+locale only/)
-    assert.match(html, /Node/)
-    const { size, bars, tests, throughput } = results()
-    const lane = (id) => size.find((row) => row.id === id)
-    const shipped = size.find((row) => row.primary)
-    assert.equal(shipped.id, "itslil-closer")
-    const minified = size.filter((row) => row.official && row.id !== "official")
-    assert.ok(minified.length >= 5)
-    for (const metric of ["brotli11", "gzip9", "raw"]) {
-      const bar = lane(bars[metric])
-      assert.ok(bar?.official, metric)
-      assert.equal(bar[metric], Math.min(...minified.map((row) => row[metric])), metric)
-    }
-    assert.equal(size.find((row) => row.baseline)?.id, bars.brotli11)
-    // the receipts describe the committed dist
-    assert.equal(lane("itslil-core").raw, bytes("dist/zod.core.js"))
-    assert.equal(shipped.raw, bytes("dist/zod.core.js") + bytes("dist/compat.js") + bytes("dist/index.js"))
-    assert.ok(lane("itslil-gzip") && lane("itslil-raw"))
-    assert.ok(shipped.brotli11 < lane("itslil-normal").brotli11)
-    assert.equal(tests.passed, 1353)
-    assert.equal(tests.total, 1353)
-    const chromium = throughput.chromium ?? throughput
-    for (const rows of [chromium, throughput.node]) {
-      assert.ok(rows.find((row) => row.id === "itslil-closer"))
-      assert.ok(rows.find((row) => row.id === "itslil-normal"))
-    }
-  })
-
-  it("labels every delivered file by what wrote it", () => {
-    const html = readFileSync(resolve(site, "index.html"), "utf8")
-    assert.match(html, /post-processed\s+by esbuild, not compiler-written/)
-    const { delivered, size } = results()
-    const file = (path) => delivered.find((row) => row.path === path)
-    assert.equal(file("dist/zod.core.js").writtenBy, "compiler")
-    assert.equal(file("dist/index.cjs").writtenBy, "post-processed by esbuild, not compiler-written")
-    for (const row of delivered) assert.equal(row.raw, bytes(row.path), row.path)
-    assert.equal(size.find((row) => row.id === "itslil-esbuild-bundle").postProcessedBy, "esbuild")
-  })
-
-  it("shows the compile of the shipped file: compiler, binary and wall time", () => {
-    const html = readFileSync(resolve(site, "index.html"), "utf8")
-    assert.match(html, /id="compiler-run"/)
-    assert.match(html, /Compile<br \/>time/)
-    const { compiler, previousRelease } = results()
-    assert.match(compiler.revision, /^[0-9a-f]{7,40}$/)
-    assert.match(compiler.binarySha256, /^[0-9a-f]{64}$/)
-    assert.ok(compiler.compileWallMs.length >= 3)
-    for (const ms of compiler.compileWallMs) assert.ok(Number.isFinite(ms) && ms > 0)
-    const shipped = createHash("sha256").update(readFileSync(resolve(site, "zod.js"))).digest("hex")
-    assert.equal(compiler.outputSha256, shipped, "the recorded compile is of the shipped zod.core.js")
-    assert.ok(previousRelease.package.brotli11 > 0 && previousRelease.core.brotli11 > 0)
-  })
-})
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {readFileSync,existsSync} from 'node:fs';
+import {dirname,resolve,join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {verifyComparison} from '../scripts/build-comparison.mjs';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+test('three independently targeted builds have current artifact and config hashes',()=>{
+ const data=verifyComparison(root);
+ assert.deepEqual(data.objectives.map(row=>row.objective),['raw','gzip','brotli']);
+ for(const row of data.objectives){
+  assert.equal(row.metric,{raw:'raw',gzip:'gzip9',brotli:'brotli11'}[row.objective]);
+  assert.equal(row.ratio,row.lilscript.sizes[row.metric]/row.original.sizes[row.metric]);
+  assert.equal(row.original.sizes[row.metric],Math.min(...data.minifiers.map(m=>m.sizes[row.metric])));
+  assert.ok(row.lilscript.buildSeconds>0);assert.ok(row.original.buildSeconds>0);
+ }
+});
+test('public comparison describes current versus original and distinguishes build stages',()=>{
+ const html=readFileSync(join(root,'site/index.html'),'utf8');
+ const module=readFileSync(join(root,'site/objective-comparison.js'),'utf8');
+ assert.match(html,/id="compression-comparison"/);assert.match(html,/id="objective-build-times"/);
+ assert.match(module,/separate compilation targeting/);assert.match(module,/upstream package from its original TypeScript sources/);
+ assert.doesNotMatch(html,/previous release|previous version|old compiler|earlier compiler|last release/i);
+ const data=JSON.parse(readFileSync(join(root,'site/comparison.json'),'utf8'));
+ assert.equal(data.schemaVersion,4);assert.ok(data.validation.checks>0);
+ assert.ok(data.upstream.sharedExports.length>0);assert.ok(data.minifiers.length>=2);
+});
+test('built Pages artifact contains the current data and measured downloads',()=>{
+ const data=JSON.parse(readFileSync(join(root,'site/comparison.json'),'utf8'));
+ assert.equal(readFileSync(join(root,'_site/comparison.json'),'utf8'),readFileSync(join(root,'site/comparison.json'),'utf8'));
+ for(const row of data.objectives)for(const item of [row.lilscript,row.original])assert.ok(existsSync(join(root,'_site',item.artifact)));
+ for(const file of ['app.js','styles.css','objective-comparison.js','objective-comparison.css','.nojekyll'])assert.ok(existsSync(join(root,'_site',file)),file);
+});

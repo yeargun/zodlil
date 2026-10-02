@@ -1,304 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="@itslil/zod is Zod 4.4.3 reimplemented in LilScript. Official classic tests, size against Oxc, Terser and esbuild, compile time, and Node plus Chromium parse speed versus zod@4.4.3."
-    />
-    <meta name="theme-color" content="#3068f4" />
-    <title>itslil/zod — Zod 4.4.3 through LilScript</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <script type="module" src="./app.js"></script>
-  </head>
-  <body>
-    <div class="progress" aria-hidden="true"></div>
-    <header class="nav shell">
-      <a class="wordmark" href="#top" aria-label="itslil/zod home">
-        <span class="mark">z</span>
-        <span>itslil/zod</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="#performance">performance</a>
-        <a href="#lab">playground</a>
-        <a href="#evidence">size</a>
-        <a href="#compiler">compiler</a>
-        <a href="https://github.com/yeargun/zodlil">GitHub ↗</a>
-      </nav>
-    </header>
-
-    <main id="top">
-      <section class="hero shell">
-        <div class="hero-copy">
-          <p class="eyebrow"><span class="live-dot"></span> Zod 4.4.3 · LilScript port · @itslil/zod</p>
-          <h1>Zod,<br /><em>compiled.</em></h1>
-          <p class="lede">
-            The <code>zod@4.4.3</code> classic API, rewritten in LilScript and built by the one
-            LilScript compiler, with nothing minifying after it. Internals are mangled; the public
-            API stays named. The size bar is upstream zod with the same public surface and the
-            English locale only, minified by Oxc, Terser and esbuild: the smallest of the three.
-          </p>
-          <div class="install-row">
-            <code>npm install @itslil/zod</code>
-            <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
-          </div>
-          <div class="hero-actions">
-            <a class="button primary" href="#performance">Playwright + Node</a>
-            <a class="button secondary" href="https://www.npmjs.com/package/@itslil/zod">npm ↗</a>
-          </div>
-        </div>
-        <div class="scoreboard" aria-label="Compression and performance results">
-          <div class="score-main">
-            <span class="score-label">Brotli-11 vs the smallest minifier of official zod</span>
-            <strong id="hero-ratio">—<span></span></strong>
-            <p id="hero-bytes"></p>
-          </div>
-          <div class="score-grid">
-            <div><strong id="hero-tests">—</strong><span>classic tests passing</span></div>
-            <div><strong id="hero-gzip">—</strong><span>gzip-9 vs its bar</span></div>
-            <div><strong id="hero-raw">—</strong><span>raw vs its bar (raw objective)</span></div>
-            <div><strong id="hero-speed">—</strong><span>Chromium parse vs official</span></div>
-            <div><strong id="hero-compile">—</strong><span>compile time</span></div>
-            <div><strong id="hero-release">—</strong><span>Brotli vs last release</span></div>
-          </div>
-          <p class="score-note">
-            Ours is what <code>import { z } from "@itslil/zod"</code> loads, each file compressed
-            as served. Sizes are <code>lilscript-codec</code> raw / gzip-9 / Brotli-11. Ratios are
-            ours / the bar (lower is smaller).
-          </p>
-        </div>
-      </section>
-
-      <section class="ticker" aria-label="Supported APIs">
-        <div>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="zodlil: current LilScript raw, gzip and Brotli objective builds versus minified upstream, with build times and live examples." name="description"/>
+<meta content="#3068f4" name="theme-color"/>
+<title>itslil/zod — Zod 4.4.3 through LilScript</title>
+<link href="./styles.css" rel="stylesheet"/>
+<script src="./app.js" type="module"></script>
+<link href="./objective-comparison.css" rel="stylesheet"/></head>
+<body>
+<div aria-hidden="true" class="progress"></div>
+<header class="nav shell">
+<a aria-label="itslil/zod home" class="wordmark" href="#top">
+<span class="mark">z</span>
+<span>itslil/zod</span>
+</a>
+<nav aria-label="Main navigation">
+<a href="#compiler">build time</a>
+<a href="#lab">playground</a>
+<a href="#evidence">size</a>
+<a href="#compiler">build time</a>
+<a href="https://github.com/yeargun/zodlil">GitHub ↗</a>
+</nav>
+</header>
+<main id="top">
+<section class="hero shell">
+<div class="hero-copy">
+<p class="eyebrow"><span class="live-dot"></span> Zod 4.4.3 · LilScript port · @itslil/zod</p>
+<h1>Zod,<br/><em>compiled.</em></h1>
+<p class="lede">The current public ESM entry is compared with upstream Zod using the shared exported API and the same dependency boundary.</p>
+<div class="install-row">
+<code>npm install @itslil/zod</code>
+<button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
+</div>
+<div class="hero-actions">
+<a class="button primary" href="#compiler">build time</a>
+<a class="button secondary" href="https://www.npmjs.com/package/@itslil/zod">npm ↗</a>
+</div>
+</div>
+<div aria-label="Compression and performance results" class="scoreboard">
+<div class="score-main">
+<span class="score-label">Current LilScript versus minified original · portable ESM</span>
+<strong id="hero-ratio">—<span></span></strong>
+<p id="hero-bytes"></p>
+</div>
+<div class="score-grid">
+<div><strong id="hero-tests">—</strong><span>current artifact checks</span></div>
+<div><strong id="hero-gzip">—</strong><span>gzip-9 vs minified original</span></div>
+<div><strong id="hero-raw">—</strong><span>raw vs minified original (raw objective)</span></div>
+<div><strong id="hero-speed">—</strong><span>Chromium parse vs official</span></div>
+<div><strong id="hero-compile">—</strong><span>compile time</span></div>
+<div><strong id="hero-release">—</strong><span>Brotli versus original</span></div>
+</div>
+<p class="score-note">Raw, gzip and Brotli each use a separate LilScript compilation targeting that objective. The original uses the same export and dependency boundary, then a JavaScript minifier.</p>
+</div>
+</section>
+<section aria-label="Supported APIs" class="ticker">
+<div>
           string <span>✦</span> number <span>✦</span> object <span>✦</span> array <span>✦</span> enum
           <span>✦</span> union <span>✦</span> optional <span>✦</span> coerce <span>✦</span> refine
           <span>✦</span> pipe <span>✦</span> lazy <span>✦</span> ZodError
         </div>
-      </section>
-
-      <section class="performance shell" id="performance">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Measured in Chromium and Node</p>
-            <h2>Parse,<br />not inferred.</h2>
-          </div>
-          <p>
-            Same 48-object batch, 400 rounds per sample. Quiet median after discarding the first 3.
-            Output must match official <code>zod@4.4.3</code>. Ratio is lane / official (lower is faster).
-            The port parses several times slower than official zod: the rewrite dropped the fast paths
-            that were JavaScript source compiled with <code>new Function</code> (forbidden under a
-            strict CSP), and upstream compiles its object parsers that way. On this shared host,
-            back-to-back runs disagree by up to 2× on the ratio, so read it as an order of magnitude.
-            Size comes first in this port.
-          </p>
-        </div>
-        <div class="perf-cards" id="perf-cards"></div>
-        <div class="table-wrap light">
-          <table>
-            <thead>
-              <tr>
-                <th>Lane</th>
-                <th>Chromium</th>
-                <th>vs official</th>
-                <th>Node</th>
-                <th>vs official</th>
-              </tr>
-            </thead>
-            <tbody id="perf-body"></tbody>
-          </table>
-        </div>
-        <p class="perf-note" id="perf-note"></p>
-      </section>
-
-      <section class="lab shell" id="lab">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">The compiled runtime, in the browser</p>
-            <h2>Live<br />parse.</h2>
-          </div>
-          <p>
+</section>
+<section class="lab shell" id="lab">
+<div class="section-heading">
+<div>
+<p class="eyebrow">The compiled runtime, in the browser</p>
+<h2>Live<br/>parse.</h2>
+</div>
+<p>
             Left is JSON. Right is <code>.parse()</code> from <code>@itslil/zod</code> or official
             <code>zod@4.4.3</code>. Both must produce the same object.
           </p>
-        </div>
-        <div class="playground">
-          <div class="play-toolbar">
-            <label>
-              <input type="radio" name="engine" value="lil" checked />
+</div>
+<div class="playground">
+<div class="play-toolbar">
+<label>
+<input checked="" name="engine" type="radio" value="lil"/>
               @itslil/zod
             </label>
-            <label>
-              <input type="radio" name="engine" value="official" />
+<label>
+<input name="engine" type="radio" value="official"/>
               zod@4.4.3
             </label>
-            <button type="button" id="race">race 400×</button>
-            <span id="race-out"></span>
-          </div>
-          <div class="play-grid">
-            <textarea id="source" spellcheck="false" aria-label="JSON input"></textarea>
-            <pre id="preview" class="lab-out"></pre>
-          </div>
-        </div>
-      </section>
-
-      <section class="evidence" id="evidence">
-        <div class="shell">
-          <div class="section-heading inverse">
-            <div>
-              <p class="eyebrow">The receipts</p>
-              <h2>Raw, gzip,<br />and Brotli.</h2>
-            </div>
-            <p>
-              Official 4.4.3 restricted to the 181 <code>z</code> members this port shares, English
-              locale only, bundled by esbuild, then Oxc, Terser and esbuild. The smallest lane per
-              codec is the bar. Nothing minifies our files after the compiler. Ratios are lane / bar.
-            </p>
-          </div>
-
-          <div class="codec-block">
-            <h3>Brotli-11</h3>
-            <p class="codec-lead">The wire number, and this port's objective (<code>lilscript.toml</code>). The shipped row is the published package.</p>
-            <div class="total-bar" id="bar-brotli"></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Lane</th>
-                    <th>Brotli-11</th>
-                    <th>vs bar</th>
-                  </tr>
-                </thead>
-                <tbody id="body-brotli"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="codec-block">
-            <h3>gzip-9</h3>
-            <p class="codec-lead">Same artifacts, gzip-9, plus the build with the gzip objective (<code>lilscript.gzip.toml</code>).</p>
-            <div class="total-bar" id="bar-gzip"></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Lane</th>
-                    <th>gzip-9</th>
-                    <th>vs bar</th>
-                  </tr>
-                </thead>
-                <tbody id="body-gzip"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="codec-block">
-            <h3>Raw</h3>
-            <p class="codec-lead">Uncompressed bytes, plus the build with the raw objective (<code>lilscript.bytes.toml</code>).</p>
-            <div class="total-bar" id="bar-raw"></div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Lane</th>
-                    <th>Raw</th>
-                    <th>vs bar</th>
-                  </tr>
-                </thead>
-                <tbody id="body-raw"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="codec-block">
-            <h3>All three</h3>
-            <p class="codec-lead">One row per lane, every codec, each against its codec's bar.</p>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Lane</th>
-                    <th>Raw</th>
-                    <th>gzip-9</th>
-                    <th>Brotli-11</th>
-                    <th>vs bar raw / gzip / Brotli</th>
-                  </tr>
-                </thead>
-                <tbody id="body-matched"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="codec-block">
-            <h3>Delivered files</h3>
-            <p class="codec-lead">
-              Every JavaScript file the package ships, and what wrote it. Only
-              <code>zod.core.js</code> is compiler-written. <code>index.cjs</code> is post-processed
-              by esbuild, not compiler-written: the compiler has no CommonJS target yet.
-            </p>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>File</th>
-                    <th>Written by</th>
-                    <th>Raw</th>
-                    <th>gzip-9</th>
-                    <th>Brotli-11</th>
-                  </tr>
-                </thead>
-                <tbody id="body-delivered"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="method-note">
-            <p>
-              <strong>How to read the rows.</strong> The shipped row is <code>zod.core.js</code>,
-              <code>compat.js</code> and <code>index.js</code>, each compressed on its own, as a CDN
-              serves them. The esbuild bundle row is the conservative figure: esbuild re-prints our
-              already-minified core when it bundles the package. The mangle-off row compiles the same
-              source with <code>lilscript.nomangle.toml</code>. The bar's <code>z.core</code> is
-              upstream's whole core namespace, of which the port offers 42 names, so the bar carries
-              about 1.2K Brotli of surface the port does not ship; the port's own additions, such as
-              <code>z.visit</code>, count against it.
-            </p>
-            <a href="https://github.com/yeargun/zodlil#size">README ↗</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="compiler-progress shell" id="compiler">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">One compiler, timed</p>
-            <h2>Compile<br />time.</h2>
-          </div>
-          <p>
-            Wall time of each compile of <code>scripts/zod.lil</code> with the shipped config, on
-            the host that built this release. Every run reproduces the shipped
-            <code>dist/zod.core.js</code> byte for byte. The previous release (2026-09-24) was compiled
-            by LilScript <code>aa2052f0</code>.
-          </p>
-        </div>
-        <div class="compiler-comparison" id="compiler-run"></div>
-      </section>
-
-      <section class="closing shell">
-        <p class="eyebrow">Zero runtime dependencies</p>
-        <h2>Install the<br />current port.</h2>
-        <div class="install-row large">
-          <code>npm install @itslil/zod</code>
-          <button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
-        </div>
-      </section>
-    </main>
-
-    <footer class="shell">
-      <span>@itslil/zod · MIT</span>
-      <span>Zod 4.4.3 rewritten in LilScript — not affiliated with Colin McDonnell</span>
-      <a href="https://github.com/yeargun/zodlil">source ↗</a>
-    </footer>
-  </body>
+<button id="race" type="button">race 400×</button>
+<span id="race-out"></span>
+</div>
+<div class="play-grid">
+<textarea aria-label="JSON input" id="source" spellcheck="false"></textarea>
+<pre class="lab-out" id="preview"></pre>
+</div>
+</div>
+</section>
+<section class="objective-section shell" id="evidence"><p class="eyebrow">Current library · original minified</p><h2>Three objectives.<br/>Measured separately.</h2><div id="compression-comparison"></div></section><section class="objective-section shell" id="compiler"><p class="eyebrow">Same machine · sequential builds</p><h2>Build time.</h2><div id="objective-build-times"></div></section>
+<section class="closing shell">
+<p class="eyebrow">Zero runtime dependencies</p>
+<h2>Install the<br/>current port.</h2>
+<div class="install-row large">
+<code>npm install @itslil/zod</code>
+<button class="copy" data-copy="npm install @itslil/zod" type="button">copy</button>
+</div>
+</section>
+</main>
+<footer class="shell">
+<span>@itslil/zod · MIT</span>
+<span>Zod 4.4.3 rewritten in LilScript — not affiliated with Colin McDonnell</span>
+<a href="https://github.com/yeargun/zodlil">source ↗</a>
+</footer>
+</body>
 </html>

@@ -1,227 +1,442 @@
 {
-  "schemaVersion": 2,
-  "measuredAt": "2026-09-27T16:36:06Z",
+  "schemaVersion": 4,
   "name": "zodlil",
+  "package": "@itslil/zod",
+  "measuredAt": "2026-10-03T02:05:49.048828+03:00",
   "compiler": {
-    "commit": "249686599dc3bf1b6bf70dc9a030081b755bbb24",
-    "sha256": "47048e41164027e92d3bf1d1840d8d83e04c60532c031ceb3346222e194b3041"
+    "baseRevision": "f7d29bd9",
+    "binarySha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+    "hasLocalSourceChanges": true
   },
   "upstream": {
     "package": "zod",
     "version": "4.4.3",
-    "repository": "https://github.com/colinhacks/zod.git",
-    "commit": "f3c9ec03ba7a28ae72d25cc295f38674bee0f559"
+    "external": [
+      "node:module",
+      "zod/v4/locales"
+    ],
+    "sharedExports": [
+      "NEVER",
+      "TimePrecision",
+      "ZodAny",
+      "ZodArray",
+      "ZodBigInt",
+      "ZodBoolean",
+      "ZodCatch",
+      "ZodCodec",
+      "ZodCustom",
+      "ZodDate",
+      "ZodDefault",
+      "ZodDiscriminatedUnion",
+      "ZodEnum",
+      "ZodError",
+      "ZodExactOptional",
+      "ZodFile",
+      "ZodFunction",
+      "ZodISODate",
+      "ZodISODateTime",
+      "ZodISODuration",
+      "ZodISOTime",
+      "ZodIntersection",
+      "ZodIssueCode",
+      "ZodLazy",
+      "ZodLiteral",
+      "ZodMap",
+      "ZodNaN",
+      "ZodNever",
+      "ZodNonOptional",
+      "ZodNull",
+      "ZodNullable",
+      "ZodNumber",
+      "ZodObject",
+      "ZodOptional",
+      "ZodPipe",
+      "ZodPrefault",
+      "ZodPreprocess",
+      "ZodPromise",
+      "ZodReadonly",
+      "ZodRealError",
+      "ZodRecord",
+      "ZodSet",
+      "ZodString",
+      "ZodSuccess",
+      "ZodSymbol",
+      "ZodTemplateLiteral",
+      "ZodTransform",
+      "ZodTuple",
+      "ZodType",
+      "ZodUndefined",
+      "ZodUnion",
+      "ZodUnknown",
+      "ZodVoid",
+      "ZodXor",
+      "_default",
+      "any",
+      "array",
+      "base64",
+      "base64url",
+      "bigint",
+      "boolean",
+      "catch",
+      "check",
+      "cidrv4",
+      "cidrv6",
+      "codec",
+      "coerce",
+      "config",
+      "core",
+      "cuid",
+      "cuid2",
+      "custom",
+      "date",
+      "decode",
+      "decodeAsync",
+      "default",
+      "describe",
+      "discriminatedUnion",
+      "e164",
+      "email",
+      "emoji",
+      "encode",
+      "encodeAsync",
+      "enum",
+      "exactOptional",
+      "file",
+      "flattenError",
+      "float32",
+      "float64",
+      "formatError",
+      "fromJSONSchema",
+      "function",
+      "globalRegistry",
+      "guid",
+      "hash",
+      "hex",
+      "hostname",
+      "httpUrl",
+      "instanceof",
+      "int",
+      "int32",
+      "int64",
+      "intersection",
+      "invertCodec",
+      "ipv4",
+      "ipv6",
+      "iso",
+      "json",
+      "jwt",
+      "keyof",
+      "ksuid",
+      "lazy",
+      "literal",
+      "locales",
+      "looseObject",
+      "looseRecord",
+      "mac",
+      "map",
+      "maxLength",
+      "meta",
+      "minLength",
+      "nan",
+      "nanoid",
+      "nativeEnum",
+      "never",
+      "nonoptional",
+      "null",
+      "nullable",
+      "number",
+      "object",
+      "optional",
+      "parse",
+      "parseAsync",
+      "partialRecord",
+      "pipe",
+      "prefault",
+      "preprocess",
+      "prettifyError",
+      "promise",
+      "property",
+      "readonly",
+      "record",
+      "refine",
+      "regexes",
+      "registry",
+      "safeDecode",
+      "safeDecodeAsync",
+      "safeEncode",
+      "safeEncodeAsync",
+      "safeParse",
+      "safeParseAsync",
+      "set",
+      "setErrorMap",
+      "slugify",
+      "strictObject",
+      "string",
+      "stringFormat",
+      "stringbool",
+      "success",
+      "superRefine",
+      "symbol",
+      "templateLiteral",
+      "toJSONSchema",
+      "transform",
+      "treeifyError",
+      "trim",
+      "tuple",
+      "uint32",
+      "uint64",
+      "ulid",
+      "undefined",
+      "union",
+      "unknown",
+      "url",
+      "util",
+      "uuid",
+      "uuidv4",
+      "uuidv6",
+      "uuidv7",
+      "void",
+      "xid",
+      "xor",
+      "z"
+    ],
+    "excludedExports": [
+      "$brand",
+      "$input",
+      "$output",
+      "ZodBase64",
+      "ZodBase64URL",
+      "ZodBigIntFormat",
+      "ZodCIDRv4",
+      "ZodCIDRv6",
+      "ZodCUID",
+      "ZodCUID2",
+      "ZodCustomStringFormat",
+      "ZodE164",
+      "ZodEmail",
+      "ZodEmoji",
+      "ZodFirstPartyTypeKind",
+      "ZodGUID",
+      "ZodIPv4",
+      "ZodIPv6",
+      "ZodJWT",
+      "ZodKSUID",
+      "ZodMAC",
+      "ZodNanoID",
+      "ZodNumberFormat",
+      "ZodStringFormat",
+      "ZodULID",
+      "ZodURL",
+      "ZodUUID",
+      "ZodXID",
+      "_ZodString",
+      "__esModule",
+      "_function",
+      "clone",
+      "endsWith",
+      "getErrorMap",
+      "gt",
+      "gte",
+      "includes",
+      "length",
+      "lowercase",
+      "lt",
+      "lte",
+      "maxSize",
+      "mime",
+      "minSize",
+      "multipleOf",
+      "negative",
+      "nonnegative",
+      "nonpositive",
+      "normalize",
+      "nullish",
+      "overwrite",
+      "positive",
+      "regex",
+      "size",
+      "startsWith",
+      "toLowerCase",
+      "toUpperCase",
+      "uppercase"
+    ],
+    "additionalExports": [
+      "compile",
+      "creditCard",
+      "deepPartial",
+      "getDiscriminatedOption",
+      "properties",
+      "visit"
+    ],
+    "resolution": {
+      "platform": "neutral",
+      "conditions": [
+        "production"
+      ],
+      "mainFields": [
+        "module",
+        "main"
+      ],
+      "target": "es2020",
+      "defines": {
+        "process.env.NODE_ENV": "production"
+      }
+    }
   },
-  "scope": "zod@4.4.3's z restricted to the 181 members the port shares, English locale only, against the @itslil/zod package's ESM as it loads (zod.core.js, compat.js, index.js). Original ESM assembled from the pinned Git source build.",
-  "compatibility": "Official classic tests: 1353/1353 pass.",
-  "tests": {
-    "pass": 1353,
-    "total": 1353
-  },
-  "buildComplete": true,
+  "scope": "Node ESM package-root API, including compatibility helpers. The optional zod/v4/locales provider is external on both sides; Node builtins are excluded. The original locale-index imports use that same external provider. These sizes exclude the locale provider, so they are not total application download sizes. The browser playground uses the separately compiled browser core.",
   "machine": {
-    "provider": "Azure",
-    "instanceClass": "Standard_B8als_v2",
     "cpu": "AMD EPYC 7763 64-Core Processor",
     "logicalCpus": 8,
-    "memoryBytes": 16706420736,
-    "os": "Ubuntu 24.04.3 LTS",
-    "kernel": "7.0.0-1014-azure",
-    "node": "v24.11.1",
-    "rayonThreads": 8,
-    "loadAtStart": [
-      4.2822265625,
-      6.0341796875,
-      8.31396484375
-    ],
-    "loadAtEnd": [
-      15.04052734375,
-      10.1533203125,
-      9.529296875
-    ]
+    "memoryGiB": 15.6,
+    "os": "Linux-7.0.0-1014-azure-x86_64-with-glibc2.39",
+    "node": "v20.19.0"
   },
-  "build": {
-    "compilerSeconds": 5.591519832611084,
-    "compilerInvocations": 1,
-    "compilerScope": "Wall time of the compiler invocation in one package build (scripts/zod.lil with lilscript.toml), median of three clean builds.",
-    "primaryCompilerSeconds": 5.591519832611084,
-    "primaryCompilerRange": [
-      5.424484729766846,
-      6.790278673171997
-    ],
-    "primaryCompilerScope": "The lilscript.toml invocation that writes the published dist/zod.core.js, median of three clean builds.",
-    "packageSeconds": 6.299483650014736,
-    "originalSeconds": 34.09708702296484,
-    "originalEsmSeconds": 2.878994007,
-    "packageScope": "node scripts/build.mjs --compile",
-    "originalScope": "corepack pnpm --filter zod build",
-    "protocol": {
-      "repetitions": 3,
-      "cleanOutputs": true,
-      "dependencyInstallationTimedSeparately": true,
-      "sourceArchives": "Pinned Git checkouts; original repository package build commands, followed by production ESM assembly.",
-      "workerUse": "Both implementations use the same machine and Node version. The machine is a burstable Azure VM that also runs unrelated jobs; timings are contextual wall times, with CPU time recorded separately."
+  "objectives": [
+    {
+      "objective": "raw",
+      "metric": "raw",
+      "lilscript": {
+        "artifact": "./comparison-artifacts/lilscript-raw.mjs",
+        "sizes": {
+          "raw": 87282,
+          "gzip9": 33246,
+          "brotli11": 29642
+        },
+        "sha256": "fd27a676202f2bebe414234f15223728a5a68bc1f0aaa8e477d39392155b33cd",
+        "buildSeconds": 12.687424546998955,
+        "config": "./comparison-artifacts/lilscript-raw.toml",
+        "configSha256": "6528e69627d7b979dc8398cf9c5fbf0e9e0ece3ce3358847abe6733bccf5a988"
+      },
+      "original": {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "artifact": "./comparison-artifacts/original-oxc.mjs",
+        "sizes": {
+          "raw": 132160,
+          "gzip9": 35532,
+          "brotli11": 29956
+        },
+        "sha256": "917df0bdc774e0718428456ad45363eba52c752fdd5f33f600461768601e85a9",
+        "buildSeconds": 0.21357657300000005
+      },
+      "ratio": 0.6604267554479419
+    },
+    {
+      "objective": "gzip",
+      "metric": "gzip9",
+      "lilscript": {
+        "artifact": "./comparison-artifacts/lilscript-gzip.mjs",
+        "sizes": {
+          "raw": 92805,
+          "gzip9": 32437,
+          "brotli11": 28797
+        },
+        "sha256": "8b6fdadefd2532e9962b6407fc8c9c3d3c0bfed438264663e2f4689f0dfd1d07",
+        "buildSeconds": 11.78674253400095,
+        "config": "./comparison-artifacts/lilscript-gzip.toml",
+        "configSha256": "e772fd7d99ee48cce291bab06416076542e8d9422875122741d0653e755f3a90"
+      },
+      "original": {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "artifact": "./comparison-artifacts/original-oxc.mjs",
+        "sizes": {
+          "raw": 132160,
+          "gzip9": 35532,
+          "brotli11": 29956
+        },
+        "sha256": "917df0bdc774e0718428456ad45363eba52c752fdd5f33f600461768601e85a9",
+        "buildSeconds": 0.21357657300000005
+      },
+      "ratio": 0.9128954182145671
+    },
+    {
+      "objective": "brotli",
+      "metric": "brotli11",
+      "lilscript": {
+        "artifact": "./comparison-artifacts/lilscript-brotli.mjs",
+        "sizes": {
+          "raw": 93824,
+          "gzip9": 32537,
+          "brotli11": 28807
+        },
+        "sha256": "8199e53feb76893444e631fda5fa1e48cbefa69d8e952a0f958a225cd4c82285",
+        "buildSeconds": 19.05108135900082,
+        "config": "./comparison-artifacts/lilscript-brotli.toml",
+        "configSha256": "0b3ec1393dda458d5b6684091d10618b6b4de7e59bd5dab70de7289ca5857ab2"
+      },
+      "original": {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "artifact": "./comparison-artifacts/original-oxc.mjs",
+        "sizes": {
+          "raw": 132160,
+          "gzip9": 35532,
+          "brotli11": 29956
+        },
+        "sha256": "917df0bdc774e0718428456ad45363eba52c752fdd5f33f600461768601e85a9",
+        "buildSeconds": 0.21357657300000005
+      },
+      "ratio": 0.9616437441580985
     }
-  },
-  "esm": {
-    "lilscript": {
-      "raw": 95150,
-      "gzip9": 31724,
-      "brotli11": 28132,
-      "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139",
-      "file": "./esm-comparison/lilscript.js",
-      "files": [
-        {
-          "path": "dist/zod.core.js",
-          "raw": 90385,
-          "gzip9": 30333,
-          "brotli11": 26948,
-          "sha256": "aebde8251a512ab21fd1ce7ad2c4d92039ee3d3df29e761adab52e7cd6800139"
-        },
-        {
-          "path": "dist/compat.js",
-          "raw": 769,
-          "gzip9": 398,
-          "brotli11": 314,
-          "sha256": "6d2fa816d36e9549f7d6edbaea2322f29e9992694096ddaabb015da6f13426f9"
-        },
-        {
-          "path": "dist/index.js",
-          "raw": 3996,
-          "gzip9": 993,
-          "brotli11": 870,
-          "sha256": "84667fc4d4d9e29d9271a37d2b0fb315a51e09f3bb39acb47d9bab9f674df6c1"
-        }
-      ],
-      "note": "The package's ESM as shipped, not bundled or minified: the sum of zod.core.js (compiler-written; the file linked here), compat.js and index.js, each compressed on its own."
+  ],
+  "minifiers": [
+    {
+      "tool": "Terser",
+      "version": "5.51.2",
+      "artifact": "./comparison-artifacts/original-terser.mjs",
+      "sizes": {
+        "raw": 134899,
+        "gzip9": 35926,
+        "brotli11": 30197
+      },
+      "sha256": "4feb6ef1b516215ee2366dd5f25a29a06f3c828b75384c25edc60f8d4981fb48",
+      "buildSeconds": 1.3708936820000002
     },
-    "original": {
-      "raw": 130453,
-      "gzip9": 34545,
-      "brotli11": 29667,
-      "sha256": "848344158b6de91e8f990e34ee03ae0b81e76054b5e10b9a739b24299dcfaa62",
-      "file": "./esm-comparison/original.js",
-      "note": "Terser, 3 passes, mangle on"
+    {
+      "tool": "esbuild",
+      "version": "0.28.1",
+      "artifact": "./comparison-artifacts/original-esbuild.mjs",
+      "sizes": {
+        "raw": 134942,
+        "gzip9": 36579,
+        "brotli11": 30875
+      },
+      "sha256": "cd8b6f5fa80a5abc67468857869a2aa26a866584e885111ba6724d9b290d0750",
+      "buildSeconds": 0.09790562799999998
     },
-    "originalOxc": {
-      "raw": 127716,
-      "gzip9": 34127,
-      "brotli11": 29433,
-      "sha256": "ab26f7346dccb578a2f42ad14eaf52ff77cde3ecda4ec9e94f1738eb4d9f2e55",
-      "note": "Vite 8 Oxc, mangle on"
-    },
-    "originalEsbuild": {
-      "raw": 130491,
-      "gzip9": 35240,
-      "brotli11": 30367,
-      "sha256": "e60bd2ca1119b59537b6bbfc2ba5973d2791f8a0a4762ec2295372daecb45d44",
-      "note": "esbuild --minify"
+    {
+      "tool": "Oxc",
+      "version": "via Vite 8.2.1",
+      "artifact": "./comparison-artifacts/original-oxc.mjs",
+      "sizes": {
+        "raw": 132160,
+        "gzip9": 35532,
+        "brotli11": 29956
+      },
+      "sha256": "917df0bdc774e0718428456ad45363eba52c752fdd5f33f600461768601e85a9",
+      "buildSeconds": 0.21357657300000005
     }
-  },
-  "assembly": "Original: the pinned Git source build of zod 4.4.3, bundled from the port's scripts/official-entry.mjs (the 181 z members the port shares) with zod's locales/index.js resolved to English only, by esbuild 0.28.1, then minified by Terser (3 passes, mangle), Oxc and esbuild. LilScript: dist/zod.core.js, dist/compat.js and dist/index.js exactly as the clean source build wrote them; nothing bundles or minifies them.",
-  "sourceBuild": {
-    "original": {
-      "complete": true,
-      "medianSeconds": 34.09708702296484,
-      "minimumSeconds": 29.828775617002975,
-      "maximumSeconds": 42.377051640010905,
-      "samples": [
-        {
-          "command": [
-            "corepack",
-            "pnpm",
-            "--filter",
-            "zod",
-            "build"
-          ],
-          "wallSeconds": 29.828775617002975,
-          "cpuSeconds": 32.60563,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "original-build-1.log",
-          "logSha256": "2bfeb0dfd1632168ab1063ff2766718c25931abc5eb487949c3b73177e4eb914"
-        },
-        {
-          "command": [
-            "corepack",
-            "pnpm",
-            "--filter",
-            "zod",
-            "build"
-          ],
-          "wallSeconds": 42.377051640010905,
-          "cpuSeconds": 33.57645500000002,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "original-build-2.log",
-          "logSha256": "b36a2fa1528cf69be62ec1724d6623daabcf1274765e853b0f1966de900d4fa9"
-        },
-        {
-          "command": [
-            "corepack",
-            "pnpm",
-            "--filter",
-            "zod",
-            "build"
-          ],
-          "wallSeconds": 34.09708702296484,
-          "cpuSeconds": 29.91858899999999,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "original-build-3.log",
-          "logSha256": "27ed91283c987c9538e2a977d271cc03f400963ffb9a82ad018d8cc336e09315"
-        }
-      ]
-    },
-    "lilscript": {
-      "complete": true,
-      "medianSeconds": 6.299483650014736,
-      "minimumSeconds": 6.035637906985357,
-      "maximumSeconds": 7.557339877996128,
-      "samples": [
-        {
-          "command": [
-            "bash",
-            "-c",
-            "node scripts/build.mjs --compile"
-          ],
-          "wallSeconds": 6.299483650014736,
-          "cpuSeconds": 4.808408000000002,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "lilscript-build-1.log",
-          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        },
-        {
-          "command": [
-            "bash",
-            "-c",
-            "node scripts/build.mjs --compile"
-          ],
-          "wallSeconds": 7.557339877996128,
-          "cpuSeconds": 4.831742999999994,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "lilscript-build-2.log",
-          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        },
-        {
-          "command": [
-            "bash",
-            "-c",
-            "node scripts/build.mjs --compile"
-          ],
-          "wallSeconds": 6.035637906985357,
-          "cpuSeconds": 4.5816839999999965,
-          "exitCode": 0,
-          "timedOut": false,
-          "log": "lilscript-build-3.log",
-          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      ]
-    },
-    "scopeNote": "Both timings cover each repository’s package build command; their output formats and build checks can differ.",
-    "cleanOutputs": true,
-    "installationExcluded": true
+  ],
+  "validation": {
+    "checks": 777,
+    "objectives": [
+      {
+        "objective": "raw",
+        "checks": 259,
+        "suite": "schema/output parity"
+      },
+      {
+        "objective": "gzip",
+        "checks": 259,
+        "suite": "schema/output parity"
+      },
+      {
+        "objective": "brotli",
+        "checks": 259,
+        "suite": "schema/output parity"
+      }
+    ],
+    "scope": "Main ESM entry; selected corpora and API checks, not all package formats or complete upstream equivalence."
   }
 }

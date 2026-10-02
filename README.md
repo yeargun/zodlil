@@ -80,9 +80,15 @@ Same 48-object batch, 400 rounds per sample. Quiet median after discarding the f
 This release parses more slowly than the last one (about 1.5× official in Node on this host). The rewrite dropped the fast paths that were JavaScript source compiled with `new Function`, which a strict CSP forbids; upstream compiles its object parsers that way. This port puts size first.
 
 ```sh
-PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm test
+PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm run test:build
 PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm run measure
 PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm run record:compiler
 npx playwright install chromium
 PATH="$HOME/.nvm/versions/node/v24.11.1/bin:$PATH" npm run bench
 ```
+
+### Running the checks
+
+`npm run test:build` builds the package and runs its tests. After an explicit
+`npm run build`, use `npm test` to test those artifacts without rebuilding them.
+This also keeps the development and production files available to the same suite.

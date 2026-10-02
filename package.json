@@ -119,14 +119,15 @@
     "setup": "node scripts/setup.mjs",
     "build": "node scripts/build.mjs --compile",
     "build:site": "node scripts/build-site.mjs",
-    "test": "node scripts/build.mjs --compile && node scripts/test.mjs",
+    "test": "node scripts/test.mjs",
     "test:e2e": "node e2e/run.mjs",
     "measure": "node scripts/measure.mjs",
     "record:compiler": "node scripts/record-compiler-run.mjs",
     "bench": "node e2e/run.mjs",
     "check:site": "npm run build:site && node --test test/site.test.mjs",
     "check:pack": "node scripts/check-pack.mjs",
-    "prepublishOnly": "npm test && npm run check:pack && npm run check:site"
+    "prepublishOnly": "npm run test:build && npm run check:pack && npm run check:site",
+    "test:build": "npm run build && npm test"
   },
   "devDependencies": {
     "@seriousme/openapi-schema-validator": "^2.9.1",

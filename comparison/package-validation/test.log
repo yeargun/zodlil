@@ -1,0 +1,30 @@
+Cloning into '/home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/zodlil/vendor/zod'...
+Updating files:   0% (2/742)Updating files:   1% (8/742)Updating files:   2% (15/742)Updating files:   3% (23/742)Updating files:   4% (30/742)Updating files:   5% (38/742)Updating files:   6% (45/742)Updating files:   7% (52/742)Updating files:   8% (60/742)Updating files:   9% (67/742)Updating files:  10% (75/742)Updating files:  11% (82/742)Updating files:  12% (90/742)Updating files:  13% (97/742)Updating files:  14% (104/742)Updating files:  15% (112/742)Updating files:  16% (119/742)Updating files:  17% (127/742)Updating files:  18% (134/742)Updating files:  19% (141/742)Updating files:  20% (149/742)Updating files:  21% (156/742)Updating files:  22% (164/742)Updating files:  23% (171/742)Updating files:  24% (179/742)Updating files:  25% (186/742)Updating files:  26% (193/742)Updating files:  27% (201/742)Updating files:  28% (208/742)Updating files:  29% (216/742)Updating files:  30% (223/742)Updating files:  31% (231/742)Updating files:  32% (238/742)Updating files:  33% (245/742)Updating files:  34% (253/742)Updating files:  35% (260/742)Updating files:  36% (268/742)Updating files:  37% (275/742)Updating files:  38% (282/742)Updating files:  39% (290/742)Updating files:  40% (297/742)Updating files:  41% (305/742)Updating files:  42% (312/742)Updating files:  43% (320/742)Updating files:  44% (327/742)Updating files:  45% (334/742)Updating files:  46% (342/742)Updating files:  47% (349/742)Updating files:  48% (357/742)Updating files:  49% (364/742)Updating files:  50% (371/742)Updating files:  51% (379/742)Updating files:  52% (386/742)Updating files:  53% (394/742)Updating files:  54% (401/742)Updating files:  55% (409/742)Updating files:  56% (416/742)Updating files:  57% (423/742)Updating files:  58% (431/742)Updating files:  59% (438/742)Updating files:  60% (446/742)Updating files:  61% (453/742)Updating files:  62% (461/742)Updating files:  63% (468/742)Updating files:  64% (475/742)Updating files:  65% (483/742)Updating files:  66% (490/742)Updating files:  67% (498/742)Updating files:  68% (505/742)Updating files:  69% (512/742)Updating files:  70% (520/742)Updating files:  71% (527/742)Updating files:  72% (535/742)Updating files:  73% (542/742)Updating files:  74% (550/742)Updating files:  75% (557/742)Updating files:  76% (564/742)Updating files:  77% (572/742)Updating files:  78% (579/742)Updating files:  79% (587/742)Updating files:  80% (594/742)Updating files:  81% (602/742)Updating files:  82% (609/742)Updating files:  83% (616/742)Updating files:  84% (624/742)Updating files:  85% (631/742)Updating files:  86% (639/742)Updating files:  87% (646/742)Updating files:  88% (653/742)Updating files:  89% (661/742)Updating files:  90% (668/742)Updating files:  91% (676/742)Updating files:  92% (683/742)Updating files:  93% (691/742)Updating files:  94% (698/742)Updating files:  95% (705/742)Updating files:  96% (713/742)Updating files:  97% (720/742)Updating files:  98% (728/742)Updating files:  99% (735/742)Updating files: 100% (742/742)Updating files: 100% (742/742), done.
+Note: switching to 'e516c3baf22615e20934116abebfed6c000222c2'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at e516c3ba ci: publish to jsr after cutting the release, not before (#6453)
+Pinned vendor/zod at e516c3baf22615e20934116abebfed6c000222c2 (zod@4.4.3)
+
+ RUN  v4.1.11 /home/azureuser/lilscript-rebuild-reports/2026-10-03-site-refresh/ports/zodlil
+
+
+ Test Files  82 passed (82)
+      Tests  1353 passed (1353)
+   Start at  12:50:28
+   Duration  12.30s (transform 8.21s, setup 0ms, import 23.50s, tests 17.90s, environment 15ms)
+

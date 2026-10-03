@@ -1,0 +1,5 @@
+
+> @itslil/zod@4.4.4 check:pack
+> node scripts/check-pack.mjs
+
+npm pack: 266 files, 260120 bytes packed, 1259364 bytes unpacked

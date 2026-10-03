@@ -1,3 +1,1 @@
-import { z } from "./index.js";
-export default z.locales;
-export const en = z.locales.en;
+import"./chunks/index-8.js";import{ok}from"./chunks/compat-7.js";let oo=ok.locales,mo=oo,no=oo.en;export{mo as default,no as en};

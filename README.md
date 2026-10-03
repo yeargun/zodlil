@@ -27,9 +27,7 @@ This is an independent port of [`zod@4.4.3`](https://github.com/colinhacks/zod).
 
 ## Build
 
-`npm run build` compiles `scripts/zod.lil` (the package root: the core in `src/` plus the JSON-schema layer in `scripts/json-schema.lil`) with `lilscript.toml` into `dist/zod.core.js`. Nothing minifies it afterwards. The only hand-written JavaScript left is `dist/compat.js` (769 bytes: upstream locales when `zod` is installed, and the `JSONSchemaGenerator` class). `dist/index.js` and the other entry points are generated re-exports.
-
-`dist/index.cjs` is post-processed by esbuild, not compiler-written: it is esbuild's CommonJS bundle of `dist/index.js`, because the compiler has no CommonJS target yet.
+`npm run build` compiles the package root and format-specific entries through the compiler’s delivery pipeline. ESM and CommonJS modules, shared chunks and export wrappers are compiler-written. Locale and host-provider boundaries are identified in [the package build record](site/package-build.json). The standalone comparison keeps the optional locale provider external on both sides; its bytes are not included in the headline.
 
 | Config | Objective | Mangling |
 | --- | --- | --- |
@@ -44,3 +42,5 @@ The public API (`z`, `parse`, `object`, `string` and the rest) keeps its names i
 ## Comparison with the original
 
 See [COMPARISON.md](COMPARISON.md) for current raw-, gzip- and Brotli-objective builds, minified upstream comparisons, build times and validation.
+
+[Download the checked repository package](https://yeargun.github.io/zodlil/downloads/package.tgz) · [Package files, hashes and validation](https://yeargun.github.io/zodlil/package-build.json). npm publication is independent.

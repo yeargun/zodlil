@@ -1,0 +1,1 @@
+import{createRequire as qo}from"node:module";export{qo};

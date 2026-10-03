@@ -1,0 +1,1 @@
+(($$e,$$r,$$o)=>{"use strict";$$o.defineProperty($$e,"__esModule",{value:true});$$o.defineProperty($$e,"default",{enumerable:true,get:()=>mo});$$o.defineProperty($$e,"en",{enumerable:true,get:()=>no});let $$0=$$r("./chunks/index-8.cjs");let $$1=$$r("./chunks/compat-7.cjs");let oo=$$1["ok"].locales,mo=oo,no=oo.en;return $$e})(exports,require,Object);

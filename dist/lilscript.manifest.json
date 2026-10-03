@@ -1,0 +1,1164 @@
+{
+  "version": 5,
+  "outputs": [
+    {
+      "mode": "split",
+      "format": "esm",
+      "entries": [
+        {
+          "name": "compat",
+          "file": "compat.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "chunks/compat-7.js",
+            "compat.js"
+          ],
+          "row": 32012,
+          "raw_row": 93473
+        },
+        {
+          "name": "core",
+          "file": "core.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "chunks/compat-7.js",
+            "chunks/index-8.js",
+            "core.js"
+          ],
+          "row": 34531,
+          "raw_row": 100461
+        },
+        {
+          "name": "index",
+          "file": "index.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "chunks/compat-7.js",
+            "chunks/index-8.js",
+            "index.js"
+          ],
+          "row": 34359,
+          "raw_row": 99759
+        },
+        {
+          "name": "locales",
+          "file": "locales.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "chunks/compat-7.js",
+            "chunks/index-8.js",
+            "locales.js"
+          ],
+          "row": 33367,
+          "raw_row": 96981
+        },
+        {
+          "name": "mini",
+          "file": "mini.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "chunks/compat-7.js",
+            "chunks/index-8.js",
+            "mini.js"
+          ],
+          "row": 34359,
+          "raw_row": 99759
+        },
+        {
+          "name": "zod.core",
+          "file": "zod.core.js",
+          "dynamic": false,
+          "closure": [
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js",
+            "chunks/zod-6.js",
+            "zod.core.js"
+          ],
+          "row": 31623,
+          "raw_row": 92751
+        }
+      ],
+      "files": [
+        {
+          "file": "core.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "core"
+          ],
+          "modules": [
+            "core.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.js",
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 3609,
+          "codec_bytes": 1264,
+          "sha256": "57e22a06bde714290d76d6034dc6432911ade07e9a15c10d5da09d9b59d1bf14"
+        },
+        {
+          "file": "locales.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "locales"
+          ],
+          "modules": [
+            "locales.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.js",
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 129,
+          "codec_bytes": 100,
+          "sha256": "38da012e899a38ecba1a7ee3854dc94b6d621cea93535cb2e10c69ec9446085f"
+        },
+        {
+          "file": "mini.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "mini"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.js",
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 2907,
+          "codec_bytes": 1092,
+          "sha256": "5dd25491a4f59d16f394403526dc53035f421d9ab464c73ede2142c8f50aed18"
+        },
+        {
+          "file": "compat.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "compat"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 42,
+          "codec_bytes": 46,
+          "sha256": "0423aa967ab61cb2b2f4b60cc47c3032fbd6d9607f78aa6f83e508f7beba6bb0"
+        },
+        {
+          "file": "index.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "index"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.js",
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 2907,
+          "codec_bytes": 1092,
+          "sha256": "5dd25491a4f59d16f394403526dc53035f421d9ab464c73ede2142c8f50aed18"
+        },
+        {
+          "file": "zod.core.js",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "zod.core"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/zod-6.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 191,
+          "codec_bytes": 103,
+          "sha256": "b3c678d98776ad1bd14257a092ba997b07f8aa3724500ffceb10d25c61918347"
+        },
+        {
+          "file": "chunks/host-0.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../host.lil"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 2573,
+          "codec_bytes": 818,
+          "sha256": "89658a1db10da8c3f9962ae91f5e3568d156f57fdbac9757694bd9259f74d139"
+        },
+        {
+          "file": "chunks/fastpass-1.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../fastpass.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.js",
+            "chunks/engine-2.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 3276,
+          "codec_bytes": 1375,
+          "sha256": "04edc3c41ca530b304bec7a9d063939d69d56dd584e2e5a9907bb6ecbdac1fe1"
+        },
+        {
+          "file": "chunks/engine-2.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../engine.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.js",
+            "chunks/fastpass-1.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 44100,
+          "codec_bytes": 13927,
+          "sha256": "065a7212901b6bea17fe3b0693a642536a3cb08ab6bac5573f94fec8c6d07e43"
+        },
+        {
+          "file": "chunks/api-3.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../api.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.js",
+            "chunks/engine-2.js",
+            "chunks/fastpass-1.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 11705,
+          "codec_bytes": 4163,
+          "sha256": "cdb36ddc911ce81ea0776c7309dc4032d1394cee49a0ca0bc008228fa64c7427"
+        },
+        {
+          "file": "chunks/entry-4.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../entry.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.js",
+            "chunks/engine-2.js",
+            "chunks/api-3.js",
+            "chunks/fastpass-1.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 10097,
+          "codec_bytes": 3678,
+          "sha256": "a17ff9d96b7294cc50fd9d5782d8dbb4240fe3e80fccedae1d3b2e3c5f18c863"
+        },
+        {
+          "file": "chunks/json-schema-5.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../../scripts/json-schema.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.js",
+            "chunks/engine-2.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 13913,
+          "codec_bytes": 4654,
+          "sha256": "c94cc905296c2ca59b884363eb29fb96241bfdda53fe26be77b9a8c06e3dc641"
+        },
+        {
+          "file": "chunks/zod-6.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../../scripts/zod.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/entry-4.js",
+            "chunks/host-0.js",
+            "chunks/engine-2.js",
+            "chunks/json-schema-5.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 6896,
+          "codec_bytes": 2905,
+          "sha256": "f38148a8923ca16aa25f0be3f143b6c2f3a8b467865eca68a6024dd5772ed2d8"
+        },
+        {
+          "file": "chunks/compat-7.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "compat.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/extern0-9.js",
+            "chunks/extern1-10.js",
+            "chunks/zod-6.js",
+            "chunks/entry-4.js",
+            "chunks/json-schema-5.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 205,
+          "codec_bytes": 135,
+          "sha256": "1edd0b52eb9a9e13fde608cefb027af2fc3cfdfdaa914b17d59f6aaa2075d0e4"
+        },
+        {
+          "file": "chunks/index-8.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "index.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/compat-7.js"
+          ],
+          "dynamic_imports": [],
+          "bytes": 3421,
+          "codec_bytes": 1301,
+          "sha256": "c131ae9299efb16c0420dff480d82e8a4bbb292f46bc33da82bc8471015cba55"
+        },
+        {
+          "file": "chunks/extern0-9.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "module-12"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 56,
+          "codec_bytes": 60,
+          "sha256": "a0914a642bb6417a413092d0f5f8b79eab194dc18c7ac3e7c7c3341d88c080e8"
+        },
+        {
+          "file": "chunks/extern1-10.js",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "module-13"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 610,
+          "codec_bytes": 251,
+          "sha256": "7d9f34bda558ce17e27d63006c2176254035a7892feb38dd6f0f1ee7e2bcc549"
+        }
+      ],
+      "side_effects": [
+        "core.js",
+        "locales.js",
+        "mini.js",
+        "compat.js",
+        "index.js",
+        "zod.core.js",
+        "chunks/host-0.js",
+        "chunks/fastpass-1.js",
+        "chunks/engine-2.js",
+        "chunks/api-3.js",
+        "chunks/entry-4.js",
+        "chunks/json-schema-5.js",
+        "chunks/zod-6.js",
+        "chunks/compat-7.js",
+        "chunks/index-8.js",
+        "chunks/extern0-9.js",
+        "chunks/extern1-10.js"
+      ],
+      "codec_total": 36964,
+      "rows_total": 200251,
+      "setters": 0,
+      "output": "public/primary",
+      "codec": "brotli",
+      "codec_settings": {
+        "brotli": {
+          "quality": 11,
+          "window": 22,
+          "mode": "generic"
+        },
+        "gzip": {
+          "level": 9,
+          "window": 15
+        }
+      },
+      "policy_fingerprint": [
+        144,
+        88,
+        11,
+        198,
+        224,
+        106,
+        238,
+        112,
+        250,
+        202,
+        38,
+        254,
+        153,
+        214,
+        114,
+        210,
+        55,
+        234,
+        191,
+        158,
+        220,
+        152,
+        42,
+        156,
+        46,
+        60,
+        113,
+        101,
+        148,
+        123,
+        221,
+        230
+      ]
+    },
+    {
+      "mode": "split",
+      "format": "cjs",
+      "entries": [
+        {
+          "name": "compat",
+          "file": "compat.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/compat-7.cjs",
+            "compat.cjs"
+          ],
+          "row": 33703,
+          "raw_row": 121180
+        },
+        {
+          "name": "core",
+          "file": "core.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/compat-7.cjs",
+            "chunks/index-8.cjs",
+            "core.cjs"
+          ],
+          "row": 36711,
+          "raw_row": 151343
+        },
+        {
+          "name": "index",
+          "file": "index.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/compat-7.cjs",
+            "chunks/index-8.cjs",
+            "index.cjs"
+          ],
+          "row": 36451,
+          "raw_row": 149700
+        },
+        {
+          "name": "locales",
+          "file": "locales.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/compat-7.cjs",
+            "chunks/index-8.cjs",
+            "locales.cjs"
+          ],
+          "row": 35337,
+          "raw_row": 136437
+        },
+        {
+          "name": "mini",
+          "file": "mini.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/compat-7.cjs",
+            "chunks/index-8.cjs",
+            "mini.cjs"
+          ],
+          "row": 36451,
+          "raw_row": 149700
+        },
+        {
+          "name": "zod.core",
+          "file": "zod.core.cjs",
+          "dynamic": false,
+          "closure": [
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs",
+            "chunks/zod-6.cjs",
+            "zod.core.cjs"
+          ],
+          "row": 33136,
+          "raw_row": 120349
+        }
+      ],
+      "files": [
+        {
+          "file": "core.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "core"
+          ],
+          "modules": [
+            "core.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.cjs",
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 15257,
+          "codec_bytes": 1570,
+          "sha256": "94a02295285c9add0b68d1b2a430022a4cc69bd9382a348d8fdcc3c79750088d"
+        },
+        {
+          "file": "locales.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "locales"
+          ],
+          "modules": [
+            "locales.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.cjs",
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 351,
+          "codec_bytes": 196,
+          "sha256": "c3ef4c133d25534d503910722d0731b710348d985059b5f11f5d8ca3bf6ba134"
+        },
+        {
+          "file": "mini.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "mini"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.cjs",
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 13614,
+          "codec_bytes": 1310,
+          "sha256": "1c373521e7714d0b19231f605b924dfd6e469930217c2cf36d719ec48a9dc608"
+        },
+        {
+          "file": "compat.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "compat"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 168,
+          "codec_bytes": 146,
+          "sha256": "c61d715cf796bca1cc0fbcf4a7fea8a5cd052899219a49620fc3dcf62fb73519"
+        },
+        {
+          "file": "index.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "index"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/index-8.cjs",
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 13614,
+          "codec_bytes": 1310,
+          "sha256": "1c373521e7714d0b19231f605b924dfd6e469930217c2cf36d719ec48a9dc608"
+        },
+        {
+          "file": "zod.core.cjs",
+          "role": "entry",
+          "source_map_for": null,
+          "label": [
+            "zod.core"
+          ],
+          "modules": [],
+          "anchored": true,
+          "imports": [
+            "chunks/zod-6.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 597,
+          "codec_bytes": 220,
+          "sha256": "1b4b5cd9f38de758bffd5bf8f5682c59ae1c30dceec8e9b6f27e157b1e274394"
+        },
+        {
+          "file": "chunks/host-0.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../host.lil"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 5722,
+          "codec_bytes": 978,
+          "sha256": "9d5cc2e7c1180967ac22d0008ee528948ce4f8d7c1a45753d4513792688db7f9"
+        },
+        {
+          "file": "chunks/fastpass-1.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../fastpass.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.cjs",
+            "chunks/engine-2.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 3864,
+          "codec_bytes": 1498,
+          "sha256": "8a9bfd825e0752758fc47881dc81d5e0accbd786bed77a5dcdd34fdf0cecbd22"
+        },
+        {
+          "file": "chunks/engine-2.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../engine.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.cjs",
+            "chunks/fastpass-1.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 52411,
+          "codec_bytes": 14433,
+          "sha256": "b66e129d9caa0a21a7c8d13ec81c475183b7e9da2f397b9a094c0e485f9df74f"
+        },
+        {
+          "file": "chunks/api-3.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../api.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/fastpass-1.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 21184,
+          "codec_bytes": 4491,
+          "sha256": "a42786ce5f06d3f1004006a4568acb3a5f48036bea576dd46e1b8deb09175fae"
+        },
+        {
+          "file": "chunks/entry-4.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../entry.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/api-3.cjs",
+            "chunks/fastpass-1.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 14208,
+          "codec_bytes": 3782,
+          "sha256": "8586280eee4e8a1b509dcf02e705967fe918a1ddbd69f44292927852a051dc67"
+        },
+        {
+          "file": "chunks/json-schema-5.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../../scripts/json-schema.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/host-0.cjs",
+            "chunks/engine-2.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 14655,
+          "codec_bytes": 4767,
+          "sha256": "fca2dcd03ea80855cbc9b7fc995c0dfddf946984638db7659a9fd5d6be0c8df8"
+        },
+        {
+          "file": "chunks/zod-6.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini",
+            "zod.core"
+          ],
+          "modules": [
+            "../../scripts/zod.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/entry-4.cjs",
+            "chunks/host-0.cjs",
+            "chunks/engine-2.cjs",
+            "chunks/json-schema-5.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 7708,
+          "codec_bytes": 2967,
+          "sha256": "d48113326b86974a2d83223421a63eebabec1388c0e2960da73503928fe6f32b"
+        },
+        {
+          "file": "chunks/compat-7.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "compat.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/extern0-9.cjs",
+            "chunks/extern1-10.cjs",
+            "chunks/zod-6.cjs",
+            "chunks/entry-4.cjs",
+            "chunks/json-schema-5.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 402,
+          "codec_bytes": 232,
+          "sha256": "8de8ce9804fd77c8a71c26741269a9233e553fad4e9da67823f98fd910b74b49"
+        },
+        {
+          "file": "chunks/index-8.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "index.lil"
+          ],
+          "anchored": true,
+          "imports": [
+            "chunks/compat-7.cjs"
+          ],
+          "dynamic_imports": [],
+          "bytes": 15074,
+          "codec_bytes": 1584,
+          "sha256": "57de10fc537ff5f61c355b48636d2965da152272053b086e155d2e45112ebfe0"
+        },
+        {
+          "file": "chunks/extern0-9.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "module-12"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 170,
+          "codec_bytes": 128,
+          "sha256": "ee04e2f5f9183c351c51c545f355449f19212710b28443faf2128ea336c1ce8a"
+        },
+        {
+          "file": "chunks/extern1-10.cjs",
+          "role": "module",
+          "source_map_for": null,
+          "label": [
+            "compat",
+            "core",
+            "index",
+            "locales",
+            "mini"
+          ],
+          "modules": [
+            "module-13"
+          ],
+          "anchored": true,
+          "imports": [],
+          "dynamic_imports": [],
+          "bytes": 688,
+          "codec_bytes": 281,
+          "sha256": "9375b211be666fa0db6bae23afc00b9b3d7736729825af38e2070a5d5bfa6182"
+        }
+      ],
+      "side_effects": [
+        "core.cjs",
+        "locales.cjs",
+        "mini.cjs",
+        "compat.cjs",
+        "index.cjs",
+        "zod.core.cjs",
+        "chunks/host-0.cjs",
+        "chunks/fastpass-1.cjs",
+        "chunks/engine-2.cjs",
+        "chunks/api-3.cjs",
+        "chunks/entry-4.cjs",
+        "chunks/json-schema-5.cjs",
+        "chunks/zod-6.cjs",
+        "chunks/compat-7.cjs",
+        "chunks/index-8.cjs",
+        "chunks/extern0-9.cjs",
+        "chunks/extern1-10.cjs"
+      ],
+      "codec_total": 39893,
+      "rows_total": 211789,
+      "setters": 0,
+      "output": "public/cjs",
+      "codec": "brotli",
+      "codec_settings": {
+        "brotli": {
+          "quality": 11,
+          "window": 22,
+          "mode": "generic"
+        },
+        "gzip": {
+          "level": 9,
+          "window": 15
+        }
+      },
+      "policy_fingerprint": [
+        47,
+        93,
+        71,
+        225,
+        150,
+        222,
+        189,
+        67,
+        58,
+        125,
+        10,
+        153,
+        152,
+        22,
+        77,
+        186,
+        9,
+        255,
+        237,
+        237,
+        174,
+        114,
+        96,
+        129,
+        21,
+        40,
+        210,
+        100,
+        187,
+        111,
+        82,
+        4
+      ]
+    }
+  ],
+  "aliases": {},
+  "providers": [],
+  "source_sha256": "31ee4d09a8e17b9ecd03eb7d6de36e8d00291482c9da9429c029e20dda93d14a"
+}

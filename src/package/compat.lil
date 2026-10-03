@@ -1,0 +1,8 @@
+import extern {createRequire} from "node:module";
+import extern {completeZod} from "./compat-factory.mjs";
+extern JsValue createRequire;
+extern JsValue completeZod;
+import {z as coreZ, generatorContext, generatorProcess, generatorEmit} from "../../scripts/zod.lil";
+// Resolve the optional locale provider from this delivered package, exactly as
+// Node resolves require() from the original compatibility module.
+export JsValue z = JS.call(completeZod, JS.undefined(), coreZ, generatorContext, generatorProcess, generatorEmit, createRequire, JS.moduleUrl());

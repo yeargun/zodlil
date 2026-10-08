@@ -1,0 +1,610 @@
+{
+  "compiler": {
+    "baseRevision": "f7d29bd9",
+    "binarySha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+    "hasLocalSourceChanges": true
+  },
+  "machine": {
+    "cpu": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpus": 8,
+    "memoryGiB": 15.6,
+    "os": "Linux-7.0.0-1014-azure-x86_64-with-glibc2.39",
+    "node": "v20.19.0"
+  },
+  "lilscript": [
+    {
+      "library": "zodlil",
+      "objective": "raw",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/configs/zodlil-raw.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/artifacts/zodlil/raw",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "2000000000"
+      ],
+      "wallSeconds": 12.687424546998955,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "6528e69627d7b979dc8398cf9c5fbf0e9e0ece3ce3358847abe6733bccf5a988",
+      "measuredAt": "2026-10-02T22:53:28.648045+00:00",
+      "outputSha256": "fd27a676202f2bebe414234f15223728a5a68bc1f0aaa8e477d39392155b33cd",
+      "raw": 87282
+    },
+    {
+      "library": "zodlil",
+      "objective": "gzip",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/configs/zodlil-gzip.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/artifacts/zodlil/gzip",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "2000000000"
+      ],
+      "wallSeconds": 11.78674253400095,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "e772fd7d99ee48cce291bab06416076542e8d9422875122741d0653e755f3a90",
+      "measuredAt": "2026-10-02T22:53:40.455338+00:00",
+      "outputSha256": "8b6fdadefd2532e9962b6407fc8c9c3d3c0bfed438264663e2f4689f0dfd1d07",
+      "raw": 92805
+    },
+    {
+      "library": "zodlil",
+      "objective": "brotli",
+      "command": [
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/bin/lilscript",
+        "--config",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/configs/zodlil-brotli.toml",
+        "--target",
+        "js-module",
+        "--mode",
+        "production",
+        "--jobs",
+        "1",
+        "--out-dir",
+        "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/artifacts/zodlil/brotli",
+        "--explain",
+        "json",
+        "--cache",
+        "off",
+        "--logical-work",
+        "2000000000"
+      ],
+      "wallSeconds": 19.05108135900082,
+      "returncode": 0,
+      "compilerSha256": "8ff44fabb92c949e68240ce6541038fd52e2f3c04d1a9ac470031e4238541c3a",
+      "configSha256": "0b3ec1393dda458d5b6684091d10618b6b4de7e59bd5dab70de7289ca5857ab2",
+      "measuredAt": "2026-10-02T22:53:59.520634+00:00",
+      "outputSha256": "8199e53feb76893444e631fda5fa1e48cbefa69d8e952a0f958a225cd4c82285",
+      "raw": 93824
+    }
+  ],
+  "upstream": {
+    "name": "zodlil",
+    "package": "zod",
+    "version": "4.4.3",
+    "resolveDir": "/home/azureuser/zodlil",
+    "output": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil",
+    "entry": "export {NEVER,TimePrecision,ZodAny,ZodArray,ZodBigInt,ZodBoolean,ZodCatch,ZodCodec,ZodCustom,ZodDate,ZodDefault,ZodDiscriminatedUnion,ZodEnum,ZodError,ZodExactOptional,ZodFile,ZodFunction,ZodISODate,ZodISODateTime,ZodISODuration,ZodISOTime,ZodIntersection,ZodIssueCode,ZodLazy,ZodLiteral,ZodMap,ZodNaN,ZodNever,ZodNonOptional,ZodNull,ZodNullable,ZodNumber,ZodObject,ZodOptional,ZodPipe,ZodPrefault,ZodPreprocess,ZodPromise,ZodReadonly,ZodRealError,ZodRecord,ZodSet,ZodString,ZodSuccess,ZodSymbol,ZodTemplateLiteral,ZodTransform,ZodTuple,ZodType,ZodUndefined,ZodUnion,ZodUnknown,ZodVoid,ZodXor,_default,any,array,base64,base64url,bigint,boolean,catch,check,cidrv4,cidrv6,codec,coerce,config,core,cuid,cuid2,custom,date,decode,decodeAsync,default,describe,discriminatedUnion,e164,email,emoji,encode,encodeAsync,enum,exactOptional,file,flattenError,float32,float64,formatError,fromJSONSchema,function,globalRegistry,guid,hash,hex,hostname,httpUrl,instanceof,int,int32,int64,intersection,invertCodec,ipv4,ipv6,iso,json,jwt,keyof,ksuid,lazy,literal,locales,looseObject,looseRecord,mac,map,maxLength,meta,minLength,nan,nanoid,nativeEnum,never,nonoptional,null,nullable,number,object,optional,parse,parseAsync,partialRecord,pipe,prefault,preprocess,prettifyError,promise,property,readonly,record,refine,regexes,registry,safeDecode,safeDecodeAsync,safeEncode,safeEncodeAsync,safeParse,safeParseAsync,set,setErrorMap,slugify,strictObject,string,stringFormat,stringbool,success,superRefine,symbol,templateLiteral,toJSONSchema,transform,treeifyError,trim,tuple,uint32,uint64,ulid,undefined,union,unknown,url,util,uuid,uuidv4,uuidv6,uuidv7,void,xid,xor,z} from \"zod\";",
+    "external": [
+      "node:module",
+      "zod/v4/locales"
+    ],
+    "sharedExports": [
+      "NEVER",
+      "TimePrecision",
+      "ZodAny",
+      "ZodArray",
+      "ZodBigInt",
+      "ZodBoolean",
+      "ZodCatch",
+      "ZodCodec",
+      "ZodCustom",
+      "ZodDate",
+      "ZodDefault",
+      "ZodDiscriminatedUnion",
+      "ZodEnum",
+      "ZodError",
+      "ZodExactOptional",
+      "ZodFile",
+      "ZodFunction",
+      "ZodISODate",
+      "ZodISODateTime",
+      "ZodISODuration",
+      "ZodISOTime",
+      "ZodIntersection",
+      "ZodIssueCode",
+      "ZodLazy",
+      "ZodLiteral",
+      "ZodMap",
+      "ZodNaN",
+      "ZodNever",
+      "ZodNonOptional",
+      "ZodNull",
+      "ZodNullable",
+      "ZodNumber",
+      "ZodObject",
+      "ZodOptional",
+      "ZodPipe",
+      "ZodPrefault",
+      "ZodPreprocess",
+      "ZodPromise",
+      "ZodReadonly",
+      "ZodRealError",
+      "ZodRecord",
+      "ZodSet",
+      "ZodString",
+      "ZodSuccess",
+      "ZodSymbol",
+      "ZodTemplateLiteral",
+      "ZodTransform",
+      "ZodTuple",
+      "ZodType",
+      "ZodUndefined",
+      "ZodUnion",
+      "ZodUnknown",
+      "ZodVoid",
+      "ZodXor",
+      "_default",
+      "any",
+      "array",
+      "base64",
+      "base64url",
+      "bigint",
+      "boolean",
+      "catch",
+      "check",
+      "cidrv4",
+      "cidrv6",
+      "codec",
+      "coerce",
+      "config",
+      "core",
+      "cuid",
+      "cuid2",
+      "custom",
+      "date",
+      "decode",
+      "decodeAsync",
+      "default",
+      "describe",
+      "discriminatedUnion",
+      "e164",
+      "email",
+      "emoji",
+      "encode",
+      "encodeAsync",
+      "enum",
+      "exactOptional",
+      "file",
+      "flattenError",
+      "float32",
+      "float64",
+      "formatError",
+      "fromJSONSchema",
+      "function",
+      "globalRegistry",
+      "guid",
+      "hash",
+      "hex",
+      "hostname",
+      "httpUrl",
+      "instanceof",
+      "int",
+      "int32",
+      "int64",
+      "intersection",
+      "invertCodec",
+      "ipv4",
+      "ipv6",
+      "iso",
+      "json",
+      "jwt",
+      "keyof",
+      "ksuid",
+      "lazy",
+      "literal",
+      "locales",
+      "looseObject",
+      "looseRecord",
+      "mac",
+      "map",
+      "maxLength",
+      "meta",
+      "minLength",
+      "nan",
+      "nanoid",
+      "nativeEnum",
+      "never",
+      "nonoptional",
+      "null",
+      "nullable",
+      "number",
+      "object",
+      "optional",
+      "parse",
+      "parseAsync",
+      "partialRecord",
+      "pipe",
+      "prefault",
+      "preprocess",
+      "prettifyError",
+      "promise",
+      "property",
+      "readonly",
+      "record",
+      "refine",
+      "regexes",
+      "registry",
+      "safeDecode",
+      "safeDecodeAsync",
+      "safeEncode",
+      "safeEncodeAsync",
+      "safeParse",
+      "safeParseAsync",
+      "set",
+      "setErrorMap",
+      "slugify",
+      "strictObject",
+      "string",
+      "stringFormat",
+      "stringbool",
+      "success",
+      "superRefine",
+      "symbol",
+      "templateLiteral",
+      "toJSONSchema",
+      "transform",
+      "treeifyError",
+      "trim",
+      "tuple",
+      "uint32",
+      "uint64",
+      "ulid",
+      "undefined",
+      "union",
+      "unknown",
+      "url",
+      "util",
+      "uuid",
+      "uuidv4",
+      "uuidv6",
+      "uuidv7",
+      "void",
+      "xid",
+      "xor",
+      "z"
+    ],
+    "excludedExports": [
+      "$brand",
+      "$input",
+      "$output",
+      "ZodBase64",
+      "ZodBase64URL",
+      "ZodBigIntFormat",
+      "ZodCIDRv4",
+      "ZodCIDRv6",
+      "ZodCUID",
+      "ZodCUID2",
+      "ZodCustomStringFormat",
+      "ZodE164",
+      "ZodEmail",
+      "ZodEmoji",
+      "ZodFirstPartyTypeKind",
+      "ZodGUID",
+      "ZodIPv4",
+      "ZodIPv6",
+      "ZodJWT",
+      "ZodKSUID",
+      "ZodMAC",
+      "ZodNanoID",
+      "ZodNumberFormat",
+      "ZodStringFormat",
+      "ZodULID",
+      "ZodURL",
+      "ZodUUID",
+      "ZodXID",
+      "_ZodString",
+      "__esModule",
+      "_function",
+      "clone",
+      "endsWith",
+      "getErrorMap",
+      "gt",
+      "gte",
+      "includes",
+      "length",
+      "lowercase",
+      "lt",
+      "lte",
+      "maxSize",
+      "mime",
+      "minSize",
+      "multipleOf",
+      "negative",
+      "nonnegative",
+      "nonpositive",
+      "normalize",
+      "nullish",
+      "overwrite",
+      "positive",
+      "regex",
+      "size",
+      "startsWith",
+      "toLowerCase",
+      "toUpperCase",
+      "uppercase"
+    ],
+    "additionalExports": [
+      "compile",
+      "creditCard",
+      "deepPartial",
+      "getDiscriminatedOption",
+      "properties",
+      "visit"
+    ],
+    "resolution": {
+      "platform": "neutral",
+      "conditions": [
+        "production"
+      ],
+      "mainFields": [
+        "module",
+        "main"
+      ],
+      "target": "es2020",
+      "defines": {
+        "process.env.NODE_ENV": "production"
+      }
+    },
+    "minifiers": [
+      {
+        "tool": "Terser",
+        "version": "5.51.2",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/terser.mjs",
+        "sha256": "4feb6ef1b516215ee2366dd5f25a29a06f3c828b75384c25edc60f8d4981fb48",
+        "raw": 134899,
+        "imports": [
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "wallSeconds": 1.3708936820000002,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/job.json",
+          "Terser"
+        ]
+      },
+      {
+        "tool": "esbuild",
+        "version": "0.28.1",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/esbuild.mjs",
+        "sha256": "cd8b6f5fa80a5abc67468857869a2aa26a866584e885111ba6724d9b290d0750",
+        "raw": 134942,
+        "imports": [
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "wallSeconds": 0.09790562799999998,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/job.json",
+          "esbuild"
+        ]
+      },
+      {
+        "tool": "Oxc",
+        "version": "via Vite 8.2.1",
+        "esbuild": "0.28.1",
+        "artifact": "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/oxc.mjs",
+        "sha256": "917df0bdc774e0718428456ad45363eba52c752fdd5f33f600461768601e85a9",
+        "raw": 132160,
+        "imports": [
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "zod/v4/locales",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "wallSeconds": 0.21357657300000005,
+        "command": [
+          "/home/azureuser/.nvm/versions/node/v20.19.0/bin/node",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream.mjs",
+          "child",
+          "/home/azureuser/lilscript-rebuild-reports/2026-10-03-pages/upstream/zodlil/job.json",
+          "Oxc"
+        ]
+      }
+    ]
+  },
+  "sourceInputs": {
+    "root": 0,
+    "entries": [
+      {
+        "name": "index",
+        "module": 0
+      }
+    ],
+    "modules": [
+      {
+        "path": "/home/azureuser/zodlil/src/package/index.lil",
+        "bytes": 12393,
+        "sha256": "4ec70adff7d0e42f4c0ba3acb54e64088c1899d600a0a1fad718c3af70a75cd7",
+        "dependencies": [
+          1
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/package/compat.lil",
+        "bytes": 559,
+        "sha256": "f80b6643ac2864e10ab903ef39defb92cc62e1eecce02e0a1ac06c897d0751cb",
+        "dependencies": [
+          2
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/scripts/zod.lil",
+        "bytes": 15579,
+        "sha256": "b0521acfc6a3dc114fcdcdedcf49685a28d0893a00d704bca1576dd10323e28a",
+        "dependencies": [
+          3,
+          4,
+          5,
+          8
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/entry.lil",
+        "bytes": 8616,
+        "sha256": "99f43595867413f326d5dd8fff1cf9357471da9a56bf53b6be270394a868e4cc",
+        "dependencies": [
+          4,
+          5,
+          7
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/host.lil",
+        "bytes": 11086,
+        "sha256": "1ec641d14bc29fa4db70620166f24f7b520f7a929374fb8436249f30cb86ae38",
+        "dependencies": [],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/engine.lil",
+        "bytes": 115844,
+        "sha256": "640f7b234b36ece6c57f1cb2cf660ebb80e55774ce8d15f6c3e6f33b844116fc",
+        "dependencies": [
+          4,
+          6
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/fastpass.lil",
+        "bytes": 9735,
+        "sha256": "86a6bba6525f4655776788ff3ba61d0cfd57b32998d1b22b26c3d23bcafcb43b",
+        "dependencies": [
+          4,
+          5
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/src/api.lil",
+        "bytes": 44613,
+        "sha256": "ef7da3e4f53bf773eb6798d9c08cfc7f165ff1fe7d5509112d71dc494b37fe55",
+        "dependencies": [
+          4,
+          5,
+          6
+        ],
+        "dynamic_dependencies": []
+      },
+      {
+        "path": "/home/azureuser/zodlil/scripts/json-schema.lil",
+        "bytes": 32163,
+        "sha256": "44cd05a799f340a942075981d70f4dd51987f497f74e6346af8074088da26330",
+        "dependencies": [
+          4,
+          5
+        ],
+        "dynamic_dependencies": []
+      }
+    ],
+    "host_modules": [
+      {
+        "specifier": "./compat-factory.mjs",
+        "stem": "compat-factory",
+        "delivered_bytes": 474,
+        "sha256": "39e413b9689f5101986431d1a061183f56450723d961072ea050d2a476917caf",
+        "exports": [
+          [
+            "completeZod",
+            "completeZod"
+          ]
+        ],
+        "imports": []
+      }
+    ],
+    "host_reserved": []
+  },
+  "validation": {
+    "checks": 777,
+    "objectives": [
+      {
+        "objective": "raw",
+        "checks": 259,
+        "suite": "schema/output parity"
+      },
+      {
+        "objective": "gzip",
+        "checks": 259,
+        "suite": "schema/output parity"
+      },
+      {
+        "objective": "brotli",
+        "checks": 259,
+        "suite": "schema/output parity"
+      }
+    ],
+    "scope": "Main ESM entry; selected corpora and API checks, not all package formats or complete upstream equivalence."
+  },
+  "workLimit": 2000000000,
+  "timingScope": "One sequential fresh-output build per objective/minifier. Upstream timing is ESM bundling and minification, not original-repository source compilation."
+}

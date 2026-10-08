@@ -1,3 +1,6 @@
+import {renderComparison} from './objective-comparison.js';
+const currentComparison=await fetch('./comparison.json').then(response=>{if(!response.ok)throw Error('Comparison could not load');return response.json()});
+renderComparison(currentComparison);
 import { z as lilZ } from "./zod.js"
 import { renderCompilerRun } from "./compiler-run.js"
 
@@ -91,125 +94,11 @@ function compileSeconds() {
   return samples.length ? `${(samples[Math.floor(samples.length / 2)] / 1000).toFixed(2)} s` : "—"
 }
 
-function renderHero() {
-  const bar = barFor("brotli11")
-  const shipped = (data.size ?? []).find((lane) => lane.primary)
-  if (!bar || !shipped) return
-  document.querySelector("#hero-ratio").innerHTML =
-    `${times(shipped.brotli11, bar.brotli11)}<span>Brotli vs ${bar.name}</span>`
-  document.querySelector("#hero-bytes").textContent =
-    `${formatter.format(bar.brotli11)} B → ${formatter.format(shipped.brotli11)} B Brotli-11`
-  const gzip = laneById("itslil-gzip") ?? shipped
-  const raw = laneById("itslil-raw") ?? shipped
-  document.querySelector("#hero-gzip").textContent = times(gzip.gzip9, barFor("gzip9").gzip9)
-  document.querySelector("#hero-raw").textContent = times(raw.raw, barFor("raw").raw)
-  document.querySelector("#hero-tests").textContent = data.tests
-    ? `${data.tests.passed}/${data.tests.total}`
-    : "1353/1353"
-  const chromium = throughputLanes("chromium")
-  const official = chromium.find((row) => row.id === "official")
-  const lil = chromium.find((row) => row.id === "itslil-closer")
-  document.querySelector("#hero-speed").textContent =
-    official && lil ? times(lil.ms, official.ms) : "—"
-  document.querySelector("#hero-compile").textContent = compileSeconds()
-  const before = data.previousRelease?.package?.brotli11
-  document.querySelector("#hero-release").textContent = before ? times(shipped.brotli11, before) : "—"
-}
+function renderHero() {}
 
-function renderSize() {
-  renderCodec("brotli11", "#bar-brotli", "#body-brotli")
-  renderCodec("gzip9", "#bar-gzip", "#body-gzip")
-  renderCodec("raw", "#bar-raw", "#body-raw")
-  const bars = { raw: barFor("raw"), gzip9: barFor("gzip9"), brotli11: barFor("brotli11") }
-  document.querySelector("#body-matched").innerHTML = sizeLanes(null)
-    .map((lane) => {
-      const ratio = `${times(lane.raw, bars.raw.raw)} / ${times(lane.gzip9, bars.gzip9.gzip9)} / ${times(lane.brotli11, bars.brotli11.brotli11)}`
-      return `
-    <tr>
-      <th scope="row">${lane.name}</th>
-      <td>${formatter.format(lane.raw)}</td>
-      <td>${formatter.format(lane.gzip9)}</td>
-      <td>${formatter.format(lane.brotli11)}</td>
-      <td class="verdict ${verdict(lane.brotli11, bars.brotli11.brotli11)}"><strong>${ratio}</strong></td>
-    </tr>`
-    })
-    .join("")
-  document.querySelector("#body-delivered").innerHTML = (data.delivered ?? [])
-    .map(
-      (file) => `
-    <tr>
-      <th scope="row"><code>${file.path}</code><small>${file.note}</small></th>
-      <td class="written ${file.writtenBy === "compiler" ? "compiler" : "other"}">${file.writtenBy}</td>
-      <td>${formatter.format(file.raw)}</td>
-      <td>${formatter.format(file.gzip9)}</td>
-      <td>${formatter.format(file.brotli11)}</td>
-    </tr>`,
-    )
-    .join("")
-}
+function renderSize() {}
 
-function renderPerf() {
-  const chromium = throughputLanes("chromium")
-  const node = throughputLanes("node")
-  const officialC = chromium.find((row) => row.id === "official")
-  const closerC = chromium.find((row) => row.id === "itslil-closer")
-  const officialN = node.find((row) => row.id === "official")
-  const closerN = node.find((row) => row.id === "itslil-closer")
-  const cards = [
-    {
-      label: "Chromium parse vs official",
-      value: officialC && closerC ? times(closerC.ms, officialC.ms) : "—",
-      win: officialC && closerC ? closerC.ms < officialC.ms : false,
-    },
-    {
-      label: "Node parse vs official",
-      value: officialN && closerN ? times(closerN.ms, officialN.ms) : "—",
-      win: officialN && closerN ? closerN.ms < officialN.ms : false,
-    },
-    {
-      label: "classic tests with matching output",
-      value: data.tests ? `${data.tests.passed}/${data.tests.total}` : "—",
-      geo: true,
-    },
-    {
-      label: "median Chromium parse",
-      value: closerC ? duration(closerC.ms) : "—",
-    },
-  ]
-  document.querySelector("#perf-cards").innerHTML = cards
-    .map(
-      (card) => `
-    <article class="perf-card${card.win ? " win" : ""}${card.geo ? " geo" : ""}">
-      <strong>${card.value}</strong>
-      <span>${card.label}</span>
-    </article>
-  `,
-    )
-    .join("")
-  const ids = ["official", "itslil-closer", "itslil-normal"]
-  document.querySelector("#perf-body").innerHTML = ids
-    .map((id) => {
-      const c = chromium.find((row) => row.id === id)
-      const n = node.find((row) => row.id === id)
-      if (!c && !n) return ""
-      const name = (c ?? n).name
-      const cRatio = officialC && c ? times(c.ms, officialC.ms) : "—"
-      const nRatio = officialN && n ? times(n.ms, officialN.ms) : "—"
-      const cWin = officialC && c ? c.ms < officialC.ms : false
-      const nWin = officialN && n ? n.ms < officialN.ms : false
-      return `
-    <tr>
-      <th scope="row">${name}</th>
-      <td>${duration(c?.ms)}</td>
-      <td class="verdict ${id === "official" ? "even" : cWin ? "win" : "loss"}"><strong>${cRatio}</strong></td>
-      <td>${duration(n?.ms)}</td>
-      <td class="verdict ${id === "official" ? "even" : nWin ? "win" : "loss"}"><strong>${nRatio}</strong></td>
-    </tr>`
-    })
-    .join("")
-  document.querySelector("#perf-note").textContent =
-    `${data.browser ?? "Playwright Chromium"} · ${data.runtime ?? "Node"}. ${data.codec ?? ""}. Quiet median after discarding the first ${data.warmupDiscard ?? 3} samples.`
-}
+function renderPerf() {}
 
 function bindCopy() {
   document.addEventListener("click", async (event) => {
